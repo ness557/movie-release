@@ -1,0 +1,62 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:insert="embeded/header.html"></head>
+<body>
+<nav th:insert="embeded/navbar.html"></nav>
+
+<th:block th:each="film, iStat : ${films}">
+    <th:block th:if="${iStat.index % 3 == 0}">
+        </div>
+        <div class="row">
+    </th:block>
+
+    <div class="col col-lg-4">
+        <table class="table">
+            <tr>
+                <td colspan="3" rowspan="5">
+                    <img th:src="${film.posterUrl}" width="200">
+                </td>
+            </tr>
+            <tr>
+                <td>Title</td>
+                <td th:text="${film.title}"/>
+            </tr>
+            <tr>
+                <td>Year</td>
+                <td th:text="${film.year}"/>
+            </tr>
+            <tr>
+                <td>Type</td>
+                <td th:text="${#strings.capitalize(film.type)}"/>
+            </tr>
+            <tr>
+                <td colspan="2">
+                    <form action="/user/getFilm" method="get">
+                        <input type="hidden" name="imdbId" th:value="${film.imdbId}"/>
+                        <input type="submit" value="View Full Info" class="btn btn-primary"/>
+                    </form>
+                </td>
+            </tr>
+        </table>
+    </div>
+</th:block>
+<div th:with="urlBuilder=${T(org.springframework.web.servlet.support.ServletUriComponentsBuilder)}">
+
+    <table class="table pagesTable center">
+        <tr>
+            <th>Pages:</th>
+            <th:block th:each="i : ${#numbers.sequence(1, pageCount)}">
+
+                <td>
+                    <a th:href="${urlBuilder.fromCurrentRequest().replaceQueryParam('page', i).toUriString()}"
+                       th:text="${i}"/>
+                </td>
+            </th:block>
+
+        </tr>
+    </table>
+</div>
+
+
+</body>
+</html>

@@ -1,0 +1,178 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:insert="embeded/header.html"></head>
+<body>
+<nav th:insert="embeded/navbar.html"></nav>
+
+<div class="container-fluid mytext">
+
+    <div class="row">
+        <div class="col-md-4 col-md-3-4" style="text-align: right">
+            <div style="text-align: center; display: inline-block;">
+                <img th:src="${film.poster}" style="height: 30vw" class="img-rounded">
+
+                <p style="margin-bottom: 1vw; margin-top: 1.3vw;"> Metascore:
+                    <b th:if="${film.metascore > 60}"
+                       style="color: #33CC00"
+                       th:text="${film.metascore}"/>
+
+                    <b th:if="${film.metascore < 40}"
+                       style="color: #FD0100"
+                       th:text="${film.metascore}"/>
+
+
+                    <b th:if="${film.metascore >= 40 and film.metascore <= 60}"
+                       style="color: #E1AC00"
+                       th:text="${film.metascore}"/>
+
+                    Imdb Rating:
+                    <b th:if="${film.imdbRating > 6}"
+                       style="color: #33CC00"
+                       th:text="${film.imdbRating}"/>
+
+                    <b th:if="${film.imdbRating < 4}"
+                       style="color: #FD0100"
+                       th:text="${film.imdbRating}"/>
+
+
+                    <b th:if="${film.imdbRating >= 4 and film.metascore <= 6}"
+                       style="color: #E1AC00"
+                       th:text="${film.imdbRating}"/>
+                </p>
+
+                <form th:if="${subscribed}" action="/user/unSubscribe" method="post">
+                    <input type="hidden" name="imdbId" th:value="${film.imdbId}"/>
+                    <input type="submit" value="Unsubscribe" class="btn-lg btn-success"/>
+                </form>
+
+                <form th:unless="${subscribed}" action="/user/subscribe" method="post">
+                    <input type="hidden" name="imdbId" th:value="${film.imdbId}"/>
+                    <input type="submit" value="Subscribe" class="btn-lg btn-primary"/>
+                </form>
+            </div>
+        </div>
+
+        <div class="col-md-8">
+            <div class="row">
+                <div class="col-md-8">
+                    <div style="font-size: 2vw;">
+                        <b th:text="${film.title} + ' (' + ${film.year} + ')'"/>
+                    </div>
+                </div>
+            </div>
+            <div class="row" style="font-size: 0.9vw; height: 2.3vw; vertical-align: center; padding-top: 0.3vw">
+                <div class="col-md-1 col-md-07">
+                    <div class="plate">
+                        <p class="plate-text" th:text="${film.rated}"/>
+                    </div>
+                </div>
+                <div class="col-md-1 col-md-07">
+                    <div class="plate">
+                        <p class="plate-text" th:text="${#strings.capitalize(film.type)}"/>
+                    </div>
+                </div>
+                <div class="col-md-2" style="text-align: center;padding: 0; width: 10%">
+                    <img style="width: 1.2vw; margin-right: 0.2vw" th:src="@{/img/clock.png}"/>
+                    <span class="plate-text" th:text="${film.runtime}"/>
+                </div>
+                <div class="col-md-2" style="padding: 0">
+                    <a class="plate-text site" style="color: #337ab7;" th:href="${film.website}"> Website </a>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="filmPropSpaces">
+                        Genres:
+                        <th:block th:text="${film.genres}"/>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="filmPropSpaces">
+                        Director:
+                        <th:block th:text="${film.director}"/>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="filmPropSpaces">
+                        Production:
+                        <th:block th:text="${film.production}"/>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="filmPropSpaces">
+                        Country:
+                        <th:block th:text="${film.country}"/>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="filmPropSpaces">
+                        Language:
+                        <th:block th:text="${film.language}"/>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="filmPropSpaces">
+                        Released:
+                        <th:block th:text="${film.releasedString}"/>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="filmPropSpaces">
+                        DVD Release Date:
+                        <th:block th:text="${film.dvdString}"/>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="filmPropSpaces">
+                        Writers:
+                        <th:block th:text="${film.writers}"/>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="filmPropSpaces">
+                        Actors:
+                        <th:block th:text="${film.actors}"/>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="filmPropSpaces">
+                        Plot:
+                        <th:block th:text="${film.plot}"/>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+
+</body>
+</html>

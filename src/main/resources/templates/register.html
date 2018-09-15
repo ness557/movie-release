@@ -1,0 +1,73 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:insert="embeded/header.html"></head>
+<body>
+<nav th:insert="embeded/navbar.html"></nav>
+
+<h3>
+    Register page
+</h3>
+
+<!--errors handling-->
+<th:block th:each="error : ${errors}">
+    <h4 class="error" th:text="${error}"></h4>
+</th:block>
+
+<!--/*@thymesVar id="user" type="com.ness.movie_release_web.model.User"*/-->
+<form th:action="@{/register}" method="post" th:object="${user}">
+
+    <input type="hidden" th:field="*{id}"/>
+
+    <table class="table table-hover table-responsive table-bordered">
+
+        <tr>
+            <td> Login </td>
+            <td><input type="text" class="form-control" th:field="*{login}"/></td>
+            <td><div th:if="${#fields.hasErrors('login')}" th:errors="*{login}" class="error"/></td>
+        </tr>
+
+        <tr>
+            <td> Password </td>
+            <td><input type="password" class="form-control" th:field="*{encPassword}"/></td>
+            <td><div th:if="${#fields.hasErrors('encPassword')}" th:errors="*{encPassword}" class="error"/></td>
+        </tr>
+
+        <tr>
+            <td> Password </td>
+            <td><input type="password" class="form-control" th:field="*{matchPassword}"/></td>
+            <td><div th:if="${#fields.hasErrors('encPassword')}" th:errors="*{encPassword}" class="error"/></td>
+        </tr>
+
+        <tr>
+            <td> Email </td>
+            <td><input type="text" class="form-control" th:field="*{email}"/></td>
+            <td><div th:if="${#fields.hasErrors('email')}" th:errors="*{email}" class="error"/></td>
+            <!--<td><form:errors path="login" class="error"/></td>-->
+        </tr>
+
+        <tr>
+            <td> Telegram Id</td>
+            <td><input type="text" class="form-control" th:field="*{telegramId}"/></td>
+            <td><div th:if="${#fields.hasErrors('telegramId')}" th:errors="*{telegramId}" class="error"/></td>
+            <!--<td><form:errors path="login" class="error"/></td>-->
+        </tr>
+
+        <tr>
+            <td> Should we notify you via Telegram? </td>
+            <td><input type="checkbox" class="form-check-input" th:field="*{telegramNotify}"/></td>
+            <td><div th:if="${#fields.hasErrors('telegramNotify')}" th:errors="*{telegramNotify}" class="error"/></td>
+            <!--<td><form:errors path="login" class="error"/></td>-->
+        </tr>
+
+        <tr>
+            <td></td>
+            <td><input type="submit" value="Submit" class="btn btn-primary"/></td>
+            <td></td>
+        </tr>
+    </table>
+
+</form>
+
+
+</body>
+</html>

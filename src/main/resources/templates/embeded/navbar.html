@@ -1,0 +1,57 @@
+<nav class="navbar navbar-inverse">
+    <div class="container-fluid">
+
+        <ul class="nav navbar-nav">
+            <li class="navbar-inverse" style="padding:0.5vw 0"><a href="/home"> Movie Notifier Service </a></li>
+        </ul>
+
+
+        <div th:if="${#request.isUserInRole('ADMIN')}">
+            <ul class="nav navbar-nav">
+                <li class="navbar-inverse"><a href="/adminTools"> Administration tools </a></li>
+            </ul>
+        </div>
+
+        <div th:if="${#request.isUserInRole('USER')}">
+            <form method="get" action="/user/search">
+
+                <ul class="nav navbar-nav">
+                    <li class="navbar-inverse">
+                        <a><input type="text" name="query" placeholder="Enter Film Name" class="form-control"
+                                  th:value="${query}"></a>
+                    </li>
+                </ul>
+
+                <ul class="nav navbar-nav">
+                    <li class="navbar-inverse" style="width: 10vw">
+                        <a><input type="number" step="1" min="1000" max="3000" name="year" placeholder="Enter Year"
+                                  th:value="${year}"
+                                  class="form-control"></a>
+                    </li>
+                </ul>
+                <ul class="nav navbar-nav">
+                    <li>
+                        <a><input type="submit" value="Find" class="btn btn-primary"></a>
+                    </li>
+                </ul>
+            </form>
+        </div>
+
+        <div style=" position:absolute; right: 0px;">
+            <div sec:authorize="isAuthenticated()">
+                <ul class="nav navbar-nav">
+                    <li class="navbar-inverse" style="padding:0.5vw 0">
+                        <a href="/userInfo" th:text="${'You signed in as: ' + #request.getUserPrincipal().getName()}"></a>
+                    </li>
+                    <li class="navbar-inverse" style="padding:0.5vw 0"><a href="/logout">Sign out</a></li>
+                </ul>
+            </div>
+            <div sec:authorize="isAnonymous()">
+                <ul class="nav navbar-nav">
+                    <li class="navbar-inverse" style="padding:0.5vw 0"><a href="/login"> Sign in </a></li>
+                    <li class="navbar-inverse" style="padding:0.5vw 0"><a href="/register"> Register </a></li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</nav>

@@ -1,0 +1,31 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:insert="embeded/header.html"></head>
+<body>
+<nav th:insert="embeded/navbar.html"></nav>
+
+<h1 align="center">Movie dvd release notification service</h1>
+<br><br>
+
+
+<div class="center">
+
+    <ol>
+        <li sec:authorize="isAnonymous()">Register</li>
+        <li sec:authorize="isAnonymous()">Log in</li>
+        <li>Search for movie</li>
+        <li>Subscribe to notification</li>
+        <li>Get notification when movie at dvd release</li>
+        <li>???</li>
+        <li>PROFIT!</li>
+    </ol>
+    <br><br>
+    <p>You should start a dialog with the bot if you want to receive telegram notifications</p>
+    <a th:href="'tg://resolve?domain=' + ${telegram}" class="btn btn-primary">Talk to bot</a>
+</div>
+
+
+<br><br>
+
+</body>
+</html>

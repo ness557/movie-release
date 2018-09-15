@@ -1,0 +1,30 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:insert="embeded/header.html"></head>
+<body>
+<nav th:insert="embeded/navbar.html"></nav>
+
+<h3>
+    Login page
+</h3>
+<form action='login' method='post'>
+    <table class='table table-hover table-responsive table-bordered'>
+        <tr>
+            <td><b>Login</b></td>
+            <td><input type='text' placeholder="Enter Login" name='username' class='form-control' required/></td>
+        </tr>
+        <tr>
+            <td><b>Password</b></td>
+            <td><input type='password' placeholder="Enter Password" name='password' class='form-control' required/></td>
+        </tr>
+        <tr>
+            <td></td>
+            <td>
+                <input type="submit" class="btn btn-primary" value="Login"/>
+            </td>
+        </tr>
+    </table>
+</form>
+
+</body>
+</html>
