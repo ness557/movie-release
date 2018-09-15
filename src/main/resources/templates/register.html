@@ -4,69 +4,181 @@
 <body>
 <nav th:insert="embeded/navbar.html"></nav>
 
-<h3>
-    Register page
-</h3>
+<div class="container-fluid">
+    <div class="row" style="text-align: center">
+        <div class="col" style="display:inline-block; width: 33%; margin-left: 6.6%">
+            <div class="row">
+                <div class="col-md-10">
+                    <span style="font-family: 'Roboto', sans-serif; font-weight: 100; font-size: 2.5vw">SIGN UP</span>
+                </div>
+            </div>
+            <form th:action="@{/register}" method="post" th:object="${user}">
 
-<!--errors handling-->
-<th:block th:each="error : ${errors}">
-    <h4 class="error" th:text="${error}"></h4>
-</th:block>
+                <div class="row">
+                    <div class="col-md-10" style="padding-bottom: 0.5vw">
+                        <th:block th:each="error : ${errors}">
+                            <span class="error" th:text="${error}"/><br>
+                        </th:block>
 
-<!--/*@thymesVar id="user" type="com.ness.movie_release_web.model.User"*/-->
-<form th:action="@{/register}" method="post" th:object="${user}">
+                        <th:block th:if="${#fields.hasErrors('login')}">
+                            <span class="error">Login </span>
+                            <span th:errors="*{login}" class="error"></span><br>
+                        </th:block>
 
-    <input type="hidden" th:field="*{id}"/>
+                        <th:block th:if="${#fields.hasErrors('encPassword')}">
+                            <span class="error">Password </span>
+                            <span th:errors="*{encPassword}" class="error"/><br>
+                        </th:block>
 
-    <table class="table table-hover table-responsive table-bordered">
+                        <th:block th:if="${#fields.hasErrors('email')}">
+                            <span th:errors="*{email}" class="error"/><br>
+                        </th:block>
 
-        <tr>
-            <td> Login </td>
-            <td><input type="text" class="form-control" th:field="*{login}"/></td>
-            <td><div th:if="${#fields.hasErrors('login')}" th:errors="*{login}" class="error"/></td>
-        </tr>
+                        <th:block th:if="${#fields.hasErrors('telegramId')}">
+                            <span class="error">Telegram id </span>
+                            <span th:errors="*{telegramId}" class="error"/><br>
+                        </th:block>
 
-        <tr>
-            <td> Password </td>
-            <td><input type="password" class="form-control" th:field="*{encPassword}"/></td>
-            <td><div th:if="${#fields.hasErrors('encPassword')}" th:errors="*{encPassword}" class="error"/></td>
-        </tr>
+                    </div>
+                </div>
 
-        <tr>
-            <td> Password </td>
-            <td><input type="password" class="form-control" th:field="*{matchPassword}"/></td>
-            <td><div th:if="${#fields.hasErrors('encPassword')}" th:errors="*{encPassword}" class="error"/></td>
-        </tr>
+                <input type="hidden" th:field="*{id}"/>
 
-        <tr>
-            <td> Email </td>
-            <td><input type="text" class="form-control" th:field="*{email}"/></td>
-            <td><div th:if="${#fields.hasErrors('email')}" th:errors="*{email}" class="error"/></td>
-            <!--<td><form:errors path="login" class="error"/></td>-->
-        </tr>
+                <div class="row">
+                    <div class="col-md-10 form-group">
+                        <div class="icon-addon addon-lg">
+                            <input type="text" placeholder="Login" class="form-control" th:field="*{login}"/>
+                            <img th:src="@{/img/user-dark.png}" class="glyphicon glyphicon-search">
+                        </div>
+                    </div>
+                    <th:block th:if="${#fields.hasErrors('login')}">
+                        <div class="col-md-2" style="text-align: left; margin-left: -1vw; margin-top: 0.7vw">
+                            <img class="glyphicon" th:src="@{/img/error.png}"/>
+                        </div>
+                    </th:block>
+                </div>
 
-        <tr>
-            <td> Telegram Id</td>
-            <td><input type="text" class="form-control" th:field="*{telegramId}"/></td>
-            <td><div th:if="${#fields.hasErrors('telegramId')}" th:errors="*{telegramId}" class="error"/></td>
-            <!--<td><form:errors path="login" class="error"/></td>-->
-        </tr>
+                <div class="row">
+                    <div class="col-md-10 form-group">
+                        <div class="icon-addon addon-lg">
+                            <input type="password" placeholder="Password" class="form-control"
+                                   th:field="*{encPassword}"/>
+                            <img th:src="@{/img/password-dark.png}" class="glyphicon glyphicon-search">
+                        </div>
+                    </div>
+                    <th:block th:if="${#fields.hasErrors('encPassword')}">
+                        <div class="col-md-2" style="text-align: left; margin-left: -1vw; margin-top: 0.7vw">
+                            <img class="glyphicon" th:src="@{/img/error.png}"/>
 
-        <tr>
-            <td> Should we notify you via Telegram? </td>
-            <td><input type="checkbox" class="form-check-input" th:field="*{telegramNotify}"/></td>
-            <td><div th:if="${#fields.hasErrors('telegramNotify')}" th:errors="*{telegramNotify}" class="error"/></td>
-            <!--<td><form:errors path="login" class="error"/></td>-->
-        </tr>
+                        </div>
+                    </th:block>
+                </div>
 
-        <tr>
-            <td></td>
-            <td><input type="submit" value="Submit" class="btn btn-primary"/></td>
-            <td></td>
-        </tr>
-    </table>
+                <div class="row">
+                    <div class="col-md-10 form-group">
+                        <div class="icon-addon addon-lg">
+                            <input type="password" placeholder="Password confirm" class="form-control"
+                                   th:field="*{matchPassword}"/>
+                            <img th:src="@{/img/password-dark.png}" class="glyphicon glyphicon-search">
+                        </div>
+                    </div>
+                    <th:block th:if="${errors != null}">
+                        <th:block th:if="${#lists.contains(errors, 'Passwords does not match')}">
+                            <div class="col-md-2" style="text-align: left; margin-left: -1vw; margin-top: 0.7vw">
+                                <img class="glyphicon" th:src="@{/img/error.png}"/>
+                            </div>
+                        </th:block>
+                    </th:block>
 
-</form>
+
+                </div>
+
+                <div class="row">
+                    <div class="col-md-10 form-group">
+                        <div class="icon-addon addon-lg">
+                            <input type="text" placeholder="Email" class="form-control" th:field="*{email}"/>
+                            <img th:src="@{/img/email-dark.png}" class="glyphicon glyphicon-search">
+                        </div>
+                    </div>
+                    <th:block th:if="${#fields.hasErrors('email')}">
+                        <div class="col-md-2" style="text-align: left; margin-left: -1vw; margin-top: 0.7vw">
+                            <img class="glyphicon" th:src="@{/img/error.png}"/>
+                        </div>
+                    </th:block>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-10 form-group">
+                        <div class="icon-addon addon-lg">
+                            <input type="text" placeholder="Telegram Id" class="form-control" th:field="*{telegramId}"/>
+                            <img th:src="@{/img/telegram-dark.png}" class="glyphicon glyphicon-search">
+                        </div>
+                    </div>
+                    <th:block th:if="${#fields.hasErrors('telegramId')}">
+                        <div class="col-md-2" style="text-align: left; margin-left: -1vw; margin-top: 0.7vw">
+                            <img class="glyphicon" th:src="@{/img/error.png}"/>
+                        </div>
+                    </th:block>
+                </div>
+
+                <div class="row mytext" style="height: 3vw">
+
+                    <div class="col-md-4" style="text-align: left;">
+                        Notify me via
+                    </div>
+
+                    <div class="col-md-3">
+                        <input type="radio" class="option-input radio" style="margin-right: 0.6vw"
+                               th:field="*{telegramNotify}" th:value="true"/>
+                        <span>Telegram</span>
+
+                    </div>
+
+                    <div class="col-md-3">
+                        <input type="radio" class="option-input radio" style="margin-right: 0.6vw"
+                               th:field="*{telegramNotify}" th:value="false"/>
+                        <span>  Email</span>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-5" style="text-align: left">
+                        <a href="/login" class="sign-up-link">Have an account?</a>
+                    </div>
+                    <div class="col-md-5" style="text-align: right">
+                        <input type="submit" class="btn btn-warning" style="padding:0.5vw 3.2vw;" value="SIGN UP"/>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+
+</div>
+
+<!--<tr>-->
+<!--<td> Telegram Id</td>-->
+<!--<td><input type="text" class="form-control" th:field="*{telegramId}"/></td>-->
+<!--<td><div th:if="${#fields.hasErrors('telegramId')}" th:errors="*{telegramId}" class="error"/></td>-->
+
+<!--</tr>-->
+
+<!--<tr>-->
+<!--<td> Should we notify you via Telegram? </td>-->
+<!--&lt;!&ndash;<td><input type="checkbox" class="form-check-input" th:field="*{telegramNotify}"/></td>&ndash;&gt;-->
+
+
+<!--<td><div th:if="${#fields.hasErrors('telegramNotify')}" th:errors="*{telegramNotify}" class="error"/></td>-->
+<!--&lt;!&ndash;<td><form:errors path="login" class="error"/></td>&ndash;&gt;-->
+<!--</tr>-->
+
+<!--<tr>-->
+<!--<td></td>-->
+<!--<td><input type="submit" value="Submit" class="btn btn-primary"/></td>-->
+<!--<td></td>-->
+<!--</tr>-->
+<!--</table>-->
+
+<!--</form>-->
 
 
 </body>

@@ -19,22 +19,22 @@ public class User {
     @Column(name = "role")
     private String role;
 
-    @NotEmpty
+    @NotEmpty(message = "can not be empty")
     @Column(name = "login")
     private String login;
 
-    @NotEmpty
+    @NotEmpty(message = "can not be empty")
     @Column(name = "encr_pass")
     private String encPassword;
 
     @Transient
     private String matchPassword;
 
-    @Pattern(regexp = "^$|@\\w*")
+    @Pattern(regexp = "^$|@\\w*", message = "should starts with @")
     @Column(name = "telegram_id")
     private String telegramId;
 
-    @Email
+    @Email(message = "Email has wrong format")
     @Column(name = "email")
     private String email;
 

@@ -42,12 +42,12 @@
 
                 <form th:if="${subscribed}" action="/user/unSubscribe" method="post">
                     <input type="hidden" name="imdbId" th:value="${film.imdbId}"/>
-                    <input type="submit" value="Unsubscribe" class="btn-lg btn-success"/>
+                    <input type="submit" value="Unsubscribe" class="btn btn-success"/>
                 </form>
 
                 <form th:unless="${subscribed}" action="/user/subscribe" method="post">
                     <input type="hidden" name="imdbId" th:value="${film.imdbId}"/>
-                    <input type="submit" value="Subscribe" class="btn-lg btn-primary"/>
+                    <input type="submit" value="Subscribe" class="btn btn-primary"/>
                 </form>
             </div>
         </div>

@@ -44,14 +44,14 @@ public class SecurityController {
             errors.add("Passwords does not match");
 
         if(user.getEmail().isEmpty() && !user.isTelegramNotify())
-            errors.add("Email address is empty. Please enter email address or choose another way to get a notification");
+            errors.add("Email address is empty");
 
         if(user.getTelegramId().isEmpty() && user.isTelegramNotify())
-            errors.add("Telegram id is empty. Please enter email address or choose another way to get a notification");
+            errors.add("Telegram id is empty");
 
         if (user.getId() == null)
             if(service.isExists(user.getLogin()))
-                errors.add("User with such login already exists");
+                errors.add("Such user already exists");
 
 
         if(!errors.isEmpty()){

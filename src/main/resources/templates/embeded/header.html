@@ -5,22 +5,15 @@
     <meta charset="UTF-8">
     <title>Movie Notifier Service</title>
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css"/>
-    <link href='http://fonts.googleapis.com/css?family=Roboto' rel='stylesheet' type='text/css'>
-    <link rel="stylesheet" type="text/css" href="//fonts.googleapis.com/css?family=Open+Sans" />
+    <link href="https://fonts.googleapis.com/css?family=Roboto:100,400" rel="stylesheet"/>
+    <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400" rel="stylesheet"/>
 
     <style>
-
         html * {
             font-family: 'Open Sans', sans-serif !important;
         }
         .error {
             color: red
-        }
-
-        .table td.fit,
-        .table th.fit {
-            white-space: nowrap;
-            width: 1%;
         }
 
         .pagesTable {
@@ -31,6 +24,8 @@
         .center {
             margin: auto;
             padding: 5px;
+            text-align: center;
+            list-style-position: inside;
         }
 
         .mytext {
@@ -46,6 +41,18 @@
             height:1.5vw;
         }
 
+        .sign-up-link{
+            font-size: 1.2vw;
+            line-height: 2.6vw;
+            color: #C5C5C5;
+            text-align: center;
+            vertical-align: middle;
+        }
+
+        .sign-up-link:hover{
+            color: #979797;
+        }
+
         .plate-text {
             color: #676767;
             text-align: center;
@@ -58,11 +65,6 @@
             margin-bottom: 0.15vw
         }
 
-        .center {
-            text-align: center;
-            list-style-position: inside;
-        }
-
         .col-md-07 {
             vertical-align: center;
             width: 7%;
@@ -72,22 +74,144 @@
             width: 29%;
         }
 
-        .btn-lg{
-            padding:0.5vw 1.3vw;
+        .btn{
+            padding:0.5vw 3.2vw;
             font-size:1.1vw;
             border-radius:6px
         }
 
-        /*.btn-primary{*/
-            /*background-color: #9AD0FF;*/
-        /*}*/
-
-        /*.btn-success{*/
-            /*background-color: #9AFFBF;*/
-        /*}*/
-
         .site:focus{
             color: #7873C8;
+        }
+
+
+        /* icon at input */
+        .center-block {
+            float: none;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .input-group .icon-addon .form-control {
+            border-radius: 0;
+        }
+
+        .icon-addon {
+            position: relative;
+            color: #555;
+            display: block;
+        }
+
+        .icon-addon:after,
+        .icon-addon:before {
+            display: table;
+            content: " ";
+        }
+
+        .icon-addon:after {
+            clear: both;
+        }
+
+        .icon-addon.addon-md .glyphicon,
+        .icon-addon .glyphicon,
+        .icon-addon.addon-md .fa,
+        .icon-addon .fa {
+            position: absolute;
+            z-index: 2;
+            left: 10px;
+            font-size: 14px;
+            width: 20px;
+            margin-left: -2.5px;
+            text-align: center;
+            padding: 10px 0;
+            top: 1px
+        }
+
+        .icon-addon.addon-lg .form-control {
+            line-height: 1.33;
+            height: 46px;
+            font-size: 18px;
+            padding: 10px 16px 10px 40px;
+        }
+
+        .icon-addon.addon-sm .form-control {
+            height: 30px;
+            padding: 5px 10px 5px 28px;
+            font-size: 12px;
+            line-height: 1.5;
+        }
+
+        .icon-addon.addon-lg .fa,
+        .icon-addon.addon-lg .glyphicon {
+            font-size: 18px;
+            margin-left: 0;
+            left: 11px;
+            top: 4px;
+        }
+
+        .icon-addon.addon-md .form-control,
+        .icon-addon .form-control {
+            padding-left: 30px;
+            box-shadow: none;
+            float: left;
+            font-weight: normal;
+            border-radius: 1vw;
+        }
+
+        .icon-addon.addon-sm .fa,
+        .icon-addon.addon-sm .glyphicon {
+            margin-left: 0;
+            font-size: 12px;
+            left: 5px;
+            top: -1px
+        }
+
+        .form-control:focus{
+            border-color: #f0ad4e;
+            border-width: 3px;
+            content: " ";
+
+        }
+
+        .icon-addon .form-control:focus + .glyphicon,
+        .icon-addon:hover .glyphicon,
+        .icon-addon .form-control:focus + .fa,
+        .icon-addon:hover .fa {
+            color: #f0ad4e;
+        }
+
+
+
+
+        /* combobox */
+
+        .option-input {
+            -webkit-appearance: none;
+            -moz-appearance: none;
+            -ms-appearance: none;
+            -o-appearance: none;
+            appearance: none;
+            position: relative;
+            top: 0.1vw;
+            height: 0.9vw;
+            width: 0.9vw;
+            background: #e2e8ef;
+            border: none;
+            color: #fff;
+            display: inline-block;
+            outline: none;
+        }
+        .option-input:hover {
+            background: #e2e8ef;
+        }
+        .option-input:checked {
+            background: #f0ad4e;
+        }
+        .option-input.radio {
+            border-radius: 50%;
+        }
+        .option-input.radio::after {
+            border-radius: 50%;
         }
 
     </style>
