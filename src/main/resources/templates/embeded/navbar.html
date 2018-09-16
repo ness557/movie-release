@@ -1,81 +1,72 @@
 <html xmlns:th="http://www.thymeleaf.org">
-<nav class="navbar navbar-inverse">
+<nav class="navbar navbar-inverse navbar-static-top">
     <div class="container-fluid">
+        <div class="navbar-header">
 
-        <ul class="nav navbar-nav">
-            <li class="navbar-inverse" style="padding:0.1vw 0"><a href="/home">
-                <img style="width: 2.3vw;" th:src="@{/img/logo.png}"/>
-
+            <a href="/home" class="navbar-brand">
+                <img style="width: 64px;" th:src="@{/img/logo.png}"/>
                 Movie Notifier Service
             </a>
-            </li>
-        </ul>
 
-        <div th:if="${#request.isUserInRole('ADMIN')}">
-            <ul class="nav navbar-nav">
-                <li class="navbar-inverse"><a href="/adminTools"> Administration tools </a></li>
-            </ul>
         </div>
+        <div id="navbar" class="navbar-collapse collapse">
 
-        <div th:if="${#request.isUserInRole('USER')}">
-            <form method="get" action="/user/search">
+            <div th:if="${#request.isUserInRole('USER')}">
+                <form method="get" class="navbar-form navbar-left" action="/user/search">
 
-                <ul class="nav navbar-nav">
-                    <li class="navbar-inverse" style="width: 14vw">
-                        <a>
-                            <div class="icon-addon addon-md">
-                                <input type="text" name="query" placeholder="Film Name" class="form-control"
-                                       th:value="${query}">
-                            </div>
-                        </a>
-                    </li>
-                </ul>
+                    <div class="form-group" style="margin-right: 10px">
+                        <div class="icon-addon addon-md">
+                            <input type="text" name="query" placeholder="Film Name" class="form-control"
+                                   th:value="${query}">
+                        </div>
+                    </div>
+                    <div class="form-group" style="margin-right: 10px">
+                        <div class="icon-addon addon-md">
+                            <input type="number" step="1" min="1000" max="3000" name="year"
+                                   placeholder="Year"
+                                   class="form-control"
+                                   th:value="${year}">
+                        </div>
+                    </div>
 
-                <ul class="nav navbar-nav">
-                    <li class="navbar-inverse" style="width: 10vw">
-                        <a>
-                            <div class="icon-addon addon-md">
-                                <input type="number" step="1" min="1000" max="3000" name="year" placeholder="Year" class="form-control"
-                                       th:value="${year}">
-                            </div>
+                    <input type="submit" value="Find" class="btn btn-primary">
+                </form>
+            </div>
 
-                        </a>
-                    </li>
-                </ul>
-                <ul class="nav navbar-nav">
+            <th:block sec:authorize="isAuthenticated()">
+                <ul class="nav navbar-nav navbar-right">
                     <li>
-                        <a><input type="submit" value="Find" class="btn btn-primary" style="padding:0.5vw 1.8vw;"></a>
-                    </li>
-                </ul>
-            </form>
-        </div>
-
-        <div style=" position:absolute; right: 0px;">
-            <div sec:authorize="isAuthenticated()">
-                <ul class="nav navbar-nav">
-                    <li class="navbar-inverse" style="padding:0.5vw 0">
                         <a href="/userInfo">
                             <th:block th:text="${'You signed in as: ' + #request.getUserPrincipal().getName()}"/>
-                            <img style="width: 1.5vw;" th:src="@{/img/user-light.png}"/>
+                            <img style="width: 20px;" th:src="@{/img/user-light.png}"/>
                         </a>
                     </li>
-                    <li class="navbar-inverse" style="padding:0.5vw 0"><a href="/logout">
-                        Sign out
-                        <img style="width: 1.5vw;" th:src="@{/img/sign-out-light.png}"/>
-                    </a></li>
+                    <li>
+                        <a href="/logout">
+                            Sign out
+                            <img style="width: 20px;" th:src="@{/img/sign-out-light.png}"/>
+                        </a>
+                    </li>
                 </ul>
-            </div>
-            <div sec:authorize="isAnonymous()">
-                <ul class="nav navbar-nav">
-                    <li class="navbar-inverse" style="padding:0.5vw 0"><a href="/login">
-                        Sign in
-                        <img style="width: 1.5vw;" th:src="@{/img/user-light.png}"/>
-                    </a></li>
-                    <li class="navbar-inverse" style="padding:0.5vw 0"><a href="/register">
-                        Register <img style="width: 1.5vw;" th:src="@{/img/register-light.png}"/>
-                    </a></li>
+            </th:block>
+
+            <th:block sec:authorize="isAnonymous()">
+                <ul class="nav navbar-nav navbar-right">
+                    <li>
+                        <a href="/login">
+                            Sign in
+                            <img style="width: 20px;" th:src="@{/img/user-light.png}"/>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="/register">
+                            Register
+                            <img style="width: 20px;" th:src="@{/img/register-light.png}"/>
+                        </a>
+                    </li>
                 </ul>
-            </div>
-        </div>
+            </th:block>
+
+        </div><!--/.nav-collapse -->
     </div>
 </nav>
