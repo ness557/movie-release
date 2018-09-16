@@ -4,12 +4,12 @@
 <body>
 <nav th:insert="embeded/navbar.html"></nav>
 
-<div class="container-fluid">
+<div class="container">
     <div class="row" style="text-align: center">
-        <div class="col" style="display:inline-block; width: 33%; margin-left: 6.6%">
+        <div class="col-md-6" style="float:none; margin: auto">
             <div class="row">
                 <div class="col-md-10">
-                    <span style="font-family: 'Roboto', sans-serif; font-weight: 100; font-size: 2.5vw">SIGN UP</span>
+                    <span style="font-family: 'Roboto', sans-serif; font-weight: 100; font-size: 34px">SIGN UP</span>
                 </div>
             </div>
             <form th:action="@{/register}" method="post" th:object="${user}">
@@ -121,7 +121,7 @@
                     </th:block>
                 </div>
 
-                <div class="row mytext" style="height: 3vw">
+                <div class="row mytext" style="height: 36px">
 
                     <div class="col-md-4" style="text-align: left;">
                         Notify me via
