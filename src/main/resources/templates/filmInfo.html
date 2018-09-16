@@ -9,9 +9,9 @@
     <div class="row">
         <div class="col-md-4 col-md-3-4" style="text-align: right">
             <div style="text-align: center; display: inline-block;">
-                <img th:src="${film.poster}" style="height: 30vw" class="img-rounded">
+                <img th:src="${film.poster}" style="height: 400px" class="img-rounded">
 
-                <p style="margin-bottom: 1vw; margin-top: 1.3vw;"> Metascore:
+                <p style="margin-bottom: 12px; margin-top: 16px;"> Metascore:
                     <b th:if="${film.metascore > 60}"
                        style="color: #33CC00"
                        th:text="${film.metascore}"/>
@@ -55,12 +55,12 @@
         <div class="col-md-8">
             <div class="row">
                 <div class="col-md-8">
-                    <div style="font-size: 2vw;">
+                    <div style="font-size: 27px;">
                         <b th:text="${film.title} + ' (' + ${film.year} + ')'"/>
                     </div>
                 </div>
             </div>
-            <div class="row" style="font-size: 0.9vw; height: 2.3vw; vertical-align: center; padding-top: 0.3vw">
+            <div class="row" style="font-size: 12px; height: 32px; vertical-align: center; padding-top: 4px">
                 <div class="col-md-1 col-md-07">
                     <div class="plate">
                         <p class="plate-text" th:text="${film.rated}"/>
@@ -71,8 +71,8 @@
                         <p class="plate-text" th:text="${#strings.capitalize(film.type)}"/>
                     </div>
                 </div>
-                <div class="col-md-2" style="text-align: center;padding: 0; width: 10%">
-                    <img style="width: 1.2vw; margin-right: 0.2vw" th:src="@{/img/clock.png}"/>
+                <div class="col-md-2" style="text-align: center;padding: 0; width: 86px">
+                    <img style="width: 16px; margin-right: 3px" th:src="@{/img/clock.png}"/>
                     <span class="plate-text" th:text="${film.runtime}"/>
                 </div>
                 <div class="col-md-2" style="padding: 0">
