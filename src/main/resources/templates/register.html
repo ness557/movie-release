@@ -15,7 +15,7 @@
             <form th:action="@{/register}" method="post" th:object="${user}">
 
                 <div class="row">
-                    <div class="col-md-10" style="padding-bottom: 0.5vw">
+                    <div class="col-md-10" style="padding-bottom: 7px">
                         <th:block th:each="error : ${errors}">
                             <span class="error" th:text="${error}"/><br>
                         </th:block>
@@ -52,7 +52,7 @@
                         </div>
                     </div>
                     <th:block th:if="${#fields.hasErrors('login')}">
-                        <div class="col-md-2" style="text-align: left; margin-left: -1vw; margin-top: 0.7vw">
+                        <div class="col-md-2" style="text-align: left; margin-left: -13px; margin-top: 10px">
                             <img class="glyphicon" th:src="@{/img/error.png}"/>
                         </div>
                     </th:block>
@@ -67,7 +67,7 @@
                         </div>
                     </div>
                     <th:block th:if="${#fields.hasErrors('encPassword')}">
-                        <div class="col-md-2" style="text-align: left; margin-left: -1vw; margin-top: 0.7vw">
+                        <div class="col-md-2" style="text-align: left; margin-left: -13px; margin-top: 10px">
                             <img class="glyphicon" th:src="@{/img/error.png}"/>
 
                         </div>
@@ -84,7 +84,7 @@
                     </div>
                     <th:block th:if="${errors != null}">
                         <th:block th:if="${#lists.contains(errors, 'Passwords does not match')}">
-                            <div class="col-md-2" style="text-align: left; margin-left: -1vw; margin-top: 0.7vw">
+                            <div class="col-md-2" style="text-align: left; margin-left: -13px; margin-top: 10px">
                                 <img class="glyphicon" th:src="@{/img/error.png}"/>
                             </div>
                         </th:block>
@@ -100,8 +100,9 @@
                             <img th:src="@{/img/email-dark.png}" class="glyphicon glyphicon-search">
                         </div>
                     </div>
-                    <th:block th:if="${#fields.hasErrors('email')}">
-                        <div class="col-md-2" style="text-align: left; margin-left: -1vw; margin-top: 0.7vw">
+                    <th:block th:if="${#fields.hasErrors('email') or
+                                        (errors != null and #lists.contains(errors, 'Email address is empty'))}">
+                        <div class="col-md-2" style="text-align: left; margin-left: -13px; margin-top: 10px">
                             <img class="glyphicon" th:src="@{/img/error.png}"/>
                         </div>
                     </th:block>
@@ -114,8 +115,9 @@
                             <img th:src="@{/img/telegram-dark.png}" class="glyphicon glyphicon-search">
                         </div>
                     </div>
-                    <th:block th:if="${#fields.hasErrors('telegramId')}">
-                        <div class="col-md-2" style="text-align: left; margin-left: -1vw; margin-top: 0.7vw">
+                    <th:block th:if="${#fields.hasErrors('telegramId') or
+                                        (errors != null and #lists.contains(errors, 'Telegram id is empty'))}">
+                        <div class="col-md-2" style="text-align: left; margin-left: -13px; margin-top: 10px">
                             <img class="glyphicon" th:src="@{/img/error.png}"/>
                         </div>
                     </th:block>
@@ -128,16 +130,30 @@
                     </div>
 
                     <div class="col-md-3">
-                        <input type="radio" class="option-input radio" style="margin-right: 0.6vw"
-                               th:field="*{telegramNotify}" th:value="true"/>
-                        <span>Telegram</span>
+                        <div class="row">
+                            <div class="col-md-1">
+                                <input type="radio" class="option-input radio" style="margin-right: 7px"
+                                       th:field="*{telegramNotify}" th:value="true"/>
+                            </div>
+                            <div class="col-md-9">
+                                Telegram
+                            </div>
 
+                        </div>
                     </div>
 
                     <div class="col-md-3">
-                        <input type="radio" class="option-input radio" style="margin-right: 0.6vw"
+                        <div class="row">
+                            <div class="col-md-1">
+
+                        <input type="radio" class="option-input radio" style="margin-right: 7px"
                                th:field="*{telegramNotify}" th:value="false"/>
-                        <span>  Email</span>
+                            </div>
+                            <div class="col-md-8">
+                                Email
+                            </div>
+
+                        </div>
                     </div>
                 </div>
 
@@ -146,40 +162,13 @@
                         <a href="/login" class="sign-up-link">Have an account?</a>
                     </div>
                     <div class="col-md-5" style="text-align: right">
-                        <input type="submit" class="btn btn-warning" style="padding:0.5vw 3.2vw;" value="SIGN UP"/>
+                        <input type="submit" class="btn btn-warning" style="padding:7px 34px;" value="SIGN UP"/>
                     </div>
                 </div>
             </form>
         </div>
     </div>
-
 </div>
-
-<!--<tr>-->
-<!--<td> Telegram Id</td>-->
-<!--<td><input type="text" class="form-control" th:field="*{telegramId}"/></td>-->
-<!--<td><div th:if="${#fields.hasErrors('telegramId')}" th:errors="*{telegramId}" class="error"/></td>-->
-
-<!--</tr>-->
-
-<!--<tr>-->
-<!--<td> Should we notify you via Telegram? </td>-->
-<!--&lt;!&ndash;<td><input type="checkbox" class="form-check-input" th:field="*{telegramNotify}"/></td>&ndash;&gt;-->
-
-
-<!--<td><div th:if="${#fields.hasErrors('telegramNotify')}" th:errors="*{telegramNotify}" class="error"/></td>-->
-<!--&lt;!&ndash;<td><form:errors path="login" class="error"/></td>&ndash;&gt;-->
-<!--</tr>-->
-
-<!--<tr>-->
-<!--<td></td>-->
-<!--<td><input type="submit" value="Submit" class="btn btn-primary"/></td>-->
-<!--<td></td>-->
-<!--</tr>-->
-<!--</table>-->
-
-<!--</form>-->
-
 
 </body>
 </html>
