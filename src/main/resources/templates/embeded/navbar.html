@@ -19,14 +19,14 @@
 
                     <div class="form-group" style="margin-right: 10px; margin-bottom:0">
                         <div class="icon-addon addon-md">
-                            <input type="text" style="width: 170px" name="query" placeholder="Film Name"
+                            <input type="text" style="width: 170px" name="query" placeholder="Title"
                                    class="form-control" th:value="${query}">
                         </div>
                     </div>
                     <div class="form-group" style="margin-right: 10px; margin-bottom:0">
                         <div class="icon-addon addon-md">
                             <input type="number" step="1" style="width: 100px" min="1000" max="3000" name="year"
-                                   placeholder="Year" class="form-control" th:value="${year}">
+                                   placeholder="Year" class="form-control no-spinners" th:value="${year}">
                         </div>
                     </div>
                     <input type="submit" value="Find" class="btn btn-primary">

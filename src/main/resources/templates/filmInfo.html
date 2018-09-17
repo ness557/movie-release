@@ -4,10 +4,9 @@
 <body>
 <nav th:insert="embeded/navbar.html"></nav>
 
-<div class="container mytext">
-
+<div class="container-fluid mytext" style="padding-top: 30px">
     <div class="row">
-        <div class="col-md-3" style="text-align: right">
+        <div class="col-10 col-sm-6 col-md-5 col-lg-4 col-xl-3" style="text-align: right">
             <div style="text-align: center; display: inline-block;">
                 <img th:src="${film.poster}" style="height: 400px" class="img-rounded">
 
@@ -45,14 +44,14 @@
                     <input type="submit" value="Unsubscribe" class="btn btn-success"/>
                 </form>
 
-                <form th:unless="${subscribed}" action="/user/subscribe" method="post">
+                <form th:unless="${subscribed}" action="/user/subscribe" method="post" style="padding-bottom: 15px">
                     <input type="hidden" name="imdbId" th:value="${film.imdbId}"/>
                     <input type="submit" value="Subscribe" class="btn btn-primary"/>
                 </form>
             </div>
         </div>
 
-        <div class="col-md-8">
+        <div class="col-12 col-sm-6 col-md-6 col-lg-8 col-xl-7">
             <div class="row">
                 <div class="col-md-8">
                     <div style="font-size: 27px;">
@@ -61,21 +60,21 @@
                 </div>
             </div>
             <div class="row" style="font-size: 12px; height: 32px; vertical-align: center; padding-top: 4px">
-                <div class="col-md-1 col-md-07">
+                <div class="col-2 col-sm-2 col-md-2 col-lg-1 col-xl-1">
                     <div class="plate">
                         <p class="plate-text" th:text="${film.rated}"/>
                     </div>
                 </div>
-                <div class="col-md-1 col-md-07">
+                <div class="col-2 col-sm-3 col-md-2 col-lg-1 col-xl-1">
                     <div class="plate">
                         <p class="plate-text" th:text="${#strings.capitalize(film.type)}"/>
                     </div>
                 </div>
-                <div class="col-md-2" style="text-align: center;padding: 0; width: 86px">
+                <div class="col-3 col-sm-4 col-md-3 col-lg-2 col-xl-2" style="text-align: center;padding: 0; width: 86px">
                     <img style="width: 16px; margin-right: 3px" th:src="@{/img/clock.png}"/>
                     <span class="plate-text" th:text="${film.runtime}"/>
                 </div>
-                <div class="col-md-2" style="padding: 0">
+                <div class="col-2 col-sm-3 col-md-2 col-lg-2 col-xl-2" style="padding: 0">
                     <a class="plate-text site" style="color: #337ab7;" th:href="${film.website}"> Website </a>
                 </div>
             </div>
