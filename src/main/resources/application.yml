@@ -13,6 +13,8 @@ spring:
         temp.use_jdbc_metadata_defaults: false
     hibernate:
       ddl-auto: update
+  thymeleaf:
+    cache: false
 
 omdbapi:
   apikey: b1e85577
