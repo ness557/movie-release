@@ -6,7 +6,7 @@
 
 <div class="container">
     <div class="row" style="text-align: center">
-        <div class="col-md-7 col-lg-6 col-sm-8 col-xs-12" style="float:none; margin: auto">
+        <div class="col-12 col-sm-12 col-md-8 col-lg-7 col-xl-6 col-centered">
             <div class="row">
                 <div class="col-md-10">
                     <span style="font-family: 'Roboto', sans-serif; font-weight: 100; font-size: 34px">SIGN UP</span>
@@ -51,6 +51,7 @@
                             <img th:src="@{/img/user-dark.png}" class="glyphicon glyphicon-search">
                         </div>
                     </div>
+                    <!-- FIXME col and sm X mark error -->
                     <th:block th:if="${#fields.hasErrors('login')}">
                         <div class="col-md-2" style="text-align: left; margin-left: -13px; margin-top: 10px">
                             <img class="glyphicon" th:src="@{/img/error.png}"/>
@@ -66,6 +67,7 @@
                             <img th:src="@{/img/password-dark.png}" class="glyphicon glyphicon-search">
                         </div>
                     </div>
+                    <!-- FIXME col and sm X mark error -->
                     <th:block th:if="${#fields.hasErrors('encPassword')}">
                         <div class="col-md-2" style="text-align: left; margin-left: -13px; margin-top: 10px">
                             <img class="glyphicon" th:src="@{/img/error.png}"/>
@@ -82,6 +84,7 @@
                             <img th:src="@{/img/password-dark.png}" class="glyphicon glyphicon-search">
                         </div>
                     </div>
+                    <!-- FIXME col and sm X mark error -->
                     <th:block th:if="${errors != null}">
                         <th:block th:if="${#lists.contains(errors, 'Passwords does not match')}">
                             <div class="col-md-2" style="text-align: left; margin-left: -13px; margin-top: 10px">
@@ -100,6 +103,7 @@
                             <img th:src="@{/img/email-dark.png}" class="glyphicon glyphicon-search">
                         </div>
                     </div>
+                    <!-- FIXME col and sm X mark error -->
                     <th:block th:if="${#fields.hasErrors('email') or
                                         (errors != null and #lists.contains(errors, 'Email address is empty'))}">
                         <div class="col-md-2" style="text-align: left; margin-left: -13px; margin-top: 10px">
@@ -115,6 +119,7 @@
                             <img th:src="@{/img/telegram-dark.png}" class="glyphicon glyphicon-search">
                         </div>
                     </div>
+                    <!-- FIXME col and sm X mark error -->
                     <th:block th:if="${#fields.hasErrors('telegramId') or
                                         (errors != null and #lists.contains(errors, 'Telegram id is empty'))}">
                         <div class="col-md-2" style="text-align: left; margin-left: -13px; margin-top: 10px">
@@ -123,33 +128,33 @@
                     </th:block>
                 </div>
 
-                <div class="row mytext" style="height: 36px">
+                <div class="row mytext" style="height: 36px; font-size: 16px">
 
-                    <div class="col-md-4 col-xs-4" style="text-align: left;">
+                    <div class="col-md-4 col-4" style="text-align: left;">
                         Notify me via
                     </div>
 
-                    <div class="col-md-3 col-xs-4">
+                    <div class="col-md-3 col-4">
                         <div class="row">
-                            <div class="col-md-1 col-xs-1">
+                            <div class="col-md-1 col-1">
                                 <input type="radio" class="option-input radio"
                                        th:field="*{telegramNotify}" th:value="true"/>
                             </div>
-                            <div class="col-md-9 col-xs-9">
+                            <div class="col-md-9 col-9" style="padding: 0">
                                 Telegram
                             </div>
 
                         </div>
                     </div>
 
-                    <div class="col-md-3 col-xs-4">
+                    <div class="col-md-3 col-4">
                         <div class="row">
-                            <div class="col-md-1 col-xs-1">
+                            <div class="col-md-1 col-1">
 
                         <input type="radio" class="option-input radio"
                                th:field="*{telegramNotify}" th:value="false"/>
                             </div>
-                            <div class="col-md-8 col-xs-8">
+                            <div class="col-md-8 col-8" style="padding: 0">
                                 Email
                             </div>
 
@@ -158,10 +163,10 @@
                 </div>
 
                 <div class="row">
-                    <div class="col-md-5 col-xs-6" style="text-align: left">
+                    <div class="col-md-5 col-6" style="text-align: left">
                         <a href="/login" class="sign-up-link">Have an account?</a>
                     </div>
-                    <div class="col-md-5 col-xs-6" style="text-align: right">
+                    <div class="col-md-5 col-6" style="text-align: right">
                         <input type="submit" class="btn btn-warning" style="padding:7px 34px;" value="SIGN UP"/>
                     </div>
                 </div>

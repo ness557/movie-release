@@ -1,33 +1,29 @@
 <html xmlns:th="http://www.thymeleaf.org">
-<nav class="navbar navbar-inverse navbar-static-top">
+<nav class="navbar navbar-expand-xl navbar-dark bg-dark">
     <div class="container-fluid" >
-        <div class="navbar-header" >
-
-            <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
-                <span class="sr-only">Toggle navigation</span>
-                <span class="icon-bar"></span>
-                <span class="icon-bar"></span>
-                <span class="icon-bar"></span>
-            </button>
-
+        <div class="navbar-header">
             <a href="/home" class="navbar-brand">
                 <img style="width: 64px;" th:src="@{/img/logo.png}"/>
                 Movie Notifier Service
             </a>
-
         </div>
-        <div id="navbar" class="navbar-collapse collapse">
+
+        <button class="navbar-toggler collapsed" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <div id="navbarSupportedContent" class="navbar-collapse collapse">
 
             <div th:if="${#request.isUserInRole('USER')}">
-                <form method="get" class="navbar-form navbar-left" action="/user/search">
+                <form method="get" class="form-inline" action="/user/search">
 
-                    <div class="form-group" style="margin-right: 10px">
+                    <div class="form-group" style="margin-right: 10px; margin-bottom:0">
                         <div class="icon-addon addon-md">
                             <input type="text" style="width: 170px" name="query" placeholder="Film Name"
                                    class="form-control" th:value="${query}">
                         </div>
                     </div>
-                    <div class="form-group" style="margin-right: 10px">
+                    <div class="form-group" style="margin-right: 10px; margin-bottom:0">
                         <div class="icon-addon addon-md">
                             <input type="number" step="1" style="width: 100px" min="1000" max="3000" name="year"
                                    placeholder="Year" class="form-control" th:value="${year}">
@@ -38,15 +34,15 @@
             </div>
 
             <th:block sec:authorize="isAuthenticated()">
-                <ul class="nav navbar-nav navbar-right">
-                    <li>
-                        <a href="/userInfo">
+                <ul class="navbar-nav ml-auto">
+                    <li class="nav-item">
+                        <a href="/userInfo" class="nav-link">
                             <th:block th:text="${'You signed in as: ' + #request.getUserPrincipal().getName()}"/>
                             <img style="width: 20px;" th:src="@{/img/user-light.png}"/>
                         </a>
                     </li>
-                    <li>
-                        <a href="/logout">
+                    <li class="nav-item">
+                        <a href="/logout" class="nav-link">
                             Sign out
                             <img style="width: 20px;" th:src="@{/img/sign-out-light.png}"/>
                         </a>
@@ -55,15 +51,15 @@
             </th:block>
 
             <th:block sec:authorize="isAnonymous()">
-                <ul class="nav navbar-nav navbar-right">
-                    <li>
-                        <a href="/login">
+                <ul class="navbar-nav ml-auto">
+                    <li class="nav-item">
+                        <a href="/login" class="nav-link">
                             Sign in
                             <img style="width: 20px;" th:src="@{/img/user-light.png}"/>
                         </a>
                     </li>
-                    <li>
-                        <a href="/register">
+                    <li class="nav-item">
+                        <a href="/register" class="nav-link">
                             Register
                             <img style="width: 20px;" th:src="@{/img/register-light.png}"/>
                         </a>
