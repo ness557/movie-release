@@ -4,42 +4,50 @@
 <body>
 <nav th:insert="embeded/navbar.html"></nav>
 
-<th:block th:each="film, iStat : ${films}">
-    <th:block th:if="${iStat.index % 3 == 0}">
-        </div>
-        <div class="row">
-    </th:block>
+<div class="container-fluid">
+    <div class="row">
+        <th:block th:each="film, iStat : ${films}">
 
-    <div class="col col-lg-4">
-        <table class="table">
-            <tr>
-                <td colspan="3" rowspan="5">
-                    <img th:src="${film.posterUrl}" width="200">
-                </td>
-            </tr>
-            <tr>
-                <td>Title</td>
-                <td th:text="${film.title}"/>
-            </tr>
-            <tr>
-                <td>Year</td>
-                <td th:text="${film.year}"/>
-            </tr>
-            <tr>
-                <td>Type</td>
-                <td th:text="${#strings.capitalize(film.type)}"/>
-            </tr>
-            <tr>
-                <td colspan="2">
-                    <form action="/user/getFilm" method="get">
-                        <input type="hidden" name="imdbId" th:value="${film.imdbId}"/>
-                        <input type="submit" value="View Full Info" class="btn btn-primary"/>
-                    </form>
-                </td>
-            </tr>
-        </table>
+            <th:block th:if="${iStat.index % 5 == 0}">
+                <div class="offset-xl-1"></div>
+            </th:block>
+            <th:block th:if="${iStat.index == 5}">
+                <div class="offset-xl-1"></div>
+            </th:block>
+
+            <div class="col-xs- col-sm- col-md- col-lg-3 col-xl-2"
+                 style="text-align: center; font-weight: bold; padding-bottom: 40px; padding-top: 40px">
+                <div class="row" style="padding-bottom: 16px">
+                    <div class="col-xl-12">
+                        <img th:src="${film.posterUrl}" style="height: 300px; width: auto;">
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-xl-12">
+                        <span th:text="${film.title}"/>
+                    </div>
+                </div>
+                <div class="row" style="padding-bottom: 12px">
+                    <div class="col-xl-12">
+                        <td th:text="${#strings.capitalize(film.type)}"/>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-xl-12">
+                        <form action="/user/getFilm" method="get">
+                            <input type="hidden" name="imdbId" th:value="${film.imdbId}"/>
+                            <input type="submit" value="View Full Information" class="btn btn-warning"/>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </th:block>
     </div>
-</th:block>
+
+
+</div>
+
 <div th:with="urlBuilder=${T(org.springframework.web.servlet.support.ServletUriComponentsBuilder)}">
 
     <table class="table pagesTable center">
@@ -55,6 +63,7 @@
 
         </tr>
     </table>
+</div>
 </div>
 
 

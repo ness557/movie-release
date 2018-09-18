@@ -4,7 +4,7 @@
 <body>
 <nav th:insert="embeded/navbar.html"></nav>
 
-<div class="container">
+<div class="container" style="margin-top: 80px">
     <div class="row" style="text-align: center">
         <div class="col-12 col-sm-12 col-md-8 col-lg-7 col-xl-6 col-centered">
             <form th:action="@{/register}" method="post" th:object="${user}">
