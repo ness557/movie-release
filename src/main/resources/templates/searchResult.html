@@ -1,5 +1,5 @@
 <!DOCTYPE HTML>
-<html xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sh="http://www.thymeleaf.org">
 <head th:insert="embeded/header.html"></head>
 <body>
 <nav th:insert="embeded/navbar.html"></nav>
@@ -15,18 +15,23 @@
                 <div class="offset-xl-1"></div>
             </th:block>
 
-            <div class="col-xs- col-sm- col-md- col-lg-3 col-xl-2"
-                 style="text-align: center; font-weight: bold; padding-bottom: 40px; padding-top: 40px">
-                <div class="row" style="padding-bottom: 16px">
+            <div class="col-xs-6 col-sm-5 col-md-4 col-lg-3 col-xl-2"
+                 style="text-align: center; font-weight: bold; padding-bottom: 40px; padding-top: 40px;">
+                <div class="row" style="padding-bottom: 6px; height: 320px">
                     <div class="col-xl-12">
-                        <img th:src="${film.posterUrl}" style="height: 300px; width: auto;">
+                        <img th:src="${film.posterUrl}" style="height: 300px; max-width: 260px">
                     </div>
                 </div>
-                <div class="row">
+                <div class="row" style="min-height: 50px;">
                     <div class="col-xl-12">
-                        <span th:text="${film.title}"/>
+                        <span th:text="${film.title} + ' (' + ${film.year} + ')'"/>
                     </div>
                 </div>
+                <!--<div class="row">-->
+                <!--<div class="col-xl-12">-->
+                <!--<span th:text="${'(' + film.year + ')'}"/>-->
+                <!--</div>-->
+                <!--</div>-->
                 <div class="row" style="padding-bottom: 12px">
                     <div class="col-xl-12">
                         <td th:text="${#strings.capitalize(film.type)}"/>
@@ -48,22 +53,132 @@
 
 </div>
 
-<div th:with="urlBuilder=${T(org.springframework.web.servlet.support.ServletUriComponentsBuilder)}">
+<div class="container"
+     th:with="urlBuilder=${T(org.springframework.web.servlet.support.ServletUriComponentsBuilder)}, page = ${page == null ? 1 : page}">
 
-    <table class="table pagesTable center">
-        <tr>
-            <th>Pages:</th>
-            <th:block th:each="i : ${#numbers.sequence(1, pageCount)}">
+    <!--<span th:text="${pageCount}"></span>-->
+    <div class="row">
+        <!-- pageCount-->
 
-                <td>
-                    <a th:href="${urlBuilder.fromCurrentRequest().replaceQueryParam('page', i).toUriString()}"
-                       th:text="${i}"/>
-                </td>
+        <!-- MIDDLE PAGES -->
+
+        <th:block th:if="${page  < pageCount - 1 and page > 2}">
+
+            <div class="col-xl-1 col-centered">
+                <a th:href="${urlBuilder.fromCurrentRequest().replaceQueryParam('page', 1).toUriString()}"
+                   th:text="${1}"/>
+            </div>
+
+            <div class="col-xl-1 col-centered">
+                <span> ... </span>
+            </div>
+
+            <th:block th:each="i : ${#numbers.sequence(page - 1, page + 1)}">
+
+                <th:block th:if="${page == i}">
+
+                    <!-- TODO clicked link -->
+                    <div class="col-xl-1 col-centered">
+                        <span th:text="${page}"></span>
+                    </div>
+
+                </th:block>
+
+                <th:block th:unless="${page == i}">
+                    <div class="col-xl-1 col-centered">
+
+                        <a th:href="${urlBuilder.fromCurrentRequest().replaceQueryParam('page', i).toUriString()}"
+                           th:text="${i}"/>
+                    </div>
+                </th:block>
             </th:block>
 
-        </tr>
-    </table>
-</div>
+
+            <div class="col-xl-1 col-centered">
+                <span> ... </span>
+            </div>
+
+            <div class="col-xl-1 col-centered">
+                <a th:href="${urlBuilder.fromCurrentRequest().replaceQueryParam('page', pageCount).toUriString()}"
+                   th:text="${pageCount}"/>
+            </div>
+
+        </th:block>
+
+        <!-- FIRST PAGES -->
+        <th:block th:if="${page <= 2}">
+
+            <th:block th:each="i : ${#numbers.sequence(page - 1, page + 1)}">
+
+                <th:block th:if="${i > 0}">
+                    <th:block th:if="${page == i}">
+
+                        <!-- TODO clicked link -->
+                        <div class="col-xl-1 col-centered">
+                            <span th:text="${page}"></span>
+                        </div>
+
+                    </th:block>
+
+                    <th:block th:unless="${page == i}">
+                        <div class="col-xl-1 col-centered">
+
+                            <a th:href="${urlBuilder.fromCurrentRequest().replaceQueryParam('page', i).toUriString()}"
+                               th:text="${i}"/>
+                        </div>
+                    </th:block>
+                </th:block>
+            </th:block>
+
+            <div class="col-xl-1 col-centered">
+                <span> ... </span>
+            </div>
+
+            <div class="col-xl-1 col-centered">
+                <a th:href="${urlBuilder.fromCurrentRequest().replaceQueryParam('page', pageCount).toUriString()}"
+                   th:text="${pageCount}"/>
+            </div>
+
+        </th:block>
+
+
+        <!-- LAST PAGES -->
+        <th:block th:if="${page >= pageCount - 1}">
+
+            <div class="col-xl-1 col-centered">
+                <a th:href="${urlBuilder.fromCurrentRequest().replaceQueryParam('page', 1).toUriString()}"
+                   th:text="${1}"/>
+            </div>
+
+            <div class="col-xl-1 col-centered">
+                <span> ... </span>
+            </div>
+
+            <th:block th:each="i : ${#numbers.sequence(page - 1, page + 1)}">
+
+                <th:block th:if="${i <= pageCount}">
+                    <th:block th:if="${page == i}">
+
+                        <!-- TODO clicked link -->
+                        <div class="col-xl-1 col-centered">
+                            <span th:text="${page}"></span>
+                        </div>
+
+                    </th:block>
+
+                    <th:block th:unless="${page == i}">
+                        <div class="col-xl-1 col-centered">
+
+                            <a th:href="${urlBuilder.fromCurrentRequest().replaceQueryParam('page', i).toUriString()}"
+                               th:text="${i}"/>
+                        </div>
+                    </th:block>
+                </th:block>
+            </th:block>
+
+        </th:block>
+
+    </div>
 </div>
 
 

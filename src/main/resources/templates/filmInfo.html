@@ -8,7 +8,7 @@
     <div class="row">
         <div class="col-10 col-sm-6 col-md-5 col-lg-4 col-xl-3" style="text-align: right">
             <div style="text-align: center; display: inline-block;">
-                <img th:src="${film.poster}" style="height: 400px" class="img-rounded">
+                <img th:src="${film.poster}" style="height: 400px; max-width: 300px" class="img-rounded">
 
                 <p style="margin-bottom: 12px; margin-top: 16px;"> Metascore:
                     <b th:if="${film.metascore > 60}"
@@ -60,17 +60,17 @@
                 </div>
             </div>
             <div class="row" style="font-size: 12px; height: 32px; vertical-align: center; padding-top: 4px">
-                <div class="col-2 col-sm-2 col-md-2 col-lg-1 col-xl-1">
+                <div class="col-2 col-sm-2 col-md-2 col-lg-1 col-xl-1" style="max-width: 70px">
                     <div class="plate">
-                        <p class="plate-text" th:text="${film.rated}"/>
+                        <p class="plate-text" th:text="${film.rated} == 'NOT RATED' ? 'N. R.' : ${film.rated}"/>
                     </div>
                 </div>
-                <div class="col-2 col-sm-3 col-md-2 col-lg-1 col-xl-1">
+                <div class="col-2 col-sm-3 col-md-2 col-lg-1 col-xl-1" style="max-width: 70px">
                     <div class="plate">
                         <p class="plate-text" th:text="${#strings.capitalize(film.type)}"/>
                     </div>
                 </div>
-                <div class="col-3 col-sm-4 col-md-3 col-lg-2 col-xl-2" style="text-align: center;padding: 0; width: 86px">
+                <div class="col-3 col-sm-4 col-md-3 col-lg-2 col-xl-2" style="text-align: center;padding: 0; max-width: 100px">
                     <img style="width: 16px; margin-right: 3px" th:src="@{/img/clock.png}"/>
                     <span class="plate-text" th:text="${film.runtime}"/>
                 </div>
