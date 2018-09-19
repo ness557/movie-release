@@ -62,104 +62,27 @@
             <div class="row">
 
                 <!-- ARROW BACK -->
-                <th:block th:if="${page > 1}">
-                    <div class="col-1 col-sm-1 col-md-1 col-lg-1 col-xl-1 col-centered">
-                        <a class="text-secondary page-link"
-                           th:href="${urlBuilder.fromCurrentRequest().replaceQueryParam('page', page - 1).toUriString()}"
-                           th:text="'<'" style="font-weight: bold; font-size: 20px;"/>
-                    </div>
-                </th:block>
-
-                <!-- FIRST PAGES -->
-                <th:block th:if="${page <= 2}">
-
-                    <th:block th:each="i : ${#numbers.sequence(page - 1, page + 1)}">
-
-                        <th:block th:if="${i > 0}">
-                            <th:block th:if="${page == i}">
-
-                                <!-- TODO clicked link -->
-                                <div class="col-1 col-sm-1 col-md-1 col-lg-1 col-xl-1 col-centered">
-                                    <span th:text="${page}"></span>
-                                </div>
-
-                            </th:block>
-
-                            <th:block th:unless="${page == i}">
-                                <div class="col-1 col-sm-1 col-md-1 col-lg-1 col-xl-1 col-centered">
-
-                                    <a class="text-secondary page-link"
-                                       th:href="${urlBuilder.fromCurrentRequest().replaceQueryParam('page', i).toUriString()}"
-                                       th:text="${i}"/>
-                                </div>
-                            </th:block>
-                        </th:block>
+                <div class="col-1 col-sm-1 col-md-1 col-lg-1 col-xl-1 col-centered">
+                    <!-- active link -->
+                    <th:block th:if="${page > 1}">
+                        <a class="text-secondary"
+                           th:href="${urlBuilder.fromCurrentRequest().replaceQueryParam('page', page - 1).toUriString()}">
+                            <img th:src="@{/img/clock.png}">
+                        </a>
                     </th:block>
 
-                    <div class="col-1 col-sm-1 col-md-1 col-lg-1 col-xl-1 col-centered">
-                        <span> ... </span>
-                    </div>
-
-                    <div class="col-1 col-sm-1 col-md-1 col-lg-1 col-xl-1 col-centered">
-                        <a class="text-secondary page-link"
-                           th:href="${urlBuilder.fromCurrentRequest().replaceQueryParam('page', pageCount).toUriString()}"
-                           th:text="${pageCount}"/>
-                    </div>
-
-                </th:block>
-
-                <!-- MIDDLE PAGES -->
-                <th:block th:if="${page  < pageCount - 1 and page > 2}">
-
-                    <div class="col-1 col-sm-1 col-md-1 col-lg-1 col-xl-1 col-centered">
-                        <a class="text-secondary page-link"
-                           th:href="${urlBuilder.fromCurrentRequest().replaceQueryParam('page', 1).toUriString()}"
-                           th:text="${1}"/>
-                    </div>
-
-                    <div class="col-1 col-sm-1 col-md-1 col-lg-1 col-xl-1 col-centered">
-                        <span> ... </span>
-                    </div>
-
-                    <th:block th:each="i : ${#numbers.sequence(page - 1, page + 1)}">
-
-                        <th:block th:if="${page == i}">
-
-                            <!-- TODO clicked link -->
-                            <div class="col-1 col-sm-1 col-md-1 col-lg-1 col-xl-1 col-centered">
-                                <span th:text="${page}"></span>
-                            </div>
-
-                        </th:block>
-
-                        <th:block th:unless="${page == i}">
-                            <div class="col-1 col-sm-1 col-md-1 col-lg-1 col-xl-1 col-centered">
-
-                                <a class="text-secondary page-link"
-                                   th:href="${urlBuilder.fromCurrentRequest().replaceQueryParam('page', i).toUriString()}"
-                                   th:text="${i}"/>
-                            </div>
-                        </th:block>
+                    <!-- inactive link-->
+                    <th:block th:unless="${page > 1}">
+                        <a class="text-secondary" style="pointer-events: none">
+                            <img th:src="@{/img/clock.png}">
+                        </a>
                     </th:block>
+                </div>
 
-
+                <!--separate link to first page -->
+                <th:block th:if="${page > 2}">
                     <div class="col-1 col-sm-1 col-md-1 col-lg-1 col-xl-1 col-centered">
-                        <span> ... </span>
-                    </div>
-
-                    <div class="col-1 col-sm-1 col-md-1 col-lg-1 col-xl-1 col-centered">
-                        <a class="text-secondary page-link"
-                           th:href="${urlBuilder.fromCurrentRequest().replaceQueryParam('page', pageCount).toUriString()}"
-                           th:text="${pageCount}"></a>
-                    </div>
-
-                </th:block>
-
-                <!-- LAST PAGES -->
-                <th:block th:if="${page >= pageCount - 1}">
-
-                    <div class="col-1 col-sm-1 col-md-1 col-lg-1 col-xl-1 col-centered">
-                        <a class="text-secondary page-link"
+                        <a class="text-secondary"
                            th:href="${urlBuilder.fromCurrentRequest().replaceQueryParam('page', 1).toUriString()}"
                            th:text="${1}"></a>
                     </div>
@@ -167,44 +90,64 @@
                     <div class="col-1 col-sm-1 col-md-1 col-lg-1 col-xl-1 col-centered">
                         <span> ... </span>
                     </div>
+                </th:block>
 
-                    <th:block th:each="i : ${#numbers.sequence(page - 1, page + 1)}">
+                <!-- pages loop -->
+                <th:block th:each="i : ${#numbers.sequence(page - 1, page + 1)}">
+                    <!-- skip first-1  and last+1 pages-->
+                    <th:block th:if="${i >= 1 and i <= pageCount}">
 
-                        <th:block th:if="${i <= pageCount}">
-                            <th:block th:if="${page == i}">
+                        <!-- CURRENT PAGE -->
+                        <th:block th:if="${page == i}">
+                            <div class="col-1 col-sm-1 col-md-1 col-lg-1 col-xl-1 col-centered">
+                                <a class="text-secondary" th:href="'#'" th:text="${i}"></a>
+                            </div>
+                        </th:block>
 
-                                <!-- TODO clicked link -->
-                                <div class="col-1 col-sm-1 col-md-1 col-lg-1 col-xl-1 col-centered">
-                                    <span th:text="${page}"></span>
-                                </div>
-
-                            </th:block>
-
-                            <th:block th:unless="${page == i}">
-                                <div class="col-1 col-sm-1 col-md-1 col-lg-1 col-xl-1 col-centered">
-
-                                    <a class="text-secondary page-link"
-                                       th:href="${urlBuilder.fromCurrentRequest().replaceQueryParam('page', i).toUriString()}"
-                                       th:text="${i}"></a>
-                                </div>
-                            </th:block>
+                        <!-- Link To Page -->
+                        <th:block th:unless="${page == i}">
+                            <div class="col-1 col-sm-1 col-md-1 col-lg-1 col-xl-1 col-centered">
+                                <a class="text-secondary"
+                                   th:href="${urlBuilder.fromCurrentRequest().replaceQueryParam('page', i).toUriString()}"
+                                   th:text="${i}"></a>
+                            </div>
                         </th:block>
                     </th:block>
                 </th:block>
 
-                <!-- ARROW FORWARD-->
-                <th:block th:if="${page < pageCount}">
+                <!--separate link to last page -->
+                <th:block th:if="${page < pageCount - 1}">
                     <div class="col-1 col-sm-1 col-md-1 col-lg-1 col-xl-1 col-centered">
-                        <a class="text-secondary page-link"
-                           th:href="${urlBuilder.fromCurrentRequest().replaceQueryParam('page', page + 1).toUriString()}"
-                           th:text="'>'"></a>
+                        <span> ... </span>
+                    </div>
+
+                    <div class="col-1 col-sm-1 col-md-1 col-lg-1 col-xl-1 col-centered">
+                        <a class="text-secondary"
+                           th:href="${urlBuilder.fromCurrentRequest().replaceQueryParam('page', pageCount).toUriString()}"
+                           th:text="${pageCount}"></a>
                     </div>
                 </th:block>
 
+                <!-- ARROW FORWARD-->
+                <div class="col-1 col-sm-1 col-md-1 col-lg-1 col-xl-1 col-centered">
+                    <!-- active link -->
+                    <th:block th:if="${page < pageCount}">
+                        <a class="text-secondary"
+                           th:href="${urlBuilder.fromCurrentRequest().replaceQueryParam('page', page - 1).toUriString()}">
+                            <img th:src="@{/img/clock.png}">
+                        </a>
+                    </th:block>
+
+                    <!-- inactive link-->
+                    <th:block th:unless="${page < pageCount}">
+                        <a class="text-secondary" style="pointer-events: none">
+                            <img th:src="@{/img/clock.png}">
+                        </a>
+                    </th:block>
+                </div>
             </div>
         </div>
     </div>
-
 </div>
 
 
