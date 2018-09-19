@@ -57,31 +57,30 @@
 <div class="container-fluid"
      th:with="urlBuilder=${T(org.springframework.web.servlet.support.ServletUriComponentsBuilder)}, page = ${page == null ? 1 : page}">
 
-    <div class="row">
-        <div class="col-8 col-sm-7 col-md-6 col-lg-4 col-xl-3 col-centered">
+    <div class="row" style="padding-bottom: 30px">
+        <div class="col-8 col-sm-7 col-md-6 col-lg-4 col-xl-2 col-centered">
             <div class="row">
 
                 <!-- ARROW BACK -->
                 <div class="col-1 col-sm-1 col-md-1 col-lg-1 col-xl-1 col-centered">
                     <!-- active link -->
                     <th:block th:if="${page > 1}">
-                        <a class="text-secondary"
-                           th:href="${urlBuilder.fromCurrentRequest().replaceQueryParam('page', page - 1).toUriString()}">
-                            <img th:src="@{/img/clock.png}">
+                        <a th:href="${urlBuilder.fromCurrentRequest().replaceQueryParam('page', page - 1).toUriString()}">
+                            <img class="page-arrow" th:src="@{/img/clock.png}">
                         </a>
                     </th:block>
 
                     <!-- inactive link-->
                     <th:block th:unless="${page > 1}">
-                        <a class="text-secondary" style="pointer-events: none">
-                            <img th:src="@{/img/clock.png}">
+                        <a style="pointer-events: none">
+                            <img class="page-arrow" th:src="@{/img/clock.png}">
                         </a>
                     </th:block>
                 </div>
 
                 <!--separate link to first page -->
                 <th:block th:if="${page > 2}">
-                    <div class="col-1 col-sm-1 col-md-1 col-lg-1 col-xl-1 col-centered">
+                    <div class="col-1 col-sm-1 col-md-1 col-lg-1 col-xl-1 col-centered page-link">
                         <a class="text-secondary"
                            th:href="${urlBuilder.fromCurrentRequest().replaceQueryParam('page', 1).toUriString()}"
                            th:text="${1}"></a>
@@ -97,21 +96,19 @@
                     <!-- skip first-1  and last+1 pages-->
                     <th:block th:if="${i >= 1 and i <= pageCount}">
 
-                        <!-- CURRENT PAGE -->
-                        <th:block th:if="${page == i}">
-                            <div class="col-1 col-sm-1 col-md-1 col-lg-1 col-xl-1 col-centered">
+                        <div class="col-1 col-sm-1 col-md-1 col-lg-1 col-xl-1 col-centered page-link">
+                            <!-- CURRENT PAGE -->
+                            <th:block th:if="${page == i}">
                                 <a class="text-secondary" th:href="'#'" th:text="${i}"></a>
-                            </div>
-                        </th:block>
+                            </th:block>
 
-                        <!-- Link To Page -->
-                        <th:block th:unless="${page == i}">
-                            <div class="col-1 col-sm-1 col-md-1 col-lg-1 col-xl-1 col-centered">
+                            <!-- Link To Page -->
+                            <th:block th:unless="${page == i}">
                                 <a class="text-secondary"
                                    th:href="${urlBuilder.fromCurrentRequest().replaceQueryParam('page', i).toUriString()}"
                                    th:text="${i}"></a>
-                            </div>
-                        </th:block>
+                            </th:block>
+                        </div>
                     </th:block>
                 </th:block>
 
@@ -121,7 +118,7 @@
                         <span> ... </span>
                     </div>
 
-                    <div class="col-1 col-sm-1 col-md-1 col-lg-1 col-xl-1 col-centered">
+                    <div class="col-1 col-sm-1 col-md-1 col-lg-1 col-xl-1 col-centered page-link">
                         <a class="text-secondary"
                            th:href="${urlBuilder.fromCurrentRequest().replaceQueryParam('page', pageCount).toUriString()}"
                            th:text="${pageCount}"></a>
@@ -132,16 +129,15 @@
                 <div class="col-1 col-sm-1 col-md-1 col-lg-1 col-xl-1 col-centered">
                     <!-- active link -->
                     <th:block th:if="${page < pageCount}">
-                        <a class="text-secondary"
-                           th:href="${urlBuilder.fromCurrentRequest().replaceQueryParam('page', page - 1).toUriString()}">
-                            <img th:src="@{/img/clock.png}">
+                        <a th:href="${urlBuilder.fromCurrentRequest().replaceQueryParam('page', page - 1).toUriString()}">
+                            <img class="page-arrow" th:src="@{/img/clock.png}">
                         </a>
                     </th:block>
 
                     <!-- inactive link-->
                     <th:block th:unless="${page < pageCount}">
-                        <a class="text-secondary" style="pointer-events: none">
-                            <img th:src="@{/img/clock.png}">
+                        <a style="pointer-events: none">
+                            <img class="page-arrow" th:src="@{/img/clock.png}">
                         </a>
                     </th:block>
                 </div>
