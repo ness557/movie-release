@@ -123,7 +123,7 @@
                 <div class="col col-fixed-arrow my-page-link">
                     <!-- active link -->
                     <th:block th:if="${page < pageCount}">
-                        <a th:href="${urlBuilder.fromCurrentRequest().replaceQueryParam('page', page - 1).toUriString()}">
+                        <a th:href="${urlBuilder.fromCurrentRequest().replaceQueryParam('page', page + 1).toUriString()}">
                             <img class="page-arrow" th:src="@{/img/pagination/page-next.png}">
                         </a>
                     </th:block>
