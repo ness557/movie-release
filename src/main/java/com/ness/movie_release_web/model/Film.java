@@ -4,6 +4,7 @@ import lombok.*;
 import javax.persistence.*;
 import javax.persistence.Table;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "film")
@@ -35,7 +36,7 @@ public class Film {
     private LocalDate dvdDate;
 
     @Column(name = "subs_date")
-    private LocalDate subscriptionDate;
+    private LocalDateTime subscriptionDate;
 
     @ManyToOne
     @JoinColumn(name = "uzer_id")

@@ -34,14 +34,14 @@
                        th:text="${film.imdbRating}"/>
 
 
-                    <b th:if="${film.imdbRating >= 4 and film.metascore <= 6}"
+                    <b th:if="${film.imdbRating >= 4 and film.imdbRating <= 6}"
                        style="color: #E1AC00"
                        th:text="${film.imdbRating}"/>
                 </p>
 
                 <form th:if="${subscribed}" action="/user/unSubscribe" method="post">
                     <input type="hidden" name="imdbId" th:value="${film.imdbId}"/>
-                    <input type="submit" value="Unsubscribe" class="btn btn-success"/>
+                    <input type="submit" value="Unsubscribe" class="btn btn-danger"/>
                 </form>
 
                 <form th:unless="${subscribed}" action="/user/subscribe" method="post" style="padding-bottom: 15px">
@@ -172,6 +172,6 @@
     </div>
 </div>
 
-
+<footer th:insert="embeded/footer.html"></footer>
 </body>
 </html>

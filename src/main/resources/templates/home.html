@@ -22,10 +22,16 @@
     <br><br>
     <p>You should start a dialog with the bot if you want to receive telegram notifications</p>
     <a th:href="'tg://resolve?domain=' + ${telegram}" class="btn btn-primary">Talk to bot</a>
+
+    <br>
+    <br>
+    <th:block sec:authorize="isAuthenticated()">
+        <p>You also can view you subscriptions list</p>
+        <a href="/user/subscriptions" class="btn btn-primary">Subscriptions</a>
+    </th:block>
 </div>
-
-
 <br><br>
 
+<nav th:insert="embeded/footer.html"></nav>
 </body>
 </html>

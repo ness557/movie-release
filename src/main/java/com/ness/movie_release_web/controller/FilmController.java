@@ -10,17 +10,15 @@ import com.ness.movie_release_web.service.UserService;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
-import org.springframework.http.HttpRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
-import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpServletRequest;
 import java.security.Principal;
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Controller
@@ -54,7 +52,7 @@ public class FilmController {
     @PostMapping("/subscribe")
     public String subscribe(@RequestParam(value = "imdbId") String imdbId,
                             Principal principal,
-                            Model model) {
+                            HttpServletRequest request) {
 
         String login = principal.getName();
 
@@ -75,12 +73,12 @@ public class FilmController {
                 wrapper.getType(),
                 wrapper.getReleased(),
                 wrapper.getDvd(),
-                LocalDate.now(),
+                LocalDateTime.now(),
                 user);
 
         filmService.save(film);
 
-        return "redirect:getFilm?imdbId=" + imdbId;
+        return "redirect:" + request.getHeader("referer");
     }
 
     @PostMapping("/unSubscribe")
@@ -94,9 +92,7 @@ public class FilmController {
 
         filmService.getByImdbIdAndUserId(imdbId, user.getId()).forEach(filmService::delete);
 
-        // todo refresh current page
-        return "redirect:getFilm?imdbId=" + imdbId;
-//        return request.getRequestURI() + "?" + request.getQueryString();
+        return "redirect:" + request.getHeader("referer");
     }
 
     @GetMapping("/search")
@@ -124,7 +120,7 @@ public class FilmController {
     }
 
     @GetMapping("/subscriptions")
-    public String getSubs(@RequestParam(value = "page") Integer page,
+    public String getSubs(@RequestParam(value = "page", required = false) Integer page,
                           Principal principal,
                           Model model) {
 

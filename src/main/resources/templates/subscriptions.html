@@ -92,7 +92,7 @@
                 <!-- pages loop -->
                 <th:block th:each="i : ${#numbers.sequence(page - 1, page + 1)}">
                     <!-- skip first-1  and last+1 pages-->
-                    <th:block th:if="${i >= 2 and i <= pageCount - 1}">
+                    <th:block th:if="${i >= 0 and i <= pageCount - 1}">
 
                         <!-- CURRENT PAGE -->
                         <!-- my-page-current -->
@@ -117,8 +117,8 @@
 
                     <div class="col col-fixed-page my-page-link my-page-number">
                         <a class="text-secondary"
-                           th:href="${urlBuilder.fromCurrentRequest().replaceQueryParam('page', pageCount).toUriString()}"
-                           th:text="${pageCount - 1}"></a>
+                           th:href="${urlBuilder.fromCurrentRequest().replaceQueryParam('page', pageCount - 1).toUriString()}"
+                           th:text="${pageCount}"></a>
                     </div>
                 </th:block>
 
@@ -145,6 +145,6 @@
     </div>
 </div>
 
-
+<footer th:insert="embeded/footer.html"></footer>
 </body>
 </html>
