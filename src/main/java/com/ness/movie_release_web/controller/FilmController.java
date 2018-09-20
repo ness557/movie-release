@@ -9,13 +9,19 @@ import com.ness.movie_release_web.service.FilmService;
 import com.ness.movie_release_web.service.UserService;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.http.HttpRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
+import org.springframework.web.servlet.ModelAndView;
 
+import javax.servlet.http.HttpServletRequest;
 import java.security.Principal;
+import java.time.LocalDate;
+import java.util.List;
 
 @Controller
 @RequestMapping("/user")
@@ -34,7 +40,7 @@ public class FilmController {
     @GetMapping("/getFilm")
     public String getFilm(@RequestParam("imdbId") String imdbId,
                           Principal principal,
-                          Model model){
+                          Model model) {
 
         User user = userService.findByLogin(principal.getName());
 
@@ -48,13 +54,13 @@ public class FilmController {
     @PostMapping("/subscribe")
     public String subscribe(@RequestParam(value = "imdbId") String imdbId,
                             Principal principal,
-                            Model model){
+                            Model model) {
 
         String login = principal.getName();
 
         User user = userService.findByLogin(login);
 
-        if(filmService.isExistsByImdbIdAndUserId(imdbId, user.getId()))
+        if (filmService.isExistsByImdbIdAndUserId(imdbId, user.getId()))
             throw new ResponseStatusException(HttpStatus.CONFLICT);
 
         OmdbFullWrapper wrapper = filmOmdbService.getInfo(imdbId);
@@ -69,6 +75,7 @@ public class FilmController {
                 wrapper.getType(),
                 wrapper.getReleased(),
                 wrapper.getDvd(),
+                LocalDate.now(),
                 user);
 
         filmService.save(film);
@@ -78,7 +85,8 @@ public class FilmController {
 
     @PostMapping("/unSubscribe")
     public String unSubscribe(@RequestParam(value = "imdbId") String imdbId,
-                            Principal principal){
+                              Principal principal,
+                              HttpServletRequest request) {
 
         String login = principal.getName();
 
@@ -86,14 +94,16 @@ public class FilmController {
 
         filmService.getByImdbIdAndUserId(imdbId, user.getId()).forEach(filmService::delete);
 
+        // todo refresh current page
         return "redirect:getFilm?imdbId=" + imdbId;
+//        return request.getRequestURI() + "?" + request.getQueryString();
     }
 
     @GetMapping("/search")
     public String search(@RequestParam("query") String query,
                          @RequestParam(required = false, name = "year") Integer year,
                          @RequestParam(required = false, name = "page") Integer page,
-                         Model model){
+                         Model model) {
 
         OmdbSearchResultWrapper result;
 
@@ -107,9 +117,28 @@ public class FilmController {
         model.addAttribute("year", year);
 
         model.addAttribute("films", result.getFilms());
-        model.addAttribute("pageCount", (int) Math.ceil(result.getTotalResults()/10.0));
+        model.addAttribute("pageCount", (int) Math.ceil(result.getTotalResults() / 10.0));
         model.addAttribute("page", page);
 
         return "searchResult";
+    }
+
+    @GetMapping("/subscriptions")
+    public String getSubs(@RequestParam(value = "page") Integer page,
+                          Principal principal,
+                          Model model) {
+
+        if (page == null)
+            page = 0;
+
+        User user = userService.findByLogin(principal.getName());
+        Page<Film> filmPage = filmService.getAllByUserWithPages(page, 10, user);
+        List<Film> films = filmPage.getContent();
+
+        model.addAttribute("films", films)
+                .addAttribute("page", page)
+                .addAttribute("pageCount", filmPage.getTotalPages());
+
+        return "subscriptions";
     }
 }

@@ -1,8 +1,12 @@
 package com.ness.movie_release_web.service;
 
 import com.ness.movie_release_web.model.Film;
+import com.ness.movie_release_web.model.User;
 import com.ness.movie_release_web.repository.FilmRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
@@ -10,7 +14,7 @@ import java.time.LocalDate;
 import java.util.List;
 
 @Service
-public class FilmServiceImpl implements FilmService{
+public class FilmServiceImpl implements FilmService {
 
     @Autowired
     FilmOmdbService omdbService;
@@ -54,6 +58,11 @@ public class FilmServiceImpl implements FilmService{
     }
 
     @Override
+    public Page<Film> getAllByUserWithPages(Integer page, Integer size, User user) {
+        return repository.findAllByUserOrderBySubscriptionDateDesc(user, PageRequest.of(page, size));
+    }
+
+    @Override
     public List<Film> getByImdbIdAndUserId(String imdbId, Long userId) {
         return repository.findAllByImdbIdAndUserId(imdbId, userId);
     }
@@ -64,7 +73,7 @@ public class FilmServiceImpl implements FilmService{
     }
 
     @Scheduled(cron = "${cron.pattern.updateDB}")
-    public void updateDB(){
+    public void updateDB() {
 
         repository.getUniqueImdbIds().forEach(id -> {
 

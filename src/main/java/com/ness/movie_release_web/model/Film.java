@@ -34,6 +34,9 @@ public class Film {
     @Column(name = "dvd_date")
     private LocalDate dvdDate;
 
+    @Column(name = "subs_date")
+    private LocalDate subscriptionDate;
+
     @ManyToOne
     @JoinColumn(name = "uzer_id")
     private User user;
