@@ -27,11 +27,6 @@
                         <span th:text="${film.title} + ' (' + ${film.year} + ')'"/>
                     </div>
                 </div>
-                <!--<div class="row">-->
-                <!--<div class="col-xl-12">-->
-                <!--<span th:text="${'(' + film.year + ')'}"/>-->
-                <!--</div>-->
-                <!--</div>-->
                 <div class="row" style="padding-bottom: 12px">
                     <div class="col-xl-12">
                         <td th:text="${#strings.capitalize(film.type)}"/>
@@ -42,15 +37,13 @@
                     <div class="col-xl-12">
                         <form action="/user/getFilm" method="get">
                             <input type="hidden" name="imdbId" th:value="${film.imdbId}"/>
-                            <input type="submit" value="View Full Information" class="btn btn-warning"/>
+                            <input type="submit" value="View Full Information" class="btn btn-peach"/>
                         </form>
                     </div>
                 </div>
             </div>
         </th:block>
     </div>
-
-
 </div>
 
 <!-- PAGINATION -->
@@ -58,36 +51,38 @@
      th:with="urlBuilder=${T(org.springframework.web.servlet.support.ServletUriComponentsBuilder)}, page = ${page == null ? 1 : page}">
 
     <div class="row" style="padding-bottom: 30px">
-        <div class="col-8 col-sm-7 col-md-6 col-lg-4 col-xl-2 col-centered">
+        <div class="col-12 col-sm-10 col-md-9 col-lg-8 col-xl-6 col-centered">
             <div class="row">
 
+                <div class="col-1 col-sm-1 col-md-1 col-lg-1 col-xl-1 col-centered"></div>
+
                 <!-- ARROW BACK -->
-                <div class="col-1 col-sm-1 col-md-1 col-lg-1 col-xl-1 col-centered">
+                <div class="col col-fixed-arrow my-page-link">
                     <!-- active link -->
                     <th:block th:if="${page > 1}">
                         <a th:href="${urlBuilder.fromCurrentRequest().replaceQueryParam('page', page - 1).toUriString()}">
-                            <img class="page-arrow" th:src="@{/img/clock.png}">
+                            <img class="page-arrow" th:src="@{/img/pagination/page-back.png}">
                         </a>
                     </th:block>
 
                     <!-- inactive link-->
                     <th:block th:unless="${page > 1}">
                         <a style="pointer-events: none">
-                            <img class="page-arrow" th:src="@{/img/clock.png}">
+                            <img class="page-arrow" th:src="@{/img/pagination/page-back-inactive.png}">
                         </a>
                     </th:block>
                 </div>
 
                 <!--separate link to first page -->
                 <th:block th:if="${page > 2}">
-                    <div class="col-1 col-sm-1 col-md-1 col-lg-1 col-xl-1 col-centered page-link">
+                    <div class="col col-fixed-page my-page-link my-page-number">
                         <a class="text-secondary"
                            th:href="${urlBuilder.fromCurrentRequest().replaceQueryParam('page', 1).toUriString()}"
                            th:text="${1}"></a>
                     </div>
 
-                    <div class="col-1 col-sm-1 col-md-1 col-lg-1 col-xl-1 col-centered">
-                        <span> ... </span>
+                    <div class="col my-page-splitter col-fixed-splitter">
+                        <span>...</span>
                     </div>
                 </th:block>
 
@@ -96,29 +91,28 @@
                     <!-- skip first-1  and last+1 pages-->
                     <th:block th:if="${i >= 1 and i <= pageCount}">
 
-                        <div class="col-1 col-sm-1 col-md-1 col-lg-1 col-xl-1 col-centered page-link">
                             <!-- CURRENT PAGE -->
-                            <th:block th:if="${page == i}">
+                            <!-- my-page-current -->
+                            <div class="col col-fixed-page my-page-link  my-page-current " th:if="${page == i}">
                                 <a class="text-secondary" th:href="'#'" th:text="${i}"></a>
-                            </th:block>
+                            </div>
 
                             <!-- Link To Page -->
-                            <th:block th:unless="${page == i}">
-                                <a class="text-secondary"
+                            <div class="col col-fixed-page my-page-link my-page-number" th:unless="${page == i}">
+                                <a class="text-secondary my-page-number"
                                    th:href="${urlBuilder.fromCurrentRequest().replaceQueryParam('page', i).toUriString()}"
                                    th:text="${i}"></a>
-                            </th:block>
-                        </div>
+                            </div>
                     </th:block>
                 </th:block>
 
                 <!--separate link to last page -->
                 <th:block th:if="${page < pageCount - 1}">
-                    <div class="col-1 col-sm-1 col-md-1 col-lg-1 col-xl-1 col-centered">
-                        <span> ... </span>
+                    <div class="col my-page-splitter col-fixed-splitter">
+                        <span>...</span>
                     </div>
 
-                    <div class="col-1 col-sm-1 col-md-1 col-lg-1 col-xl-1 col-centered page-link">
+                    <div class="col col-fixed-page my-page-link my-page-number">
                         <a class="text-secondary"
                            th:href="${urlBuilder.fromCurrentRequest().replaceQueryParam('page', pageCount).toUriString()}"
                            th:text="${pageCount}"></a>
@@ -126,21 +120,23 @@
                 </th:block>
 
                 <!-- ARROW FORWARD-->
-                <div class="col-1 col-sm-1 col-md-1 col-lg-1 col-xl-1 col-centered">
+                <div class="col col-fixed-arrow my-page-link">
                     <!-- active link -->
                     <th:block th:if="${page < pageCount}">
                         <a th:href="${urlBuilder.fromCurrentRequest().replaceQueryParam('page', page - 1).toUriString()}">
-                            <img class="page-arrow" th:src="@{/img/clock.png}">
+                            <img class="page-arrow" th:src="@{/img/pagination/page-next.png}">
                         </a>
                     </th:block>
 
                     <!-- inactive link-->
                     <th:block th:unless="${page < pageCount}">
                         <a style="pointer-events: none">
-                            <img class="page-arrow" th:src="@{/img/clock.png}">
+                            <img class="page-arrow" th:src="@{/img/pagination/page-next-inactive.png}">
                         </a>
                     </th:block>
                 </div>
+
+                <div class="col-1 col-sm-1 col-md-1 col-lg-1 col-xl-1 col-centered"></div>
             </div>
         </div>
     </div>

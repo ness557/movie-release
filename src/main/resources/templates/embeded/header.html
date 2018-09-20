@@ -82,6 +82,47 @@
             border-radius: 6px
         }
 
+        .btn-peach {
+            color: #ffffff;
+            background-color: #FFB18F;
+            border-color: #FFB18F;
+        }
+
+        .btn-peach:hover,
+        .btn-peach:focus,
+        .btn-peach:active,
+        .btn-peach.active,
+        .open .dropdown-toggle.btn-peach {
+            color: #ffffff;
+            background-color: #E39D7F;
+            border-color: #E39D7F;
+            box-shadow: none;
+        }
+
+        .btn-peach.disabled,
+        .btn-peach[disabled],
+        fieldset[disabled] .btn-peach,
+        .btn-peach.disabled:hover,
+        .btn-peach[disabled]:hover,
+        fieldset[disabled] .btn-peach:hover,
+        .btn-peach.disabled:focus,
+        .btn-peach[disabled]:focus,
+        fieldset[disabled] .btn-peach:focus,
+        .btn-peach.disabled:active,
+        .btn-peach[disabled]:active,
+        fieldset[disabled] .btn-peach:active,
+        .btn-peach.disabled.active,
+        .btn-peach[disabled].active,
+        fieldset[disabled] .btn-peach.active {
+            background-color: #FFB18F;
+            border-color: #FFB18F;
+        }
+
+        .btn-peach .badge {
+            color: #FFB18F;
+            background-color: #ffffff;
+        }
+
         .site:focus {
             color: #7873C8;
         }
@@ -168,7 +209,7 @@
         }
 
         .form-control:focus {
-            border-color: #ffc107;
+            border-color: #FFB18F;
             border-width: 3px;
             content: " ";
 
@@ -178,10 +219,25 @@
         .icon-addon:hover .glyphicon,
         .icon-addon .form-control:focus + .fa,
         .icon-addon:hover .fa {
-            color: #ffc107;
+            color: #FFB18F;
         }
 
         /* radio */
+        @keyframes click-wave {
+            0% {
+                height: 16px;
+                width: 16px;
+                opacity: 0.35;
+                position: relative;
+            }
+            100% {
+                height: 100px;
+                width: 100px;
+                margin-left: -42px;
+                margin-top: -42px;
+                opacity: 0;
+            }
+        }
 
         .option-input {
             -webkit-appearance: none;
@@ -190,13 +246,13 @@
             -o-appearance: none;
             appearance: none;
             position: relative;
-            /*top: 0px;*/
             height: 16px;
             width: 16px;
             background: #e2e8ef;
             border: none;
             color: #fff;
             outline: none;
+            box-shadow: none;
         }
 
         .option-input:hover {
@@ -204,7 +260,25 @@
         }
 
         .option-input:checked {
-            background: #ffc107;
+            background: #FFB18F;
+        }
+
+        .option-input:checked::before {
+            height: 16px;
+            width: 16px;
+            position: absolute;
+            display: inline-block;
+        }
+
+        .option-input:checked::after {
+            -webkit-animation: click-wave 0.65s;
+            -moz-animation: click-wave 0.65s;
+            animation: click-wave 0.65s;
+            background: #FFB18F;
+            content: '';
+            display: block;
+            position: relative;
+            z-index: 100;
         }
 
         .option-input.radio {
@@ -258,13 +332,52 @@
         }
 
         /* paging links*/
-        .page-link{
+        .my-page-link{
             text-align: center;
-            background-color: #e2e8ef /* TODO change color */
+            height: 50px;
+            vertical-align: middle;
+            line-height: 50px;
+            font-weight: bolder;
+        }
+
+        .my-page-number{
+            background: url('../img/pagination/page-background.png') no-repeat center;
+            background-size: 40px;
+        }
+
+        .my-page-current{
+            background: url('../img/pagination/page-current-background.png') no-repeat center;
+            background-size: 40px;
+        }
+
+        .my-page-splitter{
+            text-align: center;
+            height: 50px;
+            vertical-align: bottom;
+            line-height: 50px;
+            font-weight: bolder;
+            font-size: 30px;
+            color: #676767;
         }
 
         .page-arrow{
-            width: 20px;
+            width: 14px;
+        }
+
+        .col-fixed-page {
+            -ms-flex: 0 0 64px;
+            flex: 0 0 64px;
+        }
+
+        .col-fixed-splitter {
+            -ms-flex: 0 0 50px;
+            flex: 0 0 50px;
+        }
+
+        .col-fixed-arrow {
+            -ms-flex: 0 0 30px;
+            flex: 0 0 30px;
+            padding: 0;
         }
 
     </style>
