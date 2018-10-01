@@ -19,7 +19,9 @@
                  style="text-align: center; font-weight: bold; padding-bottom: 40px; padding-top: 40px;">
                 <div class="row" style="padding-bottom: 6px; height: 320px">
                     <div class="col-xl-12">
-                        <img class="rounded" th:src="${film.posterUrl}" style="height: 300px; max-width: 260px">
+                        <img class="rounded"
+                             th:onerror="'this.src=\'' + @{/img/no-image.png} + '\'; this.onerror=null'"
+                             th:src="${film.posterUrl}" style="height: 300px; max-width: 260px">
                     </div>
                 </div>
                 <div class="row" style="min-height: 50px;">
