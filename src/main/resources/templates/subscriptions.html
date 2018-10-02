@@ -20,12 +20,17 @@
                  style="text-align: center; font-weight: bold; padding-bottom: 40px; padding-top: 40px;">
                 <div class="row" style="padding-bottom: 6px; height: 320px">
                     <div class="col-xl-12">
-                        <img class="rounded" th:src="${film.posterUrl}" style="height: 300px; max-width: 260px">
+                        <a th:href="'/user/getFilm?imdbId=' + ${film.imdbId}">
+                            <img class="rounded" th:src="${film.posterUrl}" style="height: 300px; max-width: 260px">
+                        </a>
                     </div>
                 </div>
                 <div class="row" style="min-height: 50px;">
                     <div class="col-xl-12">
-                        <span th:text="${film.title} + ' (' + ${film.releaseDate.getYear()} + ')'"/>
+                        <a th:href="'/user/getFilm?imdbId=' + ${film.imdbId}"
+                           style="color: #555555; text-decoration: none;">
+                            <span th:text="${film.title} + ' (' + ${film.releaseDate.getYear()} + ')'"/>
+                        </a>
                     </div>
                 </div>
                 <div class="row" style="padding-bottom: 12px">

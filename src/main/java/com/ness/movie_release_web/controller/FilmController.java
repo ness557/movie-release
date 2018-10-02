@@ -108,10 +108,11 @@ public class FilmController {
 
         result = filmOmdbService.search(query, year, page);
 
-        //to save in at session
+        //to save in session
         model.addAttribute("query", query);
         model.addAttribute("year", year);
 
+//        TODO: remove info button and add subscribe button
         model.addAttribute("films", result.getFilms());
         model.addAttribute("pageCount", (int) Math.ceil(result.getTotalResults() / 10.0));
         model.addAttribute("page", page);
