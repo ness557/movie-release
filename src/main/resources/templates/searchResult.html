@@ -19,31 +19,36 @@
                  style="text-align: center; font-weight: bold; padding-bottom: 40px; padding-top: 40px;">
                 <div class="row" style="padding-bottom: 6px; height: 320px">
                     <div class="col-xl-12">
-                        <a th:href="'/user/getFilm?imdbId=' + ${film.imdbId}">
+                        <a th:href="'/user/getFilm?imdbId=' + ${film.key.imdbId}">
                             <img class="rounded"
                                  th:onerror="'this.src=\'' + @{/img/no-image.png} + '\'; this.onerror=null'"
-                                 th:src="${film.posterUrl}" style="height: 300px; max-width: 260px">
+                                 th:src="${film.key.posterUrl}" style="height: 300px; max-width: 230px">
                         </a>
                     </div>
                 </div>
                 <div class="row" style="min-height: 50px;">
                     <div class="col-xl-12">
-                        <a th:href="'/user/getFilm?imdbId=' + ${film.imdbId}" style="color: #555555; text-decoration: none;">
-                            <span th:text="${film.title} + ' (' + ${film.year} + ')'"/>
+                        <a th:href="'/user/getFilm?imdbId=' + ${film.key.imdbId}" style="color: #555555; text-decoration: none;">
+                            <span th:text="${film.key.title} + ' (' + ${film.key.year} + ')'"/>
                         </a>
                     </div>
                 </div>
                 <div class="row" style="padding-bottom: 12px">
                     <div class="col-xl-12">
-                        <td th:text="${#strings.capitalize(film.type)}"/>
+                        <td th:text="${#strings.capitalize(film.key.type)}"/>
                     </div>
                 </div>
 
                 <div class="row">
                     <div class="col-xl-12">
-                        <form action="/user/getFilm" method="get">
-                            <input type="hidden" name="imdbId" th:value="${film.imdbId}"/>
-                            <input type="submit" value="View Full Information" class="btn btn-peach"/>
+                        <form th:if="${film.value}" action="/user/unSubscribe" method="post">
+                            <input type="hidden" name="imdbId" th:value="${film.key.imdbId}"/>
+                            <input type="submit" value="Unsubscribe" class="btn btn-danger"/>
+                        </form>
+
+                        <form th:unless="${film.value}" action="/user/subscribe" method="post" style="padding-bottom: 15px">
+                            <input type="hidden" name="imdbId" th:value="${film.key.imdbId}"/>
+                            <input type="submit" value="Subscribe" class="btn btn-peach"/>
                         </form>
                     </div>
                 </div>

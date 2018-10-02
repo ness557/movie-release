@@ -1,9 +1,6 @@
 package com.ness.movie_release_web.controller;
 
-import com.ness.movie_release_web.model.Film;
-import com.ness.movie_release_web.model.OmdbFullWrapper;
-import com.ness.movie_release_web.model.OmdbSearchResultWrapper;
-import com.ness.movie_release_web.model.User;
+import com.ness.movie_release_web.model.*;
 import com.ness.movie_release_web.service.FilmOmdbService;
 import com.ness.movie_release_web.service.FilmService;
 import com.ness.movie_release_web.service.UserService;
@@ -20,6 +17,9 @@ import javax.servlet.http.HttpServletRequest;
 import java.security.Principal;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Map;
+
+import static java.util.stream.Collectors.toMap;
 
 @Controller
 @RequestMapping("/user")
@@ -99,21 +99,25 @@ public class FilmController {
     public String search(@RequestParam("query") String query,
                          @RequestParam(required = false, name = "year") Integer year,
                          @RequestParam(required = false, name = "page") Integer page,
+                         Principal principal,
                          Model model) {
 
-        OmdbSearchResultWrapper result;
+        User user = userService.findByLogin(principal.getName());
 
         // trim space at start
         query = StringUtils.trim(query);
 
-        result = filmOmdbService.search(query, year, page);
+        OmdbSearchResultWrapper result = filmOmdbService.search(query, year, page);
 
         //to save in session
         model.addAttribute("query", query);
         model.addAttribute("year", year);
 
-//        TODO: remove info button and add subscribe button
-        model.addAttribute("films", result.getFilms());
+        Map<OmdbWrapper, Boolean> filmsWithSubFlags = result.getFilms().stream()
+                .collect(toMap(f -> f, f -> filmService.isExistsByImdbIdAndUserId(f.getImdbId(), user.getId())));
+
+        model.addAttribute("films", filmsWithSubFlags);
+
         model.addAttribute("pageCount", (int) Math.ceil(result.getTotalResults() / 10.0));
         model.addAttribute("page", page);
 
