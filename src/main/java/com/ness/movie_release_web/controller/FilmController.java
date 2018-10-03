@@ -16,6 +16,7 @@ import org.springframework.web.server.ResponseStatusException;
 import javax.servlet.http.HttpServletRequest;
 import java.security.Principal;
 import java.time.LocalDateTime;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -114,7 +115,10 @@ public class FilmController {
         model.addAttribute("year", year);
 
         Map<OmdbWrapper, Boolean> filmsWithSubFlags = result.getFilms().stream()
-                .collect(toMap(f -> f, f -> filmService.isExistsByImdbIdAndUserId(f.getImdbId(), user.getId())));
+                .collect(toMap(f -> f,
+                               f -> filmService.isExistsByImdbIdAndUserId(f.getImdbId(), user.getId()),
+                               (f1, f2) -> f1,
+                               LinkedHashMap::new));
 
         model.addAttribute("films", filmsWithSubFlags);
 
