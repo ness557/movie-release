@@ -1,9 +1,9 @@
 spring:
   #heroku datasource
   datasource:
-    url: jdbc:postgresql://ec2-54-83-50-145.compute-1.amazonaws.com:5432/d44puuq4rdn72m?useSSL=false
-    username: vuebzpzvdfnpna
-    password: 4465743b9814c073597930ff8f66735bd70c2bd1dedb201bcce5cca3be5d069d
+    url: jdbc:postgresql://ec2-54-83-50-145.compute-1.amazonaws.com:5432/dkmmf1cu3r9hn?useSSL=false
+    username: nfmulsmwahrjqi
+    password: c0f675496823c1bac63ff059192cfba00acb2fae6bc4a4a31933443616e143e3
     driver-class-name: org.postgresql.Driver
 
   jpa:
