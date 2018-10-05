@@ -48,7 +48,7 @@
 
                         <form th:unless="${film.value}" action="/user/subscribe" method="post" style="padding-bottom: 15px">
                             <input type="hidden" name="imdbId" th:value="${film.key.imdbId}"/>
-                            <input type="submit" value="Subscribe" class="btn btn-peach"/>
+                            <input type="submit" value="Subscribe" class="btn btn-warning"/>
                         </form>
                     </div>
                 </div>

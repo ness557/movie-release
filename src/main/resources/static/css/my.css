@@ -60,48 +60,6 @@ body {
     border-radius: 6px
 }
 
-/* Peach button*/
-.btn-peach {
-    color: #ffffff;
-    background-color: #FFB18F;
-    border-color: #FFB18F;
-}
-
-.btn-peach:hover,
-.btn-peach:focus,
-.btn-peach:active,
-.btn-peach.active,
-.open .dropdown-toggle.btn-peach {
-    color: #ffffff;
-    background-color: #E39D7F;
-    border-color: #E39D7F;
-    box-shadow: none;
-}
-
-.btn-peach.disabled,
-.btn-peach[disabled],
-fieldset[disabled] .btn-peach,
-.btn-peach.disabled:hover,
-.btn-peach[disabled]:hover,
-fieldset[disabled] .btn-peach:hover,
-.btn-peach.disabled:focus,
-.btn-peach[disabled]:focus,
-fieldset[disabled] .btn-peach:focus,
-.btn-peach.disabled:active,
-.btn-peach[disabled]:active,
-fieldset[disabled] .btn-peach:active,
-.btn-peach.disabled.active,
-.btn-peach[disabled].active,
-fieldset[disabled] .btn-peach.active {
-    background-color: #FFB18F;
-    border-color: #FFB18F;
-}
-
-.btn-peach .badge {
-    color: #FFB18F;
-    background-color: #ffffff;
-}
-
 .site:focus {
     color: #7873C8;
 }
