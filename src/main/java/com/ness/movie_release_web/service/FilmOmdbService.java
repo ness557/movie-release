@@ -1,7 +1,7 @@
 package com.ness.movie_release_web.service;
 
-import com.ness.movie_release_web.model.OmdbFullWrapper;
-import com.ness.movie_release_web.model.OmdbSearchResultWrapper;
+import com.ness.movie_release_web.model.wrapper.OmdbFullWrapper;
+import com.ness.movie_release_web.model.wrapper.OmdbSearchResultWrapper;
 
 public interface FilmOmdbService {
 

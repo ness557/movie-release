@@ -1,6 +1,8 @@
 package com.ness.movie_release_web.model;
 
 import lombok.*;
+import org.springframework.lang.Nullable;
+
 import javax.persistence.*;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotEmpty;
@@ -41,4 +43,7 @@ public class User {
     @Column(name = "is_telegram_notify")
     private boolean isTelegramNotify;
 
+    @Column(name = "telegram_chat_id")
+    @Nullable
+    private Long telegramChatId;
 }

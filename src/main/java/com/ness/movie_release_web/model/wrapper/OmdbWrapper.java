@@ -1,7 +1,8 @@
-package com.ness.movie_release_web.model;
+package com.ness.movie_release_web.model.wrapper;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.ness.movie_release_web.model.Film;
 import com.ness.movie_release_web.util.OmdbLocalDateDeserializer;
 
 import lombok.*;

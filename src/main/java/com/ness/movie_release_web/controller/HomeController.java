@@ -5,6 +5,8 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 
+import java.security.Principal;
+
 @Controller
 public class HomeController {
 
@@ -17,7 +19,12 @@ public class HomeController {
     }
 
     @GetMapping("/home")
-    private String home(Model model){
+    private String home(Model model, Principal principal){
+
+        if (principal != null) {
+            return "redirect:/subscriptions";
+        }
+
         model.addAttribute("telegram", telegramBot);
         return "home";
     }

@@ -1,5 +1,6 @@
-package com.ness.movie_release_web.model;
+package com.ness.movie_release_web.model.wrapper;
 
+import com.ness.movie_release_web.model.User;
 import lombok.*;
 
 @Getter @Setter

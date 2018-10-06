@@ -2,6 +2,7 @@ package com.ness.movie_release_web.controller;
 
 import com.ness.movie_release_web.model.User;
 import com.ness.movie_release_web.service.UserService;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -63,6 +64,7 @@ public class SecurityController {
             return "register";
 
         user.setRole("ROLE_USER");
+        user.setTelegramId(StringUtils.lowerCase(user.getTelegramId()));
         service.save(user);
 
         return "home";

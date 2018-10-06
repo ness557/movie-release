@@ -1,6 +1,9 @@
 package com.ness.movie_release_web.controller;
 
 import com.ness.movie_release_web.model.*;
+import com.ness.movie_release_web.model.wrapper.OmdbFullWrapper;
+import com.ness.movie_release_web.model.wrapper.OmdbSearchResultWrapper;
+import com.ness.movie_release_web.model.wrapper.OmdbWrapper;
 import com.ness.movie_release_web.service.FilmOmdbService;
 import com.ness.movie_release_web.service.FilmService;
 import com.ness.movie_release_web.service.UserService;
@@ -139,6 +142,8 @@ public class FilmController {
         User user = userService.findByLogin(principal.getName());
         Page<Film> filmPage = filmService.getAllByUserWithPages(page, 10, user);
         List<Film> films = filmPage.getContent();
+
+        model.addAttribute("botInitialized", !user.isTelegramNotify() || user.getTelegramChatId() != null);
 
         model.addAttribute("films", films)
                 .addAttribute("page", page)

@@ -1,6 +1,6 @@
 package com.ness.movie_release_web.service;
 
-import com.ness.movie_release_web.model.UserWrapper;
+import com.ness.movie_release_web.model.wrapper.UserWrapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;

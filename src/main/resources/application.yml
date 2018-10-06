@@ -21,7 +21,7 @@ omdbapi:
   url: http://www.omdbapi.com/
 
 telegram:
-  bot: nessdebugbot
+  bot: movie_notify_bot
 
 logging:
   level:
