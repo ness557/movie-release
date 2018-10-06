@@ -1,9 +1,9 @@
 html * {
-    font-family: 'Open Sans', sans-serif !important;
+    font-family: 'Roboto', sans-serif !important;
 }
 
-body {
-    padding-bottom: 60px;
+html, body {
+    height: 100%
 }
 
 .bg-light-my {
