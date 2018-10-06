@@ -67,7 +67,7 @@ public class SecurityController {
         user.setTelegramId(StringUtils.lowerCase(user.getTelegramId()));
         service.save(user);
 
-        return "home";
+        return "redirect:/user/subscriptions";
     }
 
     @GetMapping("/userInfo")
