@@ -5,13 +5,18 @@
 <nav th:insert="embeded/navbar.html"></nav>
 <!--/*@thymesVar id="year" type="com.ness.movie_release_web.model.Film"*/-->
 
-<div th:if="${not botInitialized}" style="position: relative; background-color: #F6EAC3; width: 100%; height: 50px;">
+<div id="modal-notif" th:if="${not botInitialized}" style="position: relative; background-color: #F6EAC3; width: 100%; height: 50px;">
     <p style="font-size: 18px; font-weight: normal; padding: 12px 0 12px 65px; margin-bottom: 0; color: #A77C43; position:absolute;">
-        Please send any message to bot to receive notifications
+        Please send any message to
+        <a th:href="'tg://resolve?domain=' + ${@environment.getProperty('telegram.bot')}"
+           style="color: #A77C43;" onclick="document.getElementById('modal-notif').remove();">
+            bot
+        </a>
+        to receive notifications
     </p>
     <img th:src="@{/img/x.png}"
             style="position: absolute; right: 30px; bottom: 16px"
-            onclick="this.parentNode.parentNode.removeChild(this.parentNode);"/>
+            onclick="document.getElementById('modal-notif').remove();"/>
 </div>
 
 <div class="container-fluid">

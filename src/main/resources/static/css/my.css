@@ -7,7 +7,7 @@ html, body {
 }
 
 .bg-light-my {
-    background-color: #F3F3F3!important;
+    background-color: #F3F3F3 !important;
 }
 
 .error {
@@ -310,6 +310,11 @@ html, body {
     color: #92918E;
     font-weight: normal;
     font-size: 18px;
+}
+
+.footer-link:hover {
+    color: #A5A5A5;
+    text-decoration: none;
 }
 
 .footer-text {
