@@ -66,10 +66,13 @@ public class FilmOmdbServiceImpl implements FilmOmdbService {
                     new ParameterizedTypeReference<OmdbSearchResultWrapper>() {
                     });
 
-            return response.getBody();
+            OmdbSearchResultWrapper result = response.getBody();
+            logger.info("Got films: {}", result);
+
+            return result;
         } catch (RestClientException e) {
             e.printStackTrace();
-            logger.error("Could not search for film: " + e.getMessage());
+            logger.error("Could not search for film {}", e.getMessage());
             return new OmdbSearchResultWrapper();
         }
     }
@@ -85,18 +88,23 @@ public class FilmOmdbServiceImpl implements FilmOmdbService {
         StrSubstitutor sub = new StrSubstitutor(values);
         String request = sub.replace(templateRequest);
 
-        ResponseEntity<OmdbFullWrapper> response = restTemplate.exchange(
-                request,
-                HttpMethod.GET,
-                null,
-                new ParameterizedTypeReference<OmdbFullWrapper>() {
-                });
+        try {
+            ResponseEntity<OmdbFullWrapper> response = restTemplate.exchange(
+                    request,
+                    HttpMethod.GET,
+                    null,
+                    new ParameterizedTypeReference<OmdbFullWrapper>() {
+                    });
 
 
-        OmdbFullWrapper fullWrapper = response.getBody();
+            OmdbFullWrapper fullWrapper = response.getBody();
 
-        logger.debug("Got fullFilmInfo: " + fullWrapper);
+            logger.info("Got fullFilmInfo: {}", fullWrapper);
 
-        return fullWrapper;
+            return fullWrapper;
+        } catch (RestClientException e) {
+            logger.error("Could not get full film Info: {}", e.getMessage());
+            return new OmdbFullWrapper();
+        }
     }
 }
