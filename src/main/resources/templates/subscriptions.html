@@ -3,7 +3,7 @@
 <head th:insert="embeded/header.html"></head>
 <body>
 <nav th:insert="embeded/navbar.html"></nav>
-<!--/*@thymesVar id="year" type="com.ness.movie_release_web.model.Film"*/-->
+<!--/*@thymesVar id="year" type="com.ness.movie_release_web.model.wrapper.OmdbFullWrapper"*/-->
 
 <div id="modal-notif" th:if="${not botInitialized}" style="position: relative; background-color: #F6EAC3; width: 100%; height: 50px;">
     <p style="font-size: 18px; font-weight: normal; padding: 12px 0 12px 65px; margin-bottom: 0; color: #A77C43; position:absolute;">
@@ -56,8 +56,8 @@
                 <div class="row">
                     <div class="col-xl-12">
 
-                        <!-- TODO confirmation-->
-                        <form action="/user/unSubscribe" method="post">
+                        <form action="/user/unSubscribe" method="post"
+                              onsubmit="return confirm('Do you really want to unsubscribe?');">
                             <input type="hidden" name="imdbId" th:value="${film.imdbId}"/>
                             <input type="submit" value="Unsubscribe" class="btn btn-danger"/>
                         </form>
