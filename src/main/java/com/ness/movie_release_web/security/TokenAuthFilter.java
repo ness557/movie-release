@@ -36,11 +36,14 @@ public class TokenAuthFilter extends GenericFilterBean {
 
         final HttpServletRequest httpRequest = (HttpServletRequest) request;
 
-        if (httpRequest.getCookies() == null) {
-            return;
-        }
 
-        Optional<Cookie> authOpt = Arrays.stream(httpRequest.getCookies()).filter(e -> "authorization".equals(e.getName())).findFirst();
+
+        Cookie[] cookies = httpRequest.getCookies();
+
+        if(cookies == null)
+            cookies = new Cookie[0];
+
+        Optional<Cookie> authOpt = Arrays.stream(cookies).filter(e -> "authorization".equals(e.getName())).findFirst();
 
         if (authOpt.isPresent()) {
             Cookie auth = authOpt.get();
