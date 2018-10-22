@@ -6,16 +6,16 @@ import com.ness.movie_release_web.service.UserService;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
 
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletResponse;
@@ -53,21 +53,20 @@ public class SecurityController {
     }
 
     @PostMapping("/login")
-    public String postLogin(@RequestParam("username") String username,
-                            @RequestParam("password") String password,
-                            HttpServletResponse response){
+    public ResponseEntity postLogin(@RequestParam("username") String username,
+                                    @RequestParam("password") String password,
+                                    HttpServletResponse response){
 
         UserDetails userDetails = userDetailsService.loadUserByUsername(username);
 
-        // TODO errors as at register
         if (!passwordEncoder.matches(password, userDetails.getPassword())) {
-            return "errorLogin";
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN);
         }
 
         String token = tokenService.getToken(userDetails);
         response.addCookie(new Cookie("authorization", "bearer:" + token));
 
-        return "redirect:/home";
+        return ResponseEntity.ok("/user/subscriptions");
     }
 
     @PostMapping("/register")

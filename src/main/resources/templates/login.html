@@ -12,12 +12,19 @@
                     <span style="font-family: 'Roboto', sans-serif; font-weight: 100; font-size: 34px">LOG IN</span>
                 </div>
             </div>
-            <form action='login' method='post'>
+            <div class="row">
+                <div class="col" style="text-align: center; padding-bottom: 7px">
+                    <span id="errorSpan" class="error">
+                    </span>
+                </div>
+            </div>
+            <form id="loginForm" action='/login' method='post'>
                 <div class="row">
                     <div class="col">
                         <div class="form-group">
                             <div class="icon-addon addon-lg">
-                                <input type="text" placeholder="Login" name="username" class="form-control"
+                                <input type="text" placeholder="Login" id="username" name="username"
+                                       class="form-control"
                                        required>
                                 <img th:src="@{/img/user-dark.png}" class="glyphicon glyphicon-search">
                             </div>
@@ -28,7 +35,8 @@
                     <div class="col">
                         <div class="form-group">
                             <div class="icon-addon addon-lg">
-                                <input type="password" placeholder="Password" name="password" class="form-control"
+                                <input type="password" placeholder="Password" id="password" name="password"
+                                       class="form-control"
                                        required>
                                 <img th:src="@{/img/password-dark.png}" class="glyphicon glyphicon-search">
                             </div>
@@ -47,6 +55,34 @@
         </div>
     </div>
 </div>
+
+<script type='text/javascript'>
+    /* attach a submit handler to the form */
+    $("#loginForm").submit(function (event) {
+
+        $('#errorSpan').text('')
+
+        /* stop form from submitting normally */
+        event.preventDefault();
+
+        /* get the action attribute from the <form action=""> element */
+        var $form = $(this),
+            url = $form.attr('action');
+
+        /* Send the data using post with element id name and name2*/
+        var posting = $.post(url, {username: $('#username').val(), password: $('#password').val()});
+
+        /* Alerts the results */
+        posting.done(function (response) {
+            window.location.href = response;
+        });
+        posting.fail(
+            function (response) {
+                $('#errorSpan').text('Wrong login or password')
+            }
+        )
+    });
+</script>
 
 <footer th:insert="embeded/footer.html"></footer>
 </body>
