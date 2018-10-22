@@ -17,4 +17,12 @@
 
     <link href="../static/css/fonts/Roboto.css" th:href="@{/css/fonts/Roboto.css}" rel="stylesheet"/>
     <link href="../static/css/fonts/OpenSans.css" th:href="@{/css/fonts/OpenSans.css}" rel="stylesheet"/>
+
+    <script>
+        $(function(){
+            $('a, button').click(function() {
+                $(this).toggleClass('active');
+            });
+        });
+    </script>
 </head>
