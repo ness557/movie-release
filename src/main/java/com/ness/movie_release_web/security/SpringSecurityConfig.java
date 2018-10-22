@@ -6,6 +6,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -31,11 +32,16 @@ public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
                 .and()
                 .addFilterAfter(tokenAuthFilter, BasicAuthenticationFilter.class)
                 .authorizeRequests()
-                .antMatchers("/", "/home", "/register", "/img/**", "/css/**", "/js/**", "/**/favicon.ico", "/login", "/register").permitAll()
+                .antMatchers("/", "/home", "/register", "/login", "/register").permitAll()
                 .antMatchers("/user/**", "/userInfo").hasAnyRole("USER")
                 .anyRequest().anonymous()
                 .and()
                 .logout().logoutUrl("/logout").logoutSuccessUrl("/home").deleteCookies("authorization").permitAll();
+    }
+
+    @Override
+    public void configure(WebSecurity web) throws Exception {
+        web.ignoring().antMatchers("/img/**", "/css/**", "/js/**", "/favicon.ico");
     }
 
     @Bean

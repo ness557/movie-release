@@ -36,10 +36,7 @@ public class TokenAuthFilter extends GenericFilterBean {
 
         final HttpServletRequest httpRequest = (HttpServletRequest) request;
 
-
-
         Cookie[] cookies = httpRequest.getCookies();
-
         if(cookies == null)
             cookies = new Cookie[0];
 
