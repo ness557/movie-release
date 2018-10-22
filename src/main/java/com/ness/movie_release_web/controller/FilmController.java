@@ -24,6 +24,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
+import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toMap;
 
 @Controller
@@ -73,11 +74,6 @@ public class FilmController {
 
         Film film = new Film(null,
                 wrapper.getImdbId(),
-                wrapper.getTitle(),
-                wrapper.getPoster(),
-                wrapper.getType(),
-                wrapper.getReleased(),
-                wrapper.getDvd(),
                 LocalDateTime.now(),
                 user);
 
@@ -144,9 +140,11 @@ public class FilmController {
         Page<Film> filmPage = filmService.getAllByUserWithPages(page, 10, user);
         List<Film> films = filmPage.getContent();
 
+        List<OmdbFullWrapper> omdbFilms = films.stream().map(f -> filmOmdbService.getInfo(f.getImdbId())).collect(toList());
+
         model.addAttribute("botInitialized", !user.isTelegramNotify() || user.getTelegramChatId() != null);
 
-        model.addAttribute("films", films)
+        model.addAttribute("films", omdbFilms)
                 .addAttribute("page", page)
                 .addAttribute("pageCount", filmPage.getTotalPages());
 

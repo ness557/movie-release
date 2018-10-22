@@ -10,10 +10,7 @@ public interface FilmService {
     
     void save(Film film);
 
-    Film get(String title);
     Film get(Long id);
-
-
     void delete(Film film);
     void delete(Long id);
     void delete(List<Film> films);
@@ -23,7 +20,4 @@ public interface FilmService {
 
     List<Film> getByImdbIdAndUserId(String imdbId, Long userId);
     boolean isExistsByImdbIdAndUserId(String imdbId, Long userId);
-
-    void updateDB();
-
 }

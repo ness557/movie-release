@@ -14,7 +14,6 @@ import java.util.List;
 @Repository
 @Transactional
 public interface FilmRepository extends JpaRepository<Film, Long> {
-    Film findByTitle(String title);
     List<Film> findAllByImdbId(String imdbId);
     List<Film> findAllByImdbIdAndUserId(String imdbId, Long userId);
     boolean existsByImdbIdAndUserId(String imdbId, Long userId);

@@ -5,6 +5,8 @@ spring:
     username: nfmulsmwahrjqi
     password: c0f675496823c1bac63ff059192cfba00acb2fae6bc4a4a31933443616e143e3
     driver-class-name: org.postgresql.Driver
+    hikari:
+      maximum-pool-size: 5
 
   jpa:
     properties:

@@ -35,16 +35,6 @@ public class OmdbWrapper implements Serializable {
     @JsonDeserialize(using = OmdbLocalDateDeserializer.class)
     private LocalDate dvdDate;
 
-    public static OmdbWrapper wrap(Film film){
-        OmdbWrapper wrapper = new OmdbWrapper();
-        wrapper.setTitle(film.getTitle());
-        wrapper.setYear(String.valueOf(film.getReleaseDate().getYear()));
-        wrapper.setImdbId(film.getImdbId());
-        wrapper.setPosterUrl(film.getPosterUrl());
-        wrapper.setType(film.getType());
-        wrapper.setDvdDate(film.getDvdDate());
-        return wrapper;
-    }
 
     public String getDvdString(){
         if (dvdDate != null)
