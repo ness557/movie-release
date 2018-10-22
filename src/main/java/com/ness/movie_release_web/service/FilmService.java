@@ -24,4 +24,6 @@ public interface FilmService {
     List<Film> getByImdbIdAndUserId(String imdbId, Long userId);
     boolean isExistsByImdbIdAndUserId(String imdbId, Long userId);
 
+    void updateDB();
+
 }

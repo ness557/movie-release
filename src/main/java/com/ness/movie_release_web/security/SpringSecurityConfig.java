@@ -34,6 +34,7 @@ public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
                 .authorizeRequests()
                 .antMatchers("/", "/home", "/register", "/login", "/register").permitAll()
                 .antMatchers("/user/**", "/userInfo").hasAnyRole("USER")
+                .antMatchers("/user/update_db").hasAnyRole("ADMIN")
                 .anyRequest().anonymous()
                 .and()
                 .logout().logoutUrl("/logout").logoutSuccessUrl("/home").deleteCookies("authorization").permitAll();
