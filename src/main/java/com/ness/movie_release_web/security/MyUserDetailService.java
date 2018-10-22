@@ -1,6 +1,7 @@
-package com.ness.movie_release_web.service;
+package com.ness.movie_release_web.security;
 
 import com.ness.movie_release_web.model.wrapper.UserWrapper;
+import com.ness.movie_release_web.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -13,7 +14,7 @@ import org.springframework.stereotype.Service;
 import java.util.HashSet;
 import java.util.Set;
 
-@Service
+@Service("myUserDetailService")
 public class MyUserDetailService implements UserDetailsService {
 
     @Autowired
@@ -21,6 +22,10 @@ public class MyUserDetailService implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+
+        if (!service.isExists(username)) {
+            throw new UsernameNotFoundException("Not such user: " + username);
+        }
 
         UserWrapper user = UserWrapper.wrap(service.findByLogin(username));
 

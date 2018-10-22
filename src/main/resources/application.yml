@@ -30,3 +30,6 @@ logging:
 
 server:
   port: 8080
+
+my_jwt:
+  seed: uHwuPV3iUFVMeK5m7VVZDhmkywFZoN

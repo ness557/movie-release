@@ -1,17 +1,24 @@
 package com.ness.movie_release_web.controller;
 
 import com.ness.movie_release_web.model.User;
+import com.ness.movie_release_web.security.TokenService;
 import com.ness.movie_release_web.service.UserService;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
-import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 import java.security.Principal;
 import java.util.ArrayList;
@@ -22,6 +29,16 @@ public class SecurityController {
 
     @Autowired
     private UserService service;
+
+    @Autowired
+    @Qualifier("myUserDetailService")
+    private UserDetailsService userDetailsService;
+
+    @Autowired
+    private TokenService tokenService;
+
+    @Autowired
+    private PasswordEncoder passwordEncoder;
 
     @GetMapping("/login")
     public String login() {
@@ -35,9 +52,29 @@ public class SecurityController {
         return "register";
     }
 
+    @PostMapping("/login")
+    public String postLogin(@RequestParam("username") String username,
+                            @RequestParam("password") String password,
+                            HttpServletResponse response){
+
+        UserDetails userDetails = userDetailsService.loadUserByUsername(username);
+
+        // TODO errors as at register
+        if (!passwordEncoder.matches(password, userDetails.getPassword())) {
+            return "errorLogin";
+        }
+
+        String token = tokenService.getToken(userDetails);
+        response.addCookie(new Cookie("authorization", "bearer:" + token));
+
+        return "redirect:/home";
+    }
+
     @PostMapping("/register")
     public String register(@Valid @ModelAttribute User user,
-                           BindingResult bindingResult, Model model, HttpServletRequest request) {
+                           BindingResult bindingResult,
+                           Model model,
+                           HttpServletResponse response) {
 
         List<String> errors = new ArrayList<>();
 
@@ -66,6 +103,8 @@ public class SecurityController {
         user.setRole("ROLE_USER");
         user.setTelegramId(StringUtils.lowerCase(user.getTelegramId()));
         service.save(user);
+
+        postLogin(user.getLogin(), user.getEncPassword(), response);
 
         return "redirect:/user/subscriptions";
     }
