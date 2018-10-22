@@ -104,7 +104,7 @@ public class SecurityController {
         user.setTelegramId(StringUtils.lowerCase(user.getTelegramId()));
         service.save(user);
 
-        postLogin(user.getLogin(), user.getEncPassword(), response);
+        postLogin(user.getLogin(), user.getMatchPassword(), response);
 
         return "redirect:/user/subscriptions";
     }

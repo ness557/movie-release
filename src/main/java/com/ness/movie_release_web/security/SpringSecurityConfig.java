@@ -11,14 +11,10 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.web.access.AccessDeniedHandler;
 import org.springframework.security.web.authentication.www.BasicAuthenticationFilter;
 
 @Configuration
 public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
-
-    @Autowired
-    private AccessDeniedHandler accessDeniedHandler;
 
     @Autowired
     @Qualifier("myUserDetailService")
@@ -39,9 +35,7 @@ public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers("/user/**", "/userInfo").hasAnyRole("USER")
                 .anyRequest().anonymous()
                 .and()
-                .logout().logoutUrl("/logout").logoutSuccessUrl("/home").deleteCookies("authorization").permitAll()
-                .and()
-                .exceptionHandling().accessDeniedHandler(accessDeniedHandler);
+                .logout().logoutUrl("/logout").logoutSuccessUrl("/home").deleteCookies("authorization").permitAll();
     }
 
     @Bean
