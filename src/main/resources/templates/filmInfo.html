@@ -123,6 +123,15 @@
                 </div>
             </div>
 
+            <div th:if="${releases.isEmpty()}" class="row">
+                <div class="col-md-12">
+                    <div class="filmPropSpaces">
+                        Release Date:
+                        <th:block th:text='${film.releasedString}'/>
+                    </div>
+                </div>
+            </div>
+
             <th:block th:each="release: ${releases}">
                 <div class="row">
                     <div class="col-md-12">

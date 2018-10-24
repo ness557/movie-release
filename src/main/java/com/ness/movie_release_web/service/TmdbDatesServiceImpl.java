@@ -86,7 +86,13 @@ public class TmdbDatesServiceImpl implements TmdbDatesService {
             return emptyList();
         }
 
-        Integer tmdbId = response.getBody().getMovieResultList().get(0).getId();
+        Integer tmdbId = null;
+        try {
+            tmdbId = response.getBody().getMovieResultList().get(0).getId();
+        } catch (Exception e) {
+            logger.error("Could not get movie: {}", e.getMessage());
+            return emptyList();
+        }
 
         UriComponentsBuilder releasesBuilder = UriComponentsBuilder.fromHttpUrl(url + "movie/")
                 .path(tmdbId.toString()).path("/release_dates")
