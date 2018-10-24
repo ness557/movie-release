@@ -22,6 +22,10 @@ omdbapi:
   apikey: b1e85577
   url: http://www.omdbapi.com/
 
+tmdbapi:
+  url: http://api.themoviedb.org/3/
+  apikey: d6d669ef1d4e1efa83890eef2dda482f
+
 telegram:
   bot: movie_notify_bot
 

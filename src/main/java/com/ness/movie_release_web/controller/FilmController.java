@@ -7,6 +7,7 @@ import com.ness.movie_release_web.model.wrapper.OmdbSearchResultWrapper;
 import com.ness.movie_release_web.model.wrapper.OmdbWrapper;
 import com.ness.movie_release_web.service.FilmOmdbService;
 import com.ness.movie_release_web.service.FilmService;
+import com.ness.movie_release_web.service.TmdbDatesService;
 import com.ness.movie_release_web.service.UserService;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -41,6 +42,9 @@ public class FilmController {
     @Autowired
     private UserService userService;
 
+    @Autowired
+    private TmdbDatesService tmdbDatesService;
+
     @GetMapping("/getFilm")
     public String getFilm(@RequestParam("imdbId") String imdbId,
                           Principal principal,
@@ -52,6 +56,7 @@ public class FilmController {
             model.addAttribute("subscribed", true);
         }
         model.addAttribute("film", filmOmdbService.getInfo(imdbId));
+        model.addAttribute("releases", tmdbDatesService.getReleaseDates(imdbId));
         return "filmInfo";
     }
 
