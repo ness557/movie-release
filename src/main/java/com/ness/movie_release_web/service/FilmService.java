@@ -18,6 +18,6 @@ public interface FilmService {
     List<Film> getAll();
     Page<Film> getAllByUserWithPages(Integer page, Integer size, User user);
 
-    List<Film> getByImdbIdAndUserId(String imdbId, Long userId);
-    boolean isExistsByImdbIdAndUserId(String imdbId, Long userId);
+    List<Film> getByTmdbIdAndUserId(Integer tmdbId, Long userId);
+    boolean isExistsByTmdbIdAndUserId(Integer tmdbId, Long userId);
 }

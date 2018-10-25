@@ -1,7 +1,6 @@
 package com.ness.movie_release_web.controller;
 
 import com.ness.movie_release_web.model.User;
-import com.ness.movie_release_web.model.wrapper.tmdb.Language;
 import com.ness.movie_release_web.security.TokenService;
 import com.ness.movie_release_web.service.UserService;
 import org.apache.commons.lang3.StringUtils;
@@ -15,7 +14,10 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.server.ResponseStatusException;
 
 import javax.servlet.http.Cookie;
@@ -26,7 +28,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Controller
-@SessionAttributes(names = {"language"}, types = {Language.class})
 public class SecurityController {
 
     @Autowired

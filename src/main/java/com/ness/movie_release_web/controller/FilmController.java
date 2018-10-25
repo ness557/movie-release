@@ -2,13 +2,14 @@ package com.ness.movie_release_web.controller;
 
 import com.ness.movie_release_web.model.Film;
 import com.ness.movie_release_web.model.User;
-import com.ness.movie_release_web.model.wrapper.OmdbFullWrapper;
-import com.ness.movie_release_web.model.wrapper.OmdbSearchResultWrapper;
-import com.ness.movie_release_web.model.wrapper.OmdbWrapper;
 import com.ness.movie_release_web.model.wrapper.tmdb.Language;
+import com.ness.movie_release_web.model.wrapper.tmdb.movie.details.MovieDetails;
+import com.ness.movie_release_web.model.wrapper.tmdb.movie.search.Movie;
+import com.ness.movie_release_web.model.wrapper.tmdb.movie.search.MovieSearch;
 import com.ness.movie_release_web.service.FilmOmdbService;
 import com.ness.movie_release_web.service.FilmService;
 import com.ness.movie_release_web.service.UserService;
+import com.ness.movie_release_web.service.tmdb.MovieServiceImpl;
 import com.ness.movie_release_web.service.tmdb.TmdbDatesService;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,6 +27,7 @@ import java.time.LocalDateTime;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toMap;
@@ -39,6 +41,9 @@ public class FilmController {
     private FilmOmdbService filmOmdbService;
 
     @Autowired
+    private MovieServiceImpl movieService;
+
+    @Autowired
     private FilmService filmService;
 
     @Autowired
@@ -48,7 +53,7 @@ public class FilmController {
     private TmdbDatesService tmdbDatesService;
 
     @GetMapping("/getFilm")
-    public String getFilm(@RequestParam("imdbId") String imdbId,
+    public String getFilm(@RequestParam("tmdbId") Integer tmdbId,
                           Principal principal,
                           Model model) {
 
@@ -56,16 +61,18 @@ public class FilmController {
         Language language = user.getLanguage();
         model.addAttribute("language", language);
 
-        if (filmService.isExistsByImdbIdAndUserId(imdbId, user.getId())) {
+        if (filmService.isExistsByTmdbIdAndUserId(tmdbId, user.getId())) {
             model.addAttribute("subscribed", true);
         }
-        model.addAttribute("film", filmOmdbService.getInfo(imdbId));
-        model.addAttribute("releases", tmdbDatesService.getReleaseDates(imdbId));
+
+        // TODO rewrite ui
+        model.addAttribute("film", movieService.getMovieDetails(tmdbId, language));
+        model.addAttribute("releases", tmdbDatesService.getReleaseDates(tmdbId));
         return "filmInfo";
     }
 
     @PostMapping("/subscribe")
-    public String subscribe(@RequestParam(value = "imdbId") String imdbId,
+    public ResponseEntity subscribe(@RequestParam(value = "tmdbId") Integer tmdbId,
                             Principal principal,
                             HttpServletRequest request) {
 
@@ -73,25 +80,27 @@ public class FilmController {
 
         User user = userService.findByLogin(login);
 
-        if (filmService.isExistsByImdbIdAndUserId(imdbId, user.getId()))
+        if (filmService.isExistsByTmdbIdAndUserId(tmdbId, user.getId()))
             throw new ResponseStatusException(HttpStatus.CONFLICT);
 
-        OmdbFullWrapper wrapper = filmOmdbService.getInfo(imdbId);
+        Optional<MovieDetails> optionalMovieDetails = movieService.getMovieDetails(tmdbId, Language.en);
 
-        if (wrapper == null)
+        if (!optionalMovieDetails.isPresent())
             throw new ResponseStatusException(HttpStatus.CONFLICT);
+
+        MovieDetails movieDetails = optionalMovieDetails.get();
 
         Film film = new Film(null,
-                wrapper.getImdbId(),
+                movieDetails.getId(),
                 LocalDateTime.now(),
                 user);
 
         filmService.save(film);
-        return "redirect:" + request.getHeader("referer");
+        return ResponseEntity.ok().build();
     }
 
     @PostMapping("/unSubscribe")
-    public String unSubscribe(@RequestParam(value = "imdbId") String imdbId,
+    public ResponseEntity unSubscribe(@RequestParam(value = "tmdbId") Integer tmdbId,
                               Principal principal,
                               HttpServletRequest request) {
 
@@ -99,9 +108,9 @@ public class FilmController {
 
         User user = userService.findByLogin(login);
 
-        filmService.getByImdbIdAndUserId(imdbId, user.getId()).forEach(filmService::delete);
+        filmService.getByTmdbIdAndUserId(tmdbId, user.getId()).forEach(filmService::delete);
 
-        return "redirect:" + request.getHeader("referer");
+        return ResponseEntity.ok().build();
     }
 
     @GetMapping("/search")
@@ -113,28 +122,32 @@ public class FilmController {
 
         User user = userService.findByLogin(principal.getName());
         Language language = user.getLanguage();
-        model.addAttribute("language", language);
 
         // trim space at start
         query = StringUtils.trim(query);
 
-        OmdbSearchResultWrapper result = filmOmdbService.search(query, year, page);
-
-        //to save in session
+        //save in session
         model.addAttribute("query", query);
         model.addAttribute("year", year);
+        model.addAttribute("language", language);
 
-        Map<OmdbWrapper, Boolean> filmsWithSubFlags = result.getFilms().stream()
+        Optional<MovieSearch> optionalMovieSearch = movieService.searchForMovies(query, page, year, language);
+
+        if (!optionalMovieSearch.isPresent()) {
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+
+        MovieSearch movieSearch = optionalMovieSearch.get();
+
+        Map<Movie, Boolean> filmsWithSubFlags = movieSearch.getResults().stream()
                 .collect(toMap(f -> f,
-                               f -> filmService.isExistsByImdbIdAndUserId(f.getImdbId(), user.getId()),
+                               f -> filmService.isExistsByTmdbIdAndUserId(f.getId(), user.getId()),
                                (f1, f2) -> f1,
                                LinkedHashMap::new));
-
         model.addAttribute("films", filmsWithSubFlags);
 
-        model.addAttribute("pageCount", (int) Math.ceil(result.getTotalResults() / 10.0));
+        model.addAttribute("pageCount", movieSearch.getTotalPages());
         model.addAttribute("page", page);
-
         return "searchResult";
     }
 
@@ -148,19 +161,25 @@ public class FilmController {
 
         User user = userService.findByLogin(principal.getName());
         Language language = user.getLanguage();
+
+        //save in session
         model.addAttribute("language", language);
 
-        Page<Film> filmPage = filmService.getAllByUserWithPages(page, 10, user);
+        Page<Film> filmPage = filmService.getAllByUserWithPages(page, 20, user);
         List<Film> films = filmPage.getContent();
 
-        List<OmdbFullWrapper> omdbFilms = films.stream().map(f -> filmOmdbService.getInfo(f.getImdbId())).collect(toList());
+        List<MovieDetails> tmdbFilms =
+                films.stream()
+                      .map(f -> movieService.getMovieDetails(f.getTmdbId(), language))
+                      .filter(Optional::isPresent)
+                      .map(Optional::get)
+                      .collect(toList());
 
         model.addAttribute("botInitialized", !user.isTelegramNotify() || user.getTelegramChatId() != null);
 
-        model.addAttribute("films", omdbFilms)
+        model.addAttribute("films", tmdbFilms)
                 .addAttribute("page", page)
                 .addAttribute("pageCount", filmPage.getTotalPages());
-
         return "subscriptions";
     }
 

@@ -26,7 +26,7 @@
             <th:block th:if="${iStat.index % 5 == 0}">
                 <div class="offset-xl-1"></div>
             </th:block>
-            <th:block th:if="${iStat.index == 5}">
+            <th:block th:if="${iStat.index > 0 && iStat.index % 5 == 0}">
                 <div class="offset-xl-1"></div>
             </th:block>
 
@@ -34,31 +34,25 @@
                  style="text-align: center; font-weight: bold; padding-bottom: 40px; padding-top: 40px;">
                 <div class="row" style="padding-bottom: 6px; height: 320px">
                     <div class="col-xl-12">
-                        <a th:href="'/user/getFilm?imdbId=' + ${film.imdbId}">
-                            <img class="rounded" th:src="${film.poster}" style="height: 300px; max-width: 260px">
+                        <a th:href="'/user/getFilm?tmdbId=' + ${film.id}">
+                            <img class="rounded" th:src="${film.posterPath}" style="height: 300px; max-width: 260px">
                         </a>
                     </div>
                 </div>
-                <div class="row" style="min-height: 50px;">
+                <div class="row" style="min-height: 50px;padding-bottom: 12px">
                     <div class="col-xl-12">
-                        <a th:href="'/user/getFilm?imdbId=' + ${film.imdbId}"
+                        <a th:href="'/user/getFilm?tmdbId=' + ${film.id}"
                            style="color: #555555; text-decoration: none;">
-                            <span th:text="${film.title} + ' (' + ${film.released.getYear()} + ')'"/>
+                            <span th:text="${film.title} + ' (' + ${film.releaseDate.getYear()} + ')'"/>
                         </a>
-                    </div>
-                </div>
-                <div class="row" style="padding-bottom: 12px">
-                    <div class="col-xl-12">
-                        <td th:text="${#strings.capitalize(film.type)}"/>
                     </div>
                 </div>
 
                 <div class="row">
                     <div class="col-xl-12">
 
-                        <form action="/user/unSubscribe" method="post"
-                              onsubmit="return confirm('Do you really want to unsubscribe?');">
-                            <input type="hidden" name="imdbId" th:value="${film.imdbId}"/>
+                        <form action="/user/unSubscribe" method="post" class="unSubsForm">
+                            <input type="hidden" name="tmdbId" th:value="${film.id}"/>
                             <input type="submit" value="Unsubscribe" class="btn btn-danger"/>
                         </form>
                     </div>
@@ -177,5 +171,63 @@
 </th:block>
 
 <footer th:insert="embeded/footer.html"></footer>
+
+<script>
+    // function unsubscribe() {
+    //
+    //     confirm('Do you really want to unsubscribe?');
+    //
+    //     var form = $(this);
+    //     var tmdbId = form.find('input').val();
+    //
+    //     $.post('/user/unSubscribe', form.serialize());
+    //
+    //     var par = form.parent().parent().parent().html("");
+    //
+    //     return false;
+    //
+    // }
+
+    function unsubscribe(event) {
+
+        var form = $(this);
+        var tmdbId = form.find('input').val();
+
+        $.post('/user/unSubscribe', form.serialize());
+
+        var par = form.parent();
+        par.html(
+            '<form class="subsForm" action="/user/subscribe" method="post" class="subsForm">' +
+            '    <input type="hidden" name="tmdbId" value="' + tmdbId + '"/>' +
+            '    <input type="submit" value="Subscribe" class="btn btn-warning"/>' +
+            '</form>'
+        );
+        var newForm = par.find(".subsForm");
+        newForm.on('submit', subscribe);
+        return false;
+
+    }
+
+    function subscribe(event) {
+
+        var form = $(this);
+        var tmdbId = form.find('input').val();
+
+        $.post('/user/subscribe', $(this).serialize());
+
+        var par = form.parent();
+        par.html(
+            '<form class="unSubsForm" action="/user/unSubscribe" method="post" class="unSubsForm">' +
+            '    <input type="hidden" name="tmdbId" value="' + tmdbId + '"/>' +
+            '    <input type="submit" value="Unsubscribe" class="btn btn-danger"/>' +
+            '</form>'
+        );
+        var newForm = par.find(".unSubsForm");
+        newForm.on('submit', unsubscribe);
+        return false;
+    }
+
+    $(".unSubsForm").submit(unsubscribe);
+</script>
 </body>
 </html>

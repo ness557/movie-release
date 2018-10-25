@@ -8,9 +8,11 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
+import javax.transaction.Transactional;
 import java.util.List;
 
 @Service
+@Transactional
 public class FilmServiceImpl implements FilmService {
 
 //    private Logger logger = LoggerFactory.getLogger(this.getClass());
@@ -55,12 +57,12 @@ public class FilmServiceImpl implements FilmService {
     }
 
     @Override
-    public List<Film> getByImdbIdAndUserId(String imdbId, Long userId) {
-        return repository.findAllByImdbIdAndUserId(imdbId, userId);
+    public List<Film> getByTmdbIdAndUserId(Integer tmdbId, Long userId) {
+        return repository.findAllByTmdbIdAndUserId(tmdbId, userId);
     }
 
     @Override
-    public boolean isExistsByImdbIdAndUserId(String imdbId, Long userId) {
-        return repository.existsByImdbIdAndUserId(imdbId, userId);
+    public boolean isExistsByTmdbIdAndUserId(Integer tmdbId, Long userId) {
+        return repository.existsByTmdbIdAndUserId(tmdbId, userId);
     }
 }
