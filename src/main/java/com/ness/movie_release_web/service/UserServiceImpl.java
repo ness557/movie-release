@@ -17,8 +17,11 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public void save(User user) {
-        if (user.getId() == null)
-            user.setEncPassword(passwordEncoder.encode(user.getEncPassword()));
+        repository.save(user);
+    }
+
+    public void saveWithPassEncryption(User user){
+        user.setEncPassword(passwordEncoder.encode(user.getEncPassword()));
         repository.save(user);
     }
 
