@@ -55,7 +55,7 @@ public class SecurityController {
     @PostMapping("/login")
     public ResponseEntity postLogin(@RequestParam("username") String username,
                                     @RequestParam("password") String password,
-                                    HttpServletResponse response){
+                                    HttpServletResponse response) {
 
         UserDetails userDetails = userDetailsService.loadUserByUsername(username);
 
@@ -77,31 +77,31 @@ public class SecurityController {
 
         List<String> errors = new ArrayList<>();
 
-        if(!user.getEncPassword().equals(user.getMatchPassword()))
+        if (!user.getEncPassword().equals(user.getMatchPassword()))
             errors.add("Passwords does not match");
 
-        if(user.getEmail().isEmpty() && !user.isTelegramNotify())
+        if (user.getEmail().isEmpty() && !user.isTelegramNotify())
             errors.add("Email address is empty");
 
-        if(user.getTelegramId().isEmpty() && user.isTelegramNotify())
+        if (user.getTelegramId().isEmpty() && user.isTelegramNotify())
             errors.add("Telegram id is empty");
 
         if (user.getId() == null)
-            if(service.isExists(user.getLogin()))
+            if (service.isExists(user.getLogin()))
                 errors.add("Such user already exists");
 
 
-        if(!errors.isEmpty()){
+        if (!errors.isEmpty()) {
             model.addAttribute("errors", errors);
             return "register";
         }
 
-        if(bindingResult.hasErrors())
+        if (bindingResult.hasErrors())
             return "register";
 
         user.setRole("ROLE_USER");
         user.setTelegramId(StringUtils.lowerCase(user.getTelegramId()));
-        service.save(user);
+        service.saveWithPassEncryption(user);
 
         postLogin(user.getLogin(), user.getMatchPassword(), response);
 
@@ -109,7 +109,7 @@ public class SecurityController {
     }
 
     @GetMapping("/userInfo")
-    public String userInfo(Model model, Principal principal){
+    public String userInfo(Model model, Principal principal) {
 
         model.addAttribute(service.findByLogin(principal.getName()));
         return "register";

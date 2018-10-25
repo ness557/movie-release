@@ -5,6 +5,7 @@ import com.ness.movie_release_web.model.User;
 public interface UserService {
 
     void save(User user);
+    void saveWithPassEncryption(User user);
     User get(Long id);
     void delete(User user);
     void delete(Long id);
