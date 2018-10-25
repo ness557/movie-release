@@ -5,14 +5,16 @@ import com.ness.movie_release_web.model.User;
 import com.ness.movie_release_web.model.wrapper.OmdbFullWrapper;
 import com.ness.movie_release_web.model.wrapper.OmdbSearchResultWrapper;
 import com.ness.movie_release_web.model.wrapper.OmdbWrapper;
+import com.ness.movie_release_web.model.wrapper.tmdb.Language;
 import com.ness.movie_release_web.service.FilmOmdbService;
 import com.ness.movie_release_web.service.FilmService;
-import com.ness.movie_release_web.service.tmdb.TmdbDatesService;
 import com.ness.movie_release_web.service.UserService;
+import com.ness.movie_release_web.service.tmdb.TmdbDatesService;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -30,7 +32,7 @@ import static java.util.stream.Collectors.toMap;
 
 @Controller
 @RequestMapping("/user")
-@SessionAttributes(names = {"query", "year"}, types = {String.class, Integer.class})
+@SessionAttributes(names = {"query", "year", "language"}, types = {String.class, Integer.class, Language.class})
 public class FilmController {
 
     @Autowired
@@ -51,6 +53,8 @@ public class FilmController {
                           Model model) {
 
         User user = userService.findByLogin(principal.getName());
+        Language language = user.getLanguage();
+        model.addAttribute("language", language);
 
         if (filmService.isExistsByImdbIdAndUserId(imdbId, user.getId())) {
             model.addAttribute("subscribed", true);
@@ -83,7 +87,6 @@ public class FilmController {
                 user);
 
         filmService.save(film);
-
         return "redirect:" + request.getHeader("referer");
     }
 
@@ -109,6 +112,8 @@ public class FilmController {
                          Model model) {
 
         User user = userService.findByLogin(principal.getName());
+        Language language = user.getLanguage();
+        model.addAttribute("language", language);
 
         // trim space at start
         query = StringUtils.trim(query);
@@ -142,6 +147,9 @@ public class FilmController {
             page = 0;
 
         User user = userService.findByLogin(principal.getName());
+        Language language = user.getLanguage();
+        model.addAttribute("language", language);
+
         Page<Film> filmPage = filmService.getAllByUserWithPages(page, 10, user);
         List<Film> films = filmPage.getContent();
 
@@ -154,5 +162,16 @@ public class FilmController {
                 .addAttribute("pageCount", filmPage.getTotalPages());
 
         return "subscriptions";
+    }
+
+    @PostMapping("/setLanguage")
+    public ResponseEntity setLanguage(@RequestParam(value = "language") Language language, Principal principal, Model model){
+        User user = userService.findByLogin(principal.getName());
+        user.setLanguage(language);
+        userService.save(user);
+
+        model.addAttribute("language",language);
+
+        return ResponseEntity.ok().build();
     }
 }

@@ -1,6 +1,7 @@
 package com.ness.movie_release_web.controller;
 
 import com.ness.movie_release_web.model.User;
+import com.ness.movie_release_web.model.wrapper.tmdb.Language;
 import com.ness.movie_release_web.security.TokenService;
 import com.ness.movie_release_web.service.UserService;
 import org.apache.commons.lang3.StringUtils;
@@ -25,6 +26,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Controller
+@SessionAttributes(names = {"language"}, types = {Language.class})
 public class SecurityController {
 
     @Autowired
@@ -90,7 +92,6 @@ public class SecurityController {
             if (service.isExists(user.getLogin()))
                 errors.add("Such user already exists");
 
-
         if (!errors.isEmpty()) {
             model.addAttribute("errors", errors);
             return "register";
@@ -111,7 +112,9 @@ public class SecurityController {
     @GetMapping("/userInfo")
     public String userInfo(Model model, Principal principal) {
 
-        model.addAttribute(service.findByLogin(principal.getName()));
+        User user = service.findByLogin(principal.getName());
+        model.addAttribute("language", user.getLanguage());
+        model.addAttribute(user);
         return "register";
     }
 }

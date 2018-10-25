@@ -1,5 +1,6 @@
 package com.ness.movie_release_web.model;
 
+import com.ness.movie_release_web.model.wrapper.tmdb.Language;
 import lombok.*;
 import org.springframework.lang.Nullable;
 
@@ -46,4 +47,8 @@ public class User {
     @Column(name = "telegram_chat_id")
     @Nullable
     private Long telegramChatId;
+
+    @Enumerated
+    @Column(name = "language")
+    private Language language;
 }
