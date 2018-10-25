@@ -7,7 +7,7 @@ import com.ness.movie_release_web.model.wrapper.OmdbSearchResultWrapper;
 import com.ness.movie_release_web.model.wrapper.OmdbWrapper;
 import com.ness.movie_release_web.service.FilmOmdbService;
 import com.ness.movie_release_web.service.FilmService;
-import com.ness.movie_release_web.service.TmdbDatesService;
+import com.ness.movie_release_web.service.tmdb.TmdbDatesService;
 import com.ness.movie_release_web.service.UserService;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;

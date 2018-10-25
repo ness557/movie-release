@@ -1,8 +1,8 @@
-package com.ness.movie_release_web.model.wrapper.tmdbReleaseDates;
+package com.ness.movie_release_web.model.wrapper.tmdb.releaseDates;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
-import com.ness.movie_release_web.util.TmdbLocalDateDeserializer;
+import com.ness.movie_release_web.util.tmdb.TmdbReleaseDateDateDeserializer;
 import lombok.*;
 
 import java.time.LocalDate;
@@ -16,7 +16,7 @@ import java.util.Objects;
 public class ReleaseDate implements Comparable {
 
     @JsonProperty("release_date")
-    @JsonDeserialize(using = TmdbLocalDateDeserializer.class)
+    @JsonDeserialize(using = TmdbReleaseDateDateDeserializer.class)
     private LocalDate releaseDate;
 
     @JsonProperty("type")

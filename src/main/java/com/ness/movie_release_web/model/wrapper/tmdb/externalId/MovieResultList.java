@@ -1,4 +1,4 @@
-package com.ness.movie_release_web.model.wrapper.tmdbReleaseDates;
+package com.ness.movie_release_web.model.wrapper.tmdb.externalId;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.*;

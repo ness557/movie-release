@@ -1,4 +1,4 @@
-package com.ness.movie_release_web.util;
+package com.ness.movie_release_web.util.tmdb;
 
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -10,13 +10,13 @@ import java.io.IOException;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 
-public class TmdbLocalDateDeserializer extends StdDeserializer<LocalDate> {
+public class TmdbMovieReleaseDateDeserializer extends StdDeserializer<LocalDate> {
 
-    public TmdbLocalDateDeserializer() {
+    public TmdbMovieReleaseDateDeserializer() {
         this(null);
     }
 
-    protected TmdbLocalDateDeserializer(Class<?> vc) {
+    protected TmdbMovieReleaseDateDeserializer(Class<?> vc) {
         super(vc);
     }
 
@@ -27,7 +27,7 @@ public class TmdbLocalDateDeserializer extends StdDeserializer<LocalDate> {
         JsonNode node = jp.getCodec().readTree(jp);
         String value = node.textValue();
 
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
 
         try {
             return LocalDate.parse(value, formatter);
