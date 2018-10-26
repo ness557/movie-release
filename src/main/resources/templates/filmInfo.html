@@ -87,7 +87,7 @@
                         Genres:
                         <!--<th:block th:text="${film.genres}"/>-->
                         <th:block th:each="genre: ${film.genres}">
-                            <span th:text="${genre.name}"></span>
+                            <a th:text="${genre.name}" th:href="${'/user/byGenres?genre=' + genre.id + '&page=1'}"></a>
                         </th:block>
                     </div>
                 </div>
