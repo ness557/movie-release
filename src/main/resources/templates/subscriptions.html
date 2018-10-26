@@ -50,24 +50,6 @@
                             </a>
                         </div>
                     </div>
-            <div class="col-xs-6 col-sm-5 col-md-4 col-lg-3 col-xl-2"
-                 style="text-align: center; font-weight: bold; padding-bottom: 40px; padding-top: 40px;">
-                <div class="row" style="padding-bottom: 6px; height: 320px">
-                    <div class="col-xl-12">
-                        <a th:href="'/user/getFilm?tmdbId=' + ${film.id}">
-                            <img class="rounded" th:src="${film.posterPath}" style="height: 300px; max-width: 260px">
-                        </a>
-                    </div>
-                </div>
-                <div class="row" style="min-height: 50px;padding-bottom: 12px">
-                    <div class="col-xl-12">
-                        <a th:href="'/user/getFilm?tmdbId=' + ${film.id}"
-                           style="color: #555555; text-decoration: none;">
-                            <span style="height: 70px" th:text="${film.title} + ' (' + ${film.releaseDate.getYear()} + ')'"/>
-                        </a>
-                    </div>
-                </div>
-
                     <div class="row">
                         <div class="col-xl-12">
 
