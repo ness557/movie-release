@@ -8,7 +8,8 @@
     <div class="row">
         <div class="col-10 col-sm-6 col-md-5 col-lg-4 col-xl-3" style="text-align: right">
             <div style="text-align: center; display: inline-block;">
-                <img th:src="${film.posterPath}" style="height: 400px; max-width: 300px" class="rounded">
+                <img th:src="${film.posterPath}" style="height: 400px; max-width: 300px" class="rounded"
+                     th:onerror="'this.src=\'' + @{/img/no-image.png} + '\'; this.onerror=null'">
 
                 <p style="margin-bottom: 12px; margin-top: 16px;"> User Score:
                     <b th:if="${film.voteAverage > 6}"
@@ -87,7 +88,7 @@
                         Genres:
                         <!--<th:block th:text="${film.genres}"/>-->
                         <th:block th:each="genre: ${film.genres}">
-                            <span th:text="${genre.name}"></span>
+                            <a th:text="${genre.name}" th:href="${'/user/byGenres?genre=' + genre.id + '&page=1'}"></a>
                         </th:block>
                     </div>
                 </div>
