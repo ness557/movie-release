@@ -25,15 +25,19 @@
                        th:text="${film.voteAverage}"/>
                 </p>
 
-                <form th:if="${subscribed}" action="/user/unSubscribe" method="post">
-                    <input type="hidden" name="tmdbId" th:value="${film.id}"/>
-                    <input type="submit" value="Unsubscribe" class="btn btn-danger"/>
-                </form>
+                <div>
+                    <form th:if="${subscribed}" action="/user/unSubscribe" method="post" class="subsForm">
+                        <input type="hidden" name="tmdbId" th:value="${film.id}"/>
+                        <input type="submit" value="Unsubscribe" class="btn btn-danger"/>
+                    </form>
+                </div>
 
-                <form th:unless="${subscribed}" action="/user/subscribe" method="post" style="padding-bottom: 15px">
-                    <input type="hidden" name="tmdbId" th:value="${film.id}"/>
-                    <input type="submit" value="Subscribe" class="btn btn-warning"/>
-                </form>
+                <div>
+                    <form th:unless="${subscribed}" action="/user/subscribe" method="post" class="unSubsForm">
+                        <input type="hidden" name="tmdbId" th:value="${film.id}"/>
+                        <input type="submit" value="Subscribe" class="btn btn-warning"/>
+                    </form>
+                </div>
             </div>
         </div>
 
@@ -52,13 +56,14 @@
                     </div>
                 </div>
 
-                <div class="col-auto col-sm-auto col-md-auto col-lg-auto col-xl-auto" >
+                <div class="col-auto col-sm-auto col-md-auto col-lg-auto col-xl-auto">
                     <div class="plate">
                         <p class="plate-text" th:text="${#strings.capitalize(film.originalLanguage)}"/>
                     </div>
                 </div>
 
-                <div class="col-auto col-sm-auto col-md-auto col-lg-auto col-xl-auto" style="text-align: center; max-width: 100px">
+                <div class="col-auto col-sm-auto col-md-auto col-lg-auto col-xl-auto"
+                     style="text-align: center; max-width: 100px">
                     <img style="width: 16px; margin-right: 3px" th:src="@{/img/clock.png}"/>
                     <span class="plate-text" th:text="${film.runtime +' min'}"/>
                 </div>
@@ -137,7 +142,8 @@
                 <div class="col-md-12">
                     <div class="filmPropSpaces">
                         Revenue:
-                        <th:block th:text="${'$' + #numbers.formatDecimal(film.revenue, 0, 'COMMA', 2, 'POINT')}"/>$
+                        <th:block th:text="${'$' + #numbers.formatDecimal(film.revenue, 0, 'COMMA', 2, 'POINT')}"/>
+                        $
                     </div>
                 </div>
             </div>
@@ -155,5 +161,10 @@
 </div>
 
 <footer th:insert="embeded/footer.html"></footer>
+
+<script>
+    $(".subsForm").submit(subscribe);
+    $(".unSubsForm").submit(unsubscribe);
+</script>
 </body>
 </html>
