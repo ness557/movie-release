@@ -4,10 +4,12 @@ import com.ness.movie_release_web.model.Film;
 import com.ness.movie_release_web.model.User;
 import com.ness.movie_release_web.model.wrapper.tmdb.Language;
 import com.ness.movie_release_web.model.wrapper.tmdb.movie.details.MovieDetails;
+import com.ness.movie_release_web.model.wrapper.tmdb.movie.discover.SortBy;
 import com.ness.movie_release_web.model.wrapper.tmdb.movie.search.Movie;
 import com.ness.movie_release_web.model.wrapper.tmdb.movie.search.MovieSearch;
 import com.ness.movie_release_web.service.FilmService;
 import com.ness.movie_release_web.service.UserService;
+import com.ness.movie_release_web.service.tmdb.DiscoverService;
 import com.ness.movie_release_web.service.tmdb.MovieServiceImpl;
 import com.ness.movie_release_web.service.tmdb.TmdbDatesService;
 import org.apache.commons.lang3.StringUtils;
@@ -47,6 +49,9 @@ public class FilmController {
 
     @Autowired
     private TmdbDatesService tmdbDatesService;
+
+    @Autowired
+    private DiscoverService discoverService;
 
     @GetMapping("/getFilm")
     public String getFilm(@RequestParam("tmdbId") Integer tmdbId,
@@ -191,5 +196,34 @@ public class FilmController {
         model.addAttribute("language",language);
 
         return ResponseEntity.ok().build();
+    }
+
+    @GetMapping("/byGenres")
+    public String getByGenre(@RequestParam(value = "genre") Integer genre,
+                             @RequestParam(value = "page") Integer page,
+                             Principal principal,
+                             Model model){
+
+        User user = userService.findByLogin(principal.getName());
+        Language language = user.getLanguage();
+
+        Optional<MovieSearch> optionalMovieSearch = discoverService.searchByGenre(genre, page, SortBy.popularity_desc, language);
+
+        if(optionalMovieSearch.isPresent()){
+
+            MovieSearch movieSearch = optionalMovieSearch.get();
+
+            Map<Movie, Boolean> filmsWithSubFlags = movieSearch.getResults().stream()
+                    .collect(toMap(f -> f,
+                            f -> filmService.isExistsByTmdbIdAndUserId(f.getId(), user.getId()),
+                            (f1, f2) -> f1,
+                            LinkedHashMap::new));
+            model.addAttribute("films", filmsWithSubFlags);
+
+            model.addAttribute("pageCount", movieSearch.getTotalPages());
+            model.addAttribute("page", page);
+        }
+
+        return "searchResult";
     }
 }
