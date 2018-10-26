@@ -11,4 +11,5 @@ import javax.transaction.Transactional;
 public interface UserRepository extends JpaRepository<User, Long> {
     User findByLogin(String login);
     boolean existsByLogin(String login);
+    boolean existsByIdNotAndLogin(Long id, String login);
 }

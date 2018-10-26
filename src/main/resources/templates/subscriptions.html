@@ -44,7 +44,7 @@
                     <div class="col-xl-12">
                         <a th:href="'/user/getFilm?tmdbId=' + ${film.id}"
                            style="color: #555555; text-decoration: none;">
-                            <span th:text="${film.title} + ' (' + ${film.releaseDate.getYear()} + ')'"/>
+                            <span style="height: 70px" th:text="${film.title} + ' (' + ${film.releaseDate.getYear()} + ')'"/>
                         </a>
                     </div>
                 </div>

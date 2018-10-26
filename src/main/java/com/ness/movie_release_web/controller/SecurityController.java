@@ -89,9 +89,13 @@ public class SecurityController {
         if (user.getTelegramId().isEmpty() && user.isTelegramNotify())
             errors.add("Telegram id is empty");
 
-        if (user.getId() == null)
+        if (user.getId() == null) {
             if (service.isExists(user.getLogin()))
                 errors.add("Such user already exists");
+        } else {
+            if(service.existsByIdNotAndLogin(user.getId(), user.getLogin()))
+                errors.add("Login is already used");
+        }
 
         if (!errors.isEmpty()) {
             model.addAttribute("errors", errors);

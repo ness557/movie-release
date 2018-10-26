@@ -12,4 +12,5 @@ public interface UserService {
     Iterable<User> getAll();
     User findByLogin(String login);
     boolean isExists(String login);
+    boolean existsByIdNotAndLogin(Long id, String login);
 }

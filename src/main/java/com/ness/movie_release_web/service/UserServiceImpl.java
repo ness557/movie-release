@@ -20,7 +20,7 @@ public class UserServiceImpl implements UserService {
         repository.save(user);
     }
 
-    public void saveWithPassEncryption(User user){
+    public void saveWithPassEncryption(User user) {
         user.setEncPassword(passwordEncoder.encode(user.getEncPassword()));
         repository.save(user);
     }
@@ -53,5 +53,10 @@ public class UserServiceImpl implements UserService {
     @Override
     public boolean isExists(String login) {
         return repository.existsByLogin(login);
+    }
+
+    @Override
+    public boolean existsByIdNotAndLogin(Long id, String login) {
+        return repository.existsByIdNotAndLogin(id, login);
     }
 }

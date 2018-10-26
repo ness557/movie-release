@@ -23,7 +23,7 @@ public class User {
     private String role;
 
     @NotEmpty(message = "can not be empty")
-    @Column(name = "login")
+    @Column(name = "login", unique = true)
     private String login;
 
     @NotEmpty(message = "can not be empty")
