@@ -10,7 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-import org.springframework.web.client.RestClientException;
+import org.springframework.web.client.HttpStatusCodeException;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 
@@ -22,6 +22,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Function;
 import java.util.function.Predicate;
 
+import static java.lang.Thread.sleep;
 import static java.util.Collections.emptyList;
 import static java.util.stream.Collectors.toList;
 
@@ -114,8 +115,20 @@ public class TmdbDatesServiceImpl implements TmdbDatesService {
         ResponseEntity<ReleaseDateResultList> releaseResponse = null;
         try {
             releaseResponse = restTemplate.getForEntity(releasesBuilder.toUriString(), ReleaseDateResultList.class);
-        } catch (RestClientException e) {
+        } catch (HttpStatusCodeException e) {
             logger.error("Could not get release dates: {}", e.getMessage());
+
+            if (e.getStatusCode().value() == 429) {
+                try {
+                    // sleep current thread for 1s
+                    sleep(1000);
+                } catch (InterruptedException e1) {
+                    logger.error(e1.getMessage());
+                }
+                // and try again
+                return this.getReleaseDatesByTmdbId(tmdbId);
+            }
+
             return emptyList();
         }
 

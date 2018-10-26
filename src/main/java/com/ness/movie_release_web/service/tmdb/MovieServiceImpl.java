@@ -17,6 +17,8 @@ import org.springframework.web.util.UriComponentsBuilder;
 import java.util.List;
 import java.util.Optional;
 
+import static java.lang.Thread.sleep;
+
 @Service
 public class MovieServiceImpl implements MovieService {
 
@@ -45,6 +47,18 @@ public class MovieServiceImpl implements MovieService {
             response = restTemplate.getForEntity(movieUrlBuilder.toUriString(), MovieDetails.class);
         } catch (HttpStatusCodeException e) {
             logger.error("Could not get movie by id: {}, status: {}", tmdbId, e.getStatusCode().value());
+
+            // if there are too many requests
+            if (e.getStatusCode().value() == 429) {
+                try {
+                    // sleep current thread for 1s
+                    sleep(1000);
+                } catch (InterruptedException e1) {
+                    logger.error(e1.getMessage());
+                }
+                // and try again
+                return this.getMovieDetails(tmdbId, language);
+            }
             return Optional.empty();
         }
 
@@ -75,8 +89,20 @@ public class MovieServiceImpl implements MovieService {
             response = restTemplate.getForEntity(searchUrlBuilder.build(false).toUriString(), MovieSearch.class);
         } catch (HttpStatusCodeException e) {
             logger.error("Could not search for movie: {}, status: ", query, e.getStatusCode().value());
+
+            if (e.getStatusCode().value() == 429) {
+                try {
+                    // sleep current thread for 1s
+                    sleep(1000);
+                } catch (InterruptedException e1) {
+                    logger.error(e1.getMessage());
+                }
+                // and try again
+                return this.searchForMovies(query, page, year, language);
+            }
+
             return Optional.empty();
         }
-        return Optional.of(response.getBody());
+        return Optional.ofNullable(response.getBody());
     }
 }

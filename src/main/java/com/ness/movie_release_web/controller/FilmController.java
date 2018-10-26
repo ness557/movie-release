@@ -165,7 +165,7 @@ public class FilmController {
         //save in session
         model.addAttribute("language", language);
 
-        Page<Film> filmPage = filmService.getAllByUserWithPages(page, 20, user);
+        Page<Film> filmPage = filmService.getAllByUserWithPages(page, 10, user);
         List<Film> films = filmPage.getContent();
 
         List<MovieDetails> tmdbFilms =

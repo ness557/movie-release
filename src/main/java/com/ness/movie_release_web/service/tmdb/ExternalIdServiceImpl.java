@@ -10,6 +10,8 @@ import org.springframework.web.client.HttpStatusCodeException;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 
+import static java.lang.Thread.sleep;
+
 @Service
 public class ExternalIdServiceImpl implements ExternalIdService {
 
@@ -33,6 +35,17 @@ public class ExternalIdServiceImpl implements ExternalIdService {
             response = restTemplate.getForEntity(movieBuilder.toUriString(), MovieResultList.class);
         } catch (HttpStatusCodeException e) {
             logger.error("Could not get movie: {}", e.getStatusCode().value());
+
+            if (e.getStatusCode().value() == 429) {
+                try {
+                    // sleep current thread for 1s
+                    sleep(1000);
+                } catch (InterruptedException e1) {
+                    logger.error(e1.getMessage());
+                }
+                // and try again
+                return this.getTmdbIdByImdbId(imdbId);
+            }
             return 0;
         }
 
