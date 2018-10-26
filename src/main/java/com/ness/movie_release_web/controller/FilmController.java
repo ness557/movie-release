@@ -6,7 +6,6 @@ import com.ness.movie_release_web.model.wrapper.tmdb.Language;
 import com.ness.movie_release_web.model.wrapper.tmdb.movie.details.MovieDetails;
 import com.ness.movie_release_web.model.wrapper.tmdb.movie.search.Movie;
 import com.ness.movie_release_web.model.wrapper.tmdb.movie.search.MovieSearch;
-import com.ness.movie_release_web.service.FilmOmdbService;
 import com.ness.movie_release_web.service.FilmService;
 import com.ness.movie_release_web.service.UserService;
 import com.ness.movie_release_web.service.tmdb.MovieServiceImpl;
@@ -36,9 +35,6 @@ import static java.util.stream.Collectors.toMap;
 @RequestMapping("/user")
 @SessionAttributes(names = {"query", "year", "language"}, types = {String.class, Integer.class, Language.class})
 public class FilmController {
-
-    @Autowired
-    private FilmOmdbService filmOmdbService;
 
     @Autowired
     private MovieServiceImpl movieService;
