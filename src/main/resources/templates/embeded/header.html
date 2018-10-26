@@ -7,8 +7,8 @@
 
     <title>Movie Notifier Service</title>
 
-    <link href="../static/css/custom-bootstrap.css" th:href="@{/css/custom-bootstrap.css}" rel="stylesheet" />
-    <link href="../static/css/my.css" th:href="@{/css/my.css}" rel="stylesheet" />
+    <link href="../static/css/custom-bootstrap.css" th:href="@{/css/custom-bootstrap.css}" rel="stylesheet"/>
+    <link href="../static/css/my.css" th:href="@{/css/my.css}" rel="stylesheet"/>
 
     <script src="../static/js/jquery-3.3.1.slim.min.js" th:src="@{/js/jquery-3.3.1.slim.min.js}"></script>
     <script src="../static/js/bootstrap.min.js" th:src="@{/js/bootstrap.min.js}"></script>
@@ -56,6 +56,31 @@
             newForm.on('submit', unsubscribe);
             return false;
         }
+
+        jQuery(document).ready(function () {
+
+            var offset = 250;
+            var duration = 300;
+
+            jQuery(window).scroll(function () {
+
+                if (jQuery(this).scrollTop() > offset) {
+                    jQuery(".back-to-top").fadeIn(duration);
+                } else {
+                    jQuery(".back-to-top").fadeOut(duration);
+                }
+            });
+
+            jQuery(".back-to-top")
+                .click(function (event) {
+                    event.preventDefault();
+                    jQuery("html, body").animate({scrollTop: 0}, duration);
+                    return false;
+                })
+                .fadeOut(0);
+
+
+        });
     </script>
 
 </head>

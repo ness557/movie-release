@@ -84,11 +84,11 @@
                             <select th:field="*{language}" class="form-control" style="height: 46px">
                                 <option th:each="lang : ${T(com.ness.movie_release_web.model.wrapper.tmdb.Language).values()}"
                                         th:value="${lang}"
-                                        th:text="${lang}"
+                                        th:text="${lang.string}"
                                         th:selected="${lang == language}">
                                 </option>
                             </select>
-                            <img th:src="@{/img/password-dark.png}" class="glyphicon glyphicon-search">
+                            <img th:src="@{/img/language-dark.png}" class="glyphicon glyphicon-search">
                         </div>
                     </div>
                 </div>
