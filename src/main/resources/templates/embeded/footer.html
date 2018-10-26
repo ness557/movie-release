@@ -4,15 +4,39 @@
     <div class="collapse navbar-collapse" id="nav-content">
 
         <th:block sec:authorize="isAuthenticated()">
+            <ul class="navbar-nav mr-auto" style="padding-right: 70px">
+                <li class="nav-item" style="padding: 10px 30px 10px 0;">
+                    <select id="languageSelect" class="form-control">
+                        <option th:each="lang : ${T(com.ness.movie_release_web.model.wrapper.tmdb.Language).values()}"
+                                th:value="${lang}"
+                                th:text="${lang}"
+                                th:selected="${lang == language}">
+                        </option>
+                    </select>
+                </li>
+            </ul>
+
+
             <ul class="navbar-nav ml-auto" style="padding-right: 70px">
 
                 <li class="nav-item" style="padding: 10px 30px 10px 0;">
                     <a class="footer-link" href="/user/subscriptions">My subscriptions</a>
                 </li>
                 <li class="nav-item" style="padding: 10px 30px 10px 0;">
-                    <a class="footer-link" th:href="'tg://resolve?domain=' + ${@environment.getProperty('telegram.bot')}">Talk to bot</a>
+                    <a class="footer-link"
+                       th:href="'tg://resolve?domain=' + ${@environment.getProperty('telegram.bot')}">Talk to bot</a>
                 </li>
             </ul>
         </th:block>
     </div>
+
+
+    <script>
+        $('#languageSelect').change(function () {
+                var langVal = $('#languageSelect').val();
+                $.post("/user/setLanguage", {"language": langVal});
+                location.reload();
+            }
+        )
+    </script>
 </footer>

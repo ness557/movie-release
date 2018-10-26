@@ -18,4 +18,44 @@
     <link href="../static/css/fonts/Roboto.css" th:href="@{/css/fonts/Roboto.css}" rel="stylesheet"/>
     <link href="../static/css/fonts/OpenSans.css" th:href="@{/css/fonts/OpenSans.css}" rel="stylesheet"/>
 
+    <script>
+        function unsubscribe(event) {
+
+            var form = $(this);
+            var tmdbId = form.find('input').val();
+
+            $.post('/user/unSubscribe', form.serialize());
+
+            var par = form.parent();
+            par.html(
+                '<form class="subsForm" action="/user/subscribe" method="post" class="subsForm">' +
+                '    <input type="hidden" name="tmdbId" value="' + tmdbId + '"/>' +
+                '    <input type="submit" value="Subscribe" class="btn btn-warning"/>' +
+                '</form>'
+            );
+            var newForm = par.find(".subsForm");
+            newForm.on('submit', subscribe);
+            return false;
+        }
+
+        function subscribe(event) {
+
+            var form = $(this);
+            var tmdbId = form.find('input').val();
+
+            $.post('/user/subscribe', $(this).serialize());
+
+            var par = form.parent();
+            par.html(
+                '<form class="unSubsForm" action="/user/unSubscribe" method="post" class="unSubsForm">' +
+                '    <input type="hidden" name="tmdbId" value="' + tmdbId + '"/>' +
+                '    <input type="submit" value="Unsubscribe" class="btn btn-danger"/>' +
+                '</form>'
+            );
+            var newForm = par.find(".unSubsForm");
+            newForm.on('submit', unsubscribe);
+            return false;
+        }
+    </script>
+
 </head>

@@ -14,7 +14,10 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.server.ResponseStatusException;
 
 import javax.servlet.http.Cookie;
@@ -90,7 +93,6 @@ public class SecurityController {
             if (service.isExists(user.getLogin()))
                 errors.add("Such user already exists");
 
-
         if (!errors.isEmpty()) {
             model.addAttribute("errors", errors);
             return "register";
@@ -111,7 +113,9 @@ public class SecurityController {
     @GetMapping("/userInfo")
     public String userInfo(Model model, Principal principal) {
 
-        model.addAttribute(service.findByLogin(principal.getName()));
+        User user = service.findByLogin(principal.getName());
+        model.addAttribute("language", user.getLanguage());
+        model.addAttribute(user);
         return "register";
     }
 }

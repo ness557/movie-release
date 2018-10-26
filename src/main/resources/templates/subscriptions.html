@@ -5,7 +5,8 @@
 <nav th:insert="embeded/navbar.html"></nav>
 <!--/*@thymesVar id="year" type="com.ness.movie_release_web.model.wrapper.OmdbFullWrapper"*/-->
 
-<div id="modal-notif" th:if="${not botInitialized}" style="position: relative; background-color: #F6EAC3; width: 100%; height: 50px;">
+<div id="modal-notif" th:if="${not botInitialized}"
+     style="position: relative; background-color: #F6EAC3; width: 100%; height: 50px;">
     <p style="font-size: 18px; font-weight: normal; padding: 12px 0 12px 65px; margin-bottom: 0; color: #A77C43; position:absolute;">
         Please send any message to
         <a th:href="'tg://resolve?domain=' + ${@environment.getProperty('telegram.bot')}"
@@ -15,8 +16,8 @@
         to receive notifications
     </p>
     <img th:src="@{/img/x.png}"
-            style="position: absolute; right: 30px; bottom: 16px"
-            onclick="document.getElementById('modal-notif').remove();"/>
+         style="position: absolute; right: 30px; bottom: 16px"
+         onclick="document.getElementById('modal-notif').remove();"/>
 </div>
 
 <div class="container-fluid">
@@ -26,7 +27,7 @@
             <th:block th:if="${iStat.index % 5 == 0}">
                 <div class="offset-xl-1"></div>
             </th:block>
-            <th:block th:if="${iStat.index == 5}">
+            <th:block th:if="${iStat.index > 0 && iStat.index % 5 == 0}">
                 <div class="offset-xl-1"></div>
             </th:block>
 
@@ -34,31 +35,25 @@
                  style="text-align: center; font-weight: bold; padding-bottom: 40px; padding-top: 40px;">
                 <div class="row" style="padding-bottom: 6px; height: 320px">
                     <div class="col-xl-12">
-                        <a th:href="'/user/getFilm?imdbId=' + ${film.imdbId}">
-                            <img class="rounded" th:src="${film.poster}" style="height: 300px; max-width: 260px">
+                        <a th:href="'/user/getFilm?tmdbId=' + ${film.id}">
+                            <img class="rounded" th:src="${film.posterPath}" style="height: 300px; max-width: 260px">
                         </a>
                     </div>
                 </div>
-                <div class="row" style="min-height: 50px;">
+                <div class="row" style="min-height: 50px;padding-bottom: 12px">
                     <div class="col-xl-12">
-                        <a th:href="'/user/getFilm?imdbId=' + ${film.imdbId}"
+                        <a th:href="'/user/getFilm?tmdbId=' + ${film.id}"
                            style="color: #555555; text-decoration: none;">
-                            <span th:text="${film.title} + ' (' + ${film.released.getYear()} + ')'"/>
+                            <span th:text="${film.title} + ' (' + ${film.releaseDate.getYear()} + ')'"/>
                         </a>
-                    </div>
-                </div>
-                <div class="row" style="padding-bottom: 12px">
-                    <div class="col-xl-12">
-                        <td th:text="${#strings.capitalize(film.type)}"/>
                     </div>
                 </div>
 
                 <div class="row">
                     <div class="col-xl-12">
 
-                        <form action="/user/unSubscribe" method="post"
-                              onsubmit="return confirm('Do you really want to unsubscribe?');">
-                            <input type="hidden" name="imdbId" th:value="${film.imdbId}"/>
+                        <form action="/user/unSubscribe" method="post" class="unSubsForm">
+                            <input type="hidden" name="tmdbId" th:value="${film.id}"/>
                             <input type="submit" value="Unsubscribe" class="btn btn-danger"/>
                         </form>
                     </div>
@@ -177,5 +172,9 @@
 </th:block>
 
 <footer th:insert="embeded/footer.html"></footer>
+
+<script>
+       $(".unSubsForm").submit(unsubscribe);
+</script>
 </body>
 </html>

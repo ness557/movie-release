@@ -11,18 +11,18 @@
         </div>
         <div class="col-11 col-sm-11 col-md-8 col-lg-7 col-xl-6 col-centered">
             <form th:action="@{/register}" method="post" th:object="${user}">
-            <div class="row">
-                <div class="col-10 col-sm-10 col-md-10 col-lg-10 col-xl-10 form-group">
-                    <span style="font-family: 'Roboto', sans-serif; font-weight: 100; font-size: 34px">SIGN UP</span>
-                </div>
-                <th:block th:if="${#fields.hasErrors() or (errors != null)}">
-                    <div class="col-2 col-sm-2 col-md-2 col-lg-2 col-xl-2">
-                        <div class="row">
-
-                        </div>
+                <div class="row">
+                    <div class="col-10 col-sm-10 col-md-10 col-lg-10 col-xl-10 form-group">
+                        <span style="font-family: 'Roboto', sans-serif; font-weight: 100; font-size: 34px">SIGN UP</span>
                     </div>
-                </th:block>
-            </div>
+                    <th:block th:if="${#fields.hasErrors() or (errors != null)}">
+                        <div class="col-2 col-sm-2 col-md-2 col-lg-2 col-xl-2">
+                            <div class="row">
+
+                            </div>
+                        </div>
+                    </th:block>
+                </div>
 
                 <div class="row">
                     <div class="col-10 col-sm-10 col-md-10 col-lg-10 col-xl-10" style="padding-bottom: 7px">
@@ -68,7 +68,7 @@
                             <img th:src="@{/img/user-dark.png}" class="glyphicon glyphicon-search">
                         </div>
                     </div>
-                      
+
                     <th:block th:if="${#fields.hasErrors('login')}">
                         <div class="col-2 col-sm-2 col-md-2 col-lg-2 col-xl-2"
                              style="text-align: left; margin-left: -13px; margin-top: 10px">
@@ -78,6 +78,23 @@
                 </div>
 
                 <div class="row">
+
+                    <div class="col-10 col-sm-10 col-md-10 col-lg-10 col-xl-10 form-group">
+                        <div class="icon-addon addon-lg">
+                            <select th:field="*{language}" class="form-control" style="height: 46px">
+                                <option th:each="lang : ${T(com.ness.movie_release_web.model.wrapper.tmdb.Language).values()}"
+                                        th:value="${lang}"
+                                        th:text="${lang}"
+                                        th:selected="${lang == language}">
+                                </option>
+                            </select>
+                            <img th:src="@{/img/password-dark.png}" class="glyphicon glyphicon-search">
+                        </div>
+                    </div>
+                </div>
+
+
+                <div class="row">
                     <div class="col-10 col-sm-10 col-md-10 col-lg-10 col-xl-10 form-group">
                         <div class="icon-addon addon-lg">
                             <input type="password" placeholder="Password" class="form-control"
@@ -85,7 +102,7 @@
                             <img th:src="@{/img/password-dark.png}" class="glyphicon glyphicon-search">
                         </div>
                     </div>
-                      
+
                     <th:block th:if="${#fields.hasErrors('encPassword')}">
                         <div class="col-2 col-sm-2 col-md-2 col-lg-2 col-xl-2"
                              style="text-align: left; margin-left: -13px; margin-top: 10px">
@@ -95,6 +112,7 @@
                     </th:block>
                 </div>
 
+
                 <div class="row">
                     <div class="col-10 col-sm-10 col-md-10 col-lg-10 col-xl-10 form-group">
                         <div class="icon-addon addon-lg">
@@ -103,7 +121,7 @@
                             <img th:src="@{/img/password-dark.png}" class="glyphicon glyphicon-search">
                         </div>
                     </div>
-                      
+
                     <th:block th:if="${errors != null}">
                         <th:block th:if="${#lists.contains(errors, 'Passwords does not match')}">
                             <div class="col-2 col-sm-2 col-md-2 col-lg-2 col-xl-2"
@@ -112,8 +130,6 @@
                             </div>
                         </th:block>
                     </th:block>
-
-
                 </div>
 
                 <div class="row">
@@ -123,7 +139,7 @@
                             <img th:src="@{/img/email-dark.png}" class="glyphicon glyphicon-search">
                         </div>
                     </div>
-                     
+
                     <th:block th:if="${#fields.hasErrors('email') or
                                         (errors != null and #lists.contains(errors, 'Email address is empty'))}">
                         <div class="col-2 col-sm-2 col-md-2 col-lg-2 col-xl-2"
@@ -140,7 +156,7 @@
                             <img th:src="@{/img/telegram-dark.png}" class="glyphicon glyphicon-search">
                         </div>
                     </div>
-                      
+
                     <th:block th:if="${#fields.hasErrors('telegramId') or
                                         (errors != null and #lists.contains(errors, 'Telegram id is empty'))}">
                         <div class="col-2 col-sm-2 col-md-2 col-lg-2 col-xl-2"
@@ -154,7 +170,8 @@
                     <div class="col-10 col-sm-10 col-md-10 col-lg-10 col-xl-10 form-group">
                         <div class="row mytext" style="height: 36px; font-size: 16px">
 
-                            <div class="col-4 col-sm-4 col-md-4 col-lg-4 col-xl-4" style="text-align: left; padding-right: 0">
+                            <div class="col-4 col-sm-4 col-md-4 col-lg-4 col-xl-4"
+                                 style="text-align: left; padding-right: 0">
                                 Notify me via
                             </div>
 
