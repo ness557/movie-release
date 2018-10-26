@@ -21,58 +21,81 @@ public class MovieDetails {
 
     @JsonProperty("adult")
     private Boolean adult;
+
+    @JsonDeserialize(using =TmdbPosterPathDeserializer.class)
     @JsonProperty("backdrop_path")
     private String backdropPath;
+
     @JsonProperty("belongs_to_collection")
     private Object belongsToCollection;
+
     @JsonProperty("budget")
     private Integer budget;
+
     @JsonProperty("genres")
-    private List<Genre> genres = new ArrayList<>();
+    private List<Genre> genres = new ArrayList<>(); //used
+
     @JsonProperty("homepage")
-    private String homepage;
+    private String homepage; //used
+
     @JsonProperty("id")
-    private Integer id;
+    private Integer id; //used
+
     @JsonProperty("imdb_id")
     private String imdbId;
+
     @JsonProperty("original_language")
-    private String originalLanguage;
+    private String originalLanguage; //used
+
     @JsonProperty("original_title")
     private String originalTitle;
+
     @JsonProperty("overview")
-    private String overview;
+    private String overview; //used
+
     @JsonProperty("popularity")
     private Double popularity;
 
     @JsonDeserialize(using =TmdbPosterPathDeserializer.class)
     @JsonProperty("poster_path")
-    private String posterPath;
+    private String posterPath; //used
+
     @JsonProperty("production_companies")
-    private List<ProductionCompany> productionCompanies = new ArrayList<>();
+    private List<ProductionCompany> productionCompanies = new ArrayList<>(); //used
+
     @JsonProperty("production_countries")
-    private List<ProductionCountry> productionCountries = new ArrayList<>();
+    private List<ProductionCountry> productionCountries = new ArrayList<>(); //used
 
     @JsonDeserialize(using = TmdbMovieReleaseDateDeserializer.class)
     @JsonProperty("release_date")
-    private LocalDate releaseDate;
+    private LocalDate releaseDate; //not needed
+
     @JsonProperty("revenue")
-    private Integer revenue;
+    private Integer revenue; //used
+
     @JsonProperty("runtime")
-    private Integer runtime; // minutes
+    private Integer runtime; // minutes used
+
     @JsonProperty("spoken_languages")
     private List<SpokenLanguage> spokenLanguages = new ArrayList<>();
+
     @JsonProperty("status")
-    private String status;
+    private String status; //used
+
     @JsonProperty("tagline")
-    private String tagline;
+    private String tagline; //used
+
     @JsonProperty("title")
-    private String title;
+    private String title; //used
+
     @JsonProperty("video")
     private Boolean video;
+
     @JsonProperty("vote_average")
-    private Double voteAverage;
+    private Double voteAverage; //used
+
     @JsonProperty("vote_count")
     private Integer voteCount;
 
-    private List<ReleaseDate> releaseDates = new ArrayList<>();
+    private List<ReleaseDate> releaseDates = new ArrayList<>(); //used
 }

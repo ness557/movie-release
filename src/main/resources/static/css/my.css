@@ -37,7 +37,8 @@ html, body {
 .plate {
     background-color: #F6F6F6;
     border: 1px solid #ECECEC;
-    width: 48px;
+    /*width: 148px;*/
+    padding: 0 5px;
     height: 22px;
 }
 

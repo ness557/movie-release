@@ -65,8 +65,11 @@ public class FilmController {
             model.addAttribute("subscribed", true);
         }
 
-        // TODO rewrite ui
-        model.addAttribute("film", movieService.getMovieDetails(tmdbId, language));
+        Optional<MovieDetails> movieDetails = movieService.getMovieDetails(tmdbId, language);
+        if (!movieDetails.isPresent())
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND);
+
+        model.addAttribute("film", movieDetails.get());
         model.addAttribute("releases", tmdbDatesService.getReleaseDates(tmdbId));
         return "filmInfo";
     }
