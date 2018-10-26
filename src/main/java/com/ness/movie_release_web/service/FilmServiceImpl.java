@@ -8,14 +8,10 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
-import javax.transaction.Transactional;
 import java.util.List;
 
 @Service
-@Transactional
 public class FilmServiceImpl implements FilmService {
-
-//    private Logger logger = LoggerFactory.getLogger(this.getClass());
 
     @Autowired
     private FilmRepository repository;
