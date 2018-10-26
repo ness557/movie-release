@@ -34,8 +34,7 @@
     <script>
         $('#languageSelect').change(function () {
                 var langVal = $('#languageSelect').val();
-                $.post("/user/setLanguage", {"language": langVal});
-                location.reload();
+                $.post("/user/setLanguage", {"language": langVal}, location.reload());
             }
         )
     </script>
