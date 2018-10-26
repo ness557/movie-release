@@ -5,32 +5,51 @@
 <nav th:insert="embeded/navbar.html"></nav>
 <!--/*@thymesVar id="year" type="com.ness.movie_release_web.model.wrapper.OmdbFullWrapper"*/-->
 
-<div id="modal-notif" th:if="${not botInitialized}"
-     style="position: relative; background-color: #F6EAC3; width: 100%; height: 50px;">
-    <p style="font-size: 18px; font-weight: normal; padding: 12px 0 12px 65px; margin-bottom: 0; color: #A77C43; position:absolute;">
-        Please send any message to
-        <a th:href="'tg://resolve?domain=' + ${@environment.getProperty('telegram.bot')}"
-           style="color: #A77C43;" onclick="document.getElementById('modal-notif').remove();">
-            bot
-        </a>
-        to receive notifications
-    </p>
-    <img th:src="@{/img/x.png}"
-         style="position: absolute; right: 30px; bottom: 16px"
-         onclick="document.getElementById('modal-notif').remove();"/>
-</div>
-
 <div class="container-fluid">
-    <div class="row">
-        <th:block th:each="film, iStat : ${films}">
+    <div id="modal-notif" th:if="${not botInitialized}"
+         style="position: relative; background-color: #F6EAC3; width: 100%; height: 50px;">
+        <p style="font-size: 18px; font-weight: normal; padding: 12px 0 12px 65px; margin-bottom: 0; color: #A77C43; position:absolute;">
+            Please send any message to
+            <a th:href="'tg://resolve?domain=' + ${@environment.getProperty('telegram.bot')}"
+               style="color: #A77C43;" onclick="document.getElementById('modal-notif').remove();">
+                bot
+            </a>
+            to receive notifications
+        </p>
+        <img th:src="@{/img/x.png}"
+             style="position: absolute; right: 30px; bottom: 16px"
+             onclick="document.getElementById('modal-notif').remove();"/>
+    </div>
 
-            <th:block th:if="${iStat.index % 5 == 0}">
-                <div class="offset-xl-1"></div>
-            </th:block>
-            <th:block th:if="${iStat.index > 0 && iStat.index % 5 == 0}">
-                <div class="offset-xl-1"></div>
-            </th:block>
+    <div class="container-fluid">
+        <div class="row">
+            <th:block th:each="film, iStat : ${films}">
 
+                <th:block th:if="${iStat.index % 5 == 0}">
+                    <div class="offset-xl-1"></div>
+                </th:block>
+                <th:block th:if="${iStat.index > 0 && iStat.index % 5 == 0}">
+                    <div class="offset-xl-1"></div>
+                </th:block>
+
+                <div class="col-xs-6 col-sm-5 col-md-4 col-lg-3 col-xl-2"
+                     style="text-align: center; font-weight: bold; padding-bottom: 40px; padding-top: 40px;">
+                    <div class="row" style="padding-bottom: 6px; height: 320px">
+                        <div class="col-xl-12">
+                            <a th:href="'/user/getFilm?tmdbId=' + ${film.id}">
+                                <img class="rounded" th:src="${film.posterPath}"
+                                     style="height: 300px; max-width: 260px">
+                            </a>
+                        </div>
+                    </div>
+                    <div class="row" style="min-height: 50px;padding-bottom: 12px">
+                        <div class="col-xl-12">
+                            <a th:href="'/user/getFilm?tmdbId=' + ${film.id}"
+                               style="color: #555555; text-decoration: none;">
+                                <span th:text="${film.title} + ' (' + ${film.releaseDate.getYear()} + ')'"/>
+                            </a>
+                        </div>
+                    </div>
             <div class="col-xs-6 col-sm-5 col-md-4 col-lg-3 col-xl-2"
                  style="text-align: center; font-weight: bold; padding-bottom: 40px; padding-top: 40px;">
                 <div class="row" style="padding-bottom: 6px; height: 320px">
@@ -49,132 +68,133 @@
                     </div>
                 </div>
 
-                <div class="row">
-                    <div class="col-xl-12">
+                    <div class="row">
+                        <div class="col-xl-12">
 
-                        <form action="/user/unSubscribe" method="post" class="unSubsForm">
-                            <input type="hidden" name="tmdbId" th:value="${film.id}"/>
-                            <input type="submit" value="Unsubscribe" class="btn btn-danger"/>
-                        </form>
+                            <form action="/user/unSubscribe" method="post" class="unSubsForm">
+                                <input type="hidden" name="tmdbId" th:value="${film.id}"/>
+                                <input type="submit" value="Unsubscribe" class="btn btn-danger"/>
+                            </form>
+                        </div>
                     </div>
                 </div>
-            </div>
-        </th:block>
+            </th:block>
+        </div>
     </div>
-</div>
 
-<div class="container" th:if="${films.isEmpty()}" style="height: 35%; color: #C9C9C9; font-size: 20px">
-    <div class="row" style="height: 100%;">
-        <div class="col-xl-12" style="text-align: center; position: relative">
+    <div class="container" th:if="${films.isEmpty()}" style="height: 35%; color: #C9C9C9; font-size: 20px">
+        <div class="row" style="height: 100%;">
+            <div class="col-xl-12" style="text-align: center; position: relative">
             <span style="position: absolute; bottom: 0; left: 0; right: 0">You have no subscriptions yet.
             <br>
             To add a subscription search for movie and hit the subscribe button :)</span>
-        </div>
-    </div>
-</div>
-
-<th:block th:if="${pageCount > 0}">
-    <!-- PAGINATION -->
-    <div class="container-fluid" style="padding-bottom: 60px"
-         th:with="urlBuilder=${T(org.springframework.web.servlet.support.ServletUriComponentsBuilder)}, page = ${page == null ? 0 : page}">
-
-        <div class="row" style="padding-bottom: 30px">
-            <div class="col-12 col-sm-10 col-md-9 col-lg-8 col-xl-6 col-centered">
-                <div class="row">
-
-                    <div class="col-1 col-sm-1 col-md-1 col-lg-1 col-xl-1 col-centered"></div>
-
-                    <!-- ARROW BACK -->
-                    <div class="col col-fixed-arrow my-page-link">
-                        <!-- active link -->
-                        <th:block th:if="${page > 0}">
-                            <a th:href="${urlBuilder.fromCurrentRequest().replaceQueryParam('page', page - 1).toUriString()}">
-                                <img class="page-arrow" th:src="@{/img/pagination/page-back.png}">
-                            </a>
-                        </th:block>
-
-                        <!-- inactive link-->
-                        <th:block th:unless="${page > 0}">
-                            <a style="pointer-events: none">
-                                <img class="page-arrow" th:src="@{/img/pagination/page-back-inactive.png}">
-                            </a>
-                        </th:block>
-                    </div>
-
-                    <!--separate link to first page -->
-                    <th:block th:if="${page > 1}">
-                        <div class="col col-fixed-page my-page-link my-page-number">
-                            <a class="text-secondary"
-                               th:href="${urlBuilder.fromCurrentRequest().replaceQueryParam('page', 0).toUriString()}"
-                               th:text="${1}"></a>
-                        </div>
-
-                        <div class="col my-page-splitter col-fixed-splitter">
-                            <span>...</span>
-                        </div>
-                    </th:block>
-
-                    <!-- pages loop -->
-                    <th:block th:each="i : ${#numbers.sequence(page - 1, page + 1)}">
-                        <!-- skip first-1  and last+1 pages-->
-                        <th:block th:if="${i >= 0 and i <= pageCount - 1}">
-
-                            <!-- CURRENT PAGE -->
-                            <!-- my-page-current -->
-                            <div class="col col-fixed-page my-page-link  my-page-current " th:if="${page == i}">
-                                <a class="text-secondary" th:href="'#'" th:text="${i + 1}"></a>
-                            </div>
-
-                            <!-- Link To Page -->
-                            <div class="col col-fixed-page my-page-link my-page-number" th:unless="${page == i}">
-                                <a class="text-secondary my-page-number"
-                                   th:href="${urlBuilder.fromCurrentRequest().replaceQueryParam('page', i).toUriString()}"
-                                   th:text="${i + 1}"></a>
-                            </div>
-                        </th:block>
-                    </th:block>
-
-                    <!--separate link to last page -->
-                    <th:block th:if="${page < pageCount - 2}">
-                        <div class="col my-page-splitter col-fixed-splitter">
-                            <span>...</span>
-                        </div>
-
-                        <div class="col col-fixed-page my-page-link my-page-number">
-                            <a class="text-secondary"
-                               th:href="${urlBuilder.fromCurrentRequest().replaceQueryParam('page', pageCount - 1).toUriString()}"
-                               th:text="${pageCount}"></a>
-                        </div>
-                    </th:block>
-
-                    <!-- ARROW FORWARD-->
-                    <div class="col col-fixed-arrow my-page-link">
-                        <!-- active link -->
-                        <th:block th:if="${page < pageCount - 1}">
-                            <a th:href="${urlBuilder.fromCurrentRequest().replaceQueryParam('page', page + 1).toUriString()}">
-                                <img class="page-arrow" th:src="@{/img/pagination/page-next.png}">
-                            </a>
-                        </th:block>
-
-                        <!-- inactive link-->
-                        <th:block th:unless="${page < pageCount - 1}">
-                            <a style="pointer-events: none">
-                                <img class="page-arrow" th:src="@{/img/pagination/page-next-inactive.png}">
-                            </a>
-                        </th:block>
-                    </div>
-
-                    <div class="col-1 col-sm-1 col-md-1 col-lg-1 col-xl-1 col-centered"></div>
-                </div>
             </div>
         </div>
     </div>
-</th:block>
+
+    <th:block th:if="${pageCount > 0}">
+        <!-- PAGINATION -->
+        <div class="container-fluid" style="padding-bottom: 60px"
+             th:with="urlBuilder=${T(org.springframework.web.servlet.support.ServletUriComponentsBuilder)}, page = ${page == null ? 0 : page}">
+
+            <div class="row" style="padding-bottom: 30px">
+                <div class="col-12 col-sm-10 col-md-9 col-lg-8 col-xl-6 col-centered">
+                    <div class="row">
+
+                        <div class="col-1 col-sm-1 col-md-1 col-lg-1 col-xl-1 col-centered"></div>
+
+                        <!-- ARROW BACK -->
+                        <div class="col col-fixed-arrow my-page-link">
+                            <!-- active link -->
+                            <th:block th:if="${page > 0}">
+                                <a th:href="${urlBuilder.fromCurrentRequest().replaceQueryParam('page', page - 1).toUriString()}">
+                                    <img class="page-arrow" th:src="@{/img/pagination/page-back.png}">
+                                </a>
+                            </th:block>
+
+                            <!-- inactive link-->
+                            <th:block th:unless="${page > 0}">
+                                <a style="pointer-events: none">
+                                    <img class="page-arrow" th:src="@{/img/pagination/page-back-inactive.png}">
+                                </a>
+                            </th:block>
+                        </div>
+
+                        <!--separate link to first page -->
+                        <th:block th:if="${page > 1}">
+                            <div class="col col-fixed-page my-page-link my-page-number">
+                                <a class="text-secondary"
+                                   th:href="${urlBuilder.fromCurrentRequest().replaceQueryParam('page', 0).toUriString()}"
+                                   th:text="${1}"></a>
+                            </div>
+
+                            <div class="col my-page-splitter col-fixed-splitter">
+                                <span>...</span>
+                            </div>
+                        </th:block>
+
+                        <!-- pages loop -->
+                        <th:block th:each="i : ${#numbers.sequence(page - 1, page + 1)}">
+                            <!-- skip first-1  and last+1 pages-->
+                            <th:block th:if="${i >= 0 and i <= pageCount - 1}">
+
+                                <!-- CURRENT PAGE -->
+                                <!-- my-page-current -->
+                                <div class="col col-fixed-page my-page-link  my-page-current " th:if="${page == i}">
+                                    <a class="text-secondary" th:href="'#'" th:text="${i + 1}"></a>
+                                </div>
+
+                                <!-- Link To Page -->
+                                <div class="col col-fixed-page my-page-link my-page-number" th:unless="${page == i}">
+                                    <a class="text-secondary my-page-number"
+                                       th:href="${urlBuilder.fromCurrentRequest().replaceQueryParam('page', i).toUriString()}"
+                                       th:text="${i + 1}"></a>
+                                </div>
+                            </th:block>
+                        </th:block>
+
+                        <!--separate link to last page -->
+                        <th:block th:if="${page < pageCount - 2}">
+                            <div class="col my-page-splitter col-fixed-splitter">
+                                <span>...</span>
+                            </div>
+
+                            <div class="col col-fixed-page my-page-link my-page-number">
+                                <a class="text-secondary"
+                                   th:href="${urlBuilder.fromCurrentRequest().replaceQueryParam('page', pageCount - 1).toUriString()}"
+                                   th:text="${pageCount}"></a>
+                            </div>
+                        </th:block>
+
+                        <!-- ARROW FORWARD-->
+                        <div class="col col-fixed-arrow my-page-link">
+                            <!-- active link -->
+                            <th:block th:if="${page < pageCount - 1}">
+                                <a th:href="${urlBuilder.fromCurrentRequest().replaceQueryParam('page', page + 1).toUriString()}">
+                                    <img class="page-arrow" th:src="@{/img/pagination/page-next.png}">
+                                </a>
+                            </th:block>
+
+                            <!-- inactive link-->
+                            <th:block th:unless="${page < pageCount - 1}">
+                                <a style="pointer-events: none">
+                                    <img class="page-arrow" th:src="@{/img/pagination/page-next-inactive.png}">
+                                </a>
+                            </th:block>
+                        </div>
+
+                        <div class="col-1 col-sm-1 col-md-1 col-lg-1 col-xl-1 col-centered"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </th:block>
+</div>
 
 <footer th:insert="embeded/footer.html"></footer>
 
 <script>
-       $(".unSubsForm").submit(unsubscribe);
+    $(".unSubsForm").submit(unsubscribe);
 </script>
 </body>
 </html>
