@@ -3,7 +3,19 @@
 <head th:insert="embeded/header.html"></head>
 <body>
 <nav th:insert="embeded/navbar.html"></nav>
-<!--/*@thymesVar id="year" type="com.ness.movie_release_web.model.wrapper.OmdbFullWrapper"*/-->
+
+<form action="/get" method="get">
+    <select class="form-control selectpicker" name="genre" multiple data-live-search="true">
+        <option value="1">Mustard</option>
+        <option value="2">Ketchup</option>
+        <option value="3">Relish</option>
+    </select>
+    <input type="submit" value="subn"/>
+</form>
+
+<script>
+    $('.selectpicker').selectpicker();
+</script>
 
 <div class="container-fluid">
     <div id="modal-notif" th:if="${not botInitialized}"
