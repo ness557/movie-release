@@ -5,14 +5,25 @@
 
         <th:block sec:authorize="isAuthenticated()">
             <ul class="navbar-nav mr-auto">
-                <li class="nav-item" style="padding: 10px 30px 10px 0;">
-                    <select id="languageSelect" class="form-control">
-                        <option th:each="lang : ${T(com.ness.movie_release_web.model.wrapper.tmdb.Language).values()}"
-                                th:value="${lang}"
-                                th:text="${lang}"
-                                th:selected="${lang == language}">
-                        </option>
-                    </select>
+                <li class="nav-item mr-auto dropup">
+                    <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button"
+                       data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        <img style="width: 20px;" th:src="@{/img/language-dark.png}"/>
+                        <th:block th:text="${language.string}"/>
+                    </a>
+                    <div class="dropdown-menu"
+                         aria-labelledby="navbarDropdown">
+                        <!--<a class="dropdown-item" href="#">Something else here</a>-->
+
+                        <a href="#" class="dropdown-item languageSelect"
+                           th:each="lang : ${T(com.ness.movie_release_web.model.wrapper.tmdb.Language).values()}">
+                            <option class="langVal"
+                                    th:value="${lang}"
+                                    th:text="${lang.string}"
+                                    th:selected="${lang == language}">
+                            </option>
+                        </a>
+                    </div>
                 </li>
             </ul>
 
@@ -32,8 +43,9 @@
 
 
     <script>
-        $('#languageSelect').change(function () {
-                var langVal = $('#languageSelect').val();
+        $('.languageSelect').click(function () {
+            var langVal = $(this).find(".langVal").val()
+                // var langVal = $('#languageSelect').val();
                 $.post("/user/setLanguage", {"language": langVal}, function () {
                     setTimeout(20);
                     location.reload();

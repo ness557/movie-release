@@ -1,6 +1,6 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-    <div class="container-fluid" >
+    <div class="container-fluid">
         <div class="navbar-header">
             <a href="/home" class="navbar-brand">
                 <img style="width: 64px; height: 50px" th:src="@{/img/logo.png}"/>
@@ -8,44 +8,57 @@
             </a>
         </div>
 
-        <button class="navbar-toggler collapsed" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+        <button class="navbar-toggler collapsed" type="button" data-toggle="collapse"
+                data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false"
+                aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
         </button>
 
         <div id="navbarSupportedContent" class="navbar-collapse collapse text-right">
 
             <div th:if="${#request.isUserInRole('USER')}">
-                <form method="get" class="form-inline" action="/user/search">
+                <ul class="navbar-nav mr-auto">
+                    <li class="nav-item">
+                        <form method="get" class="form-inline" action="/user/search">
 
-                    <div class="form-group ml-auto" style="margin-right: 10px; margin-bottom:0">
-                        <div class="icon-addon addon-md">
-                            <input type="text" style="width: 170px" name="query" placeholder="Title"
-                                   class="form-control" th:value="${query}">
-                        </div>
-                    </div>
-                    <div class="form-group" style="margin-right: 10px; margin-bottom:0">
-                        <div class="icon-addon addon-md">
-                            <input type="number" step="1" style="width: 100px" min="1000" max="3000" name="year"
-                                   placeholder="Year" class="form-control no-spinners" th:value="${year}">
-                        </div>
-                    </div>
-                    <input type="submit" value="Find" class="btn btn-primary">
-                </form>
+                            <div class="form-group ml-auto" style="margin-right: 10px; margin-bottom:0">
+                                <div class="icon-addon addon-md">
+                                    <input type="text" style="width: 170px" name="query" placeholder="Title"
+                                           class="form-control" th:value="${query}">
+                                </div>
+                            </div>
+                            <div class="form-group" style="margin-right: 10px; margin-bottom:0">
+                                <div class="icon-addon addon-md">
+                                    <input type="number" step="1" style="width: 100px" min="1000" max="3000" name="year"
+                                           placeholder="Year" class="form-control no-spinners" th:value="${year}">
+                                </div>
+                            </div>
+                            <input type="submit" value="Find" class="btn btn-primary">
+                        </form>
+                    </li>
+                </ul>
             </div>
 
             <th:block sec:authorize="isAuthenticated()">
                 <ul class="navbar-nav ml-auto">
-                    <li class="nav-item">
-                        <a href="/userInfo" class="nav-link">
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button"
+                           data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                             <th:block th:text="${'You signed in as: ' + #request.getUserPrincipal().getName()}"/>
                             <img style="width: 20px;" th:src="@{/img/user-light.png}"/>
                         </a>
-                    </li>
-                    <li class="nav-item">
-                        <a href="/logout" class="nav-link">
-                            Sign out
-                            <img style="width: 20px;" th:src="@{/img/sign-out-light.png}"/>
-                        </a>
+                        <div class="dropdown-menu dropdown-menu-right text-right ml-auto" style="width: 200px" aria-labelledby="navbarDropdown">
+                            <!--<a class="dropdown-item" href="#">Something else here</a>-->
+
+                            <a href="/userInfo" class="dropdown-item">
+                                Edit profile
+                                <img style="width: 20px;" th:src="@{/img/edit-dark.png}"/>
+                            </a>
+                            <a href="/logout" class="dropdown-item ml-auto">
+                                Sign out
+                                <img style="width: 20px;" th:src="@{/img/sign-out-dark.png}"/>
+                            </a>
+                        </div>
                     </li>
                 </ul>
             </th:block>
@@ -70,40 +83,3 @@
         </div><!--/.nav-collapse -->
     </div>
 </nav>
-
-
-
-
-<!--&lt;!&ndash; example 6 - center on mobile &ndash;&gt;-->
-<!--<nav class="navbar navbar-expand-lg navbar-light bg-light">-->
-    <!--<div class="d-flex flex-grow-1">-->
-        <!--<span class="w-100 d-lg-none d-block">&lt;!&ndash; hidden spacer to center brand on mobile &ndash;&gt;</span>-->
-        <!--<a class="navbar-brand d-none d-lg-inline-block" href="#">-->
-            <!--Navbar 6-->
-        <!--</a>-->
-        <!--<a class="navbar-brand-two mx-auto d-lg-none d-inline-block" href="#">-->
-            <!--<img src="//placehold.it/40?text=LOGO" alt="logo">-->
-        <!--</a>-->
-        <!--<div class="w-100 text-right">-->
-            <!--<button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#myNavbar">-->
-                <!--<span class="navbar-toggler-icon"></span>-->
-            <!--</button>-->
-        <!--</div>-->
-    <!--</div>-->
-    <!--<div class="collapse navbar-collapse flex-grow-1 text-right" id="myNavbar">-->
-        <!--<ul class="navbar-nav ml-auto flex-nowrap">-->
-            <!--<li class="nav-item">-->
-                <!--<a href="#" class="nav-link m-2 menu-item nav-active">Our Solution</a>-->
-            <!--</li>-->
-            <!--<li class="nav-item">-->
-                <!--<a href="#" class="nav-link m-2 menu-item">How We Help</a>-->
-            <!--</li>-->
-            <!--<li class="nav-item">-->
-                <!--<a href="#" class="nav-link m-2 menu-item">Blog</a>-->
-            <!--</li>-->
-            <!--<li class="nav-item">-->
-                <!--<a href="#" class="nav-link m-2 menu-item">Contact</a>-->
-            <!--</li>-->
-        <!--</ul>-->
-    <!--</div>-->
-<!--</nav>-->
