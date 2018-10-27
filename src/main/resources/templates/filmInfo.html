@@ -86,9 +86,8 @@
                 <div class="col-md-12">
                     <div class="filmPropSpaces">
                         <b>Genres:</b>
-                        <!--<th:block th:text="${film.genres}"/>-->
                         <th:block th:each="genre: ${film.genres}">
-                            <a th:text="${genre.name}" th:href="${'/user/byGenres?genre=' + genre.id + '&page=1'}"></a>
+                            <a class="genre-link" th:text="${#strings.capitalize(genre.name)}" th:href="${'/user/byGenres?genre=' + genre.id + '&page=1'}"></a>
                         </th:block>
                     </div>
                 </div>
