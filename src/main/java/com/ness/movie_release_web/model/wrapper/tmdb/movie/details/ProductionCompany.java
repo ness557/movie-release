@@ -1,6 +1,8 @@
 package com.ness.movie_release_web.model.wrapper.tmdb.movie.details;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.ness.movie_release_web.util.tmdb.TmdbPosterPathDeserializer;
 import lombok.*;
 
 @Getter
@@ -13,6 +15,7 @@ public class ProductionCompany {
 
     @JsonProperty("id")
     private Integer id;
+    @JsonDeserialize(using = TmdbPosterPathDeserializer.class)
     @JsonProperty("logo_path")
     private Object logoPath;
     @JsonProperty("name")

@@ -4,6 +4,7 @@ import com.ness.movie_release_web.model.Film;
 import com.ness.movie_release_web.model.User;
 import com.ness.movie_release_web.model.wrapper.tmdb.Language;
 import com.ness.movie_release_web.model.wrapper.tmdb.movie.details.MovieDetails;
+import com.ness.movie_release_web.model.wrapper.tmdb.movie.discover.DiscoverSearchCriteria;
 import com.ness.movie_release_web.model.wrapper.tmdb.movie.discover.SortBy;
 import com.ness.movie_release_web.model.wrapper.tmdb.movie.search.Movie;
 import com.ness.movie_release_web.model.wrapper.tmdb.movie.search.MovieSearch;
@@ -24,6 +25,7 @@ import org.springframework.web.server.ResponseStatusException;
 
 import javax.servlet.http.HttpServletRequest;
 import java.security.Principal;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -198,16 +200,34 @@ public class FilmController {
         return ResponseEntity.ok().build();
     }
 
-    @GetMapping("/byGenres")
-    public String getByGenre(@RequestParam(value = "genre") Integer genre,
-                             @RequestParam(value = "page") Integer page,
+    @GetMapping("/discover")
+    public String getByGenre(@RequestParam(value = "genres", required = false) List<Integer> genres,
+                             @RequestParam(value = "companies", required = false) List<Integer> companies,
+                             @RequestParam(value = "sortBy", required = false) SortBy sortBy,
+                             @RequestParam(value = "releaseDateMin", required = false) LocalDate releaseDateMin,
+                             @RequestParam(value = "releaseDateMax", required = false) LocalDate releaseDateMax,
+                             @RequestParam(value = "voteAverageMin", required = false) Double voteAverageMin,
+                             @RequestParam(value = "voteAverageMax", required = false) Double voteAverageMax,
+                             @RequestParam(value = "page", required = false) Integer page,
                              Principal principal,
                              Model model){
 
         User user = userService.findByLogin(principal.getName());
         Language language = user.getLanguage();
 
-        Optional<MovieSearch> optionalMovieSearch = discoverService.searchByGenre(genre, page, SortBy.popularity_desc, language);
+        DiscoverSearchCriteria criteria = new DiscoverSearchCriteria(
+                genres,
+                companies,
+                sortBy,
+                releaseDateMin,
+                releaseDateMax,
+                voteAverageMin,
+                voteAverageMax,
+                page,
+                language
+        );
+
+        Optional<MovieSearch> optionalMovieSearch = discoverService.searchByGenre(criteria);
 
         if(optionalMovieSearch.isPresent()){
 

@@ -1,8 +1,8 @@
 package com.ness.movie_release_web.service.tmdb;
 
-import com.ness.movie_release_web.model.wrapper.tmdb.Language;
-import com.ness.movie_release_web.model.wrapper.tmdb.movie.discover.SortBy;
+import com.ness.movie_release_web.model.wrapper.tmdb.movie.discover.DiscoverSearchCriteria;
 import com.ness.movie_release_web.model.wrapper.tmdb.movie.search.MovieSearch;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -12,6 +12,7 @@ import org.springframework.web.client.HttpStatusCodeException;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 
+import java.time.format.DateTimeFormatter;
 import java.util.Optional;
 
 import static java.lang.Thread.sleep;
@@ -29,14 +30,40 @@ public class DiscoverServiceImpl implements DiscoverService {
     private String url;
 
     @Override
-    public Optional<MovieSearch> searchByGenre(Integer genreId, Integer page, SortBy sortBy, Language language) {
+    public Optional<MovieSearch> searchByGenre(DiscoverSearchCriteria criteria) {
 
         UriComponentsBuilder movieBuilder = UriComponentsBuilder.fromHttpUrl(url + "discover/movie")
-                .queryParam("api_key", apikey)
-                .queryParam("sort_by", sortBy.getSearchString())
-                .queryParam("language", language)
-                .queryParam("page", page == null ? 1 : page)
-                .queryParam("with_genres", genreId);
+                .queryParam("api_key", apikey);
+
+        if (criteria.getGenres() != null)
+            movieBuilder.queryParam("with_genres",
+                    StringUtils.join(criteria.getGenres(), ","));
+
+        if (criteria.getCompanies() != null)
+            movieBuilder.queryParam("with_companies",
+                    StringUtils.join(criteria.getCompanies(), ","));
+
+        if (criteria.getSortBy() != null)
+            movieBuilder.queryParam("sort_by", criteria.getSortBy().getSearchString());
+
+        if (criteria.getReleaseDateMin() != null)
+            movieBuilder.queryParam("release_date.gte",
+                    criteria.getReleaseDateMin().format(DateTimeFormatter.ofPattern("yyyy-MM-dd")));
+
+        if (criteria.getReleaseDateMax() != null)
+            movieBuilder.queryParam("release_date.lte",
+                    criteria.getReleaseDateMax().format(DateTimeFormatter.ofPattern("yyyy-MM-dd")));
+
+        if (criteria.getReleaseDateMax() != null)
+            movieBuilder.queryParam("vote_average.gte", criteria.getVoteAverageMin());
+
+        if (criteria.getReleaseDateMax() != null)
+            movieBuilder.queryParam("vote_average.lte", criteria.getVoteAverageMax());
+
+        if (criteria.getPage() != null)
+            movieBuilder.queryParam("page", criteria.getPage());
+
+        movieBuilder.queryParam("language", criteria.getLanguage());
 
         ResponseEntity<MovieSearch> response = null;
         try {
@@ -52,7 +79,7 @@ public class DiscoverServiceImpl implements DiscoverService {
                     logger.error(e1.getMessage());
                 }
                 // and try again
-                return this.searchByGenre(genreId, page, sortBy, language);
+                return this.searchByGenre(criteria);
             }
             return Optional.empty();
         }

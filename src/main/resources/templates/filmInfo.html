@@ -87,7 +87,7 @@
                     <div class="filmPropSpaces">
                         <b>Genres:</b>
                         <th:block th:each="genre: ${film.genres}">
-                            <a class="genre-link" th:text="${#strings.capitalize(genre.name)}" th:href="${'/user/byGenres?genre=' + genre.id + '&page=1'}"></a>
+                            <a class="genre-link" th:text="${#strings.capitalize(genre.name)}" th:href="${'/user/discover?genres=' + genre.id}"></a>
                         </th:block>
                     </div>
                 </div>
@@ -99,7 +99,7 @@
                         <b>Production:</b>
 
                         <th:block th:each="production: ${film.productionCompanies}">
-                            <span th:text="${production.name}"></span>
+                            <a class="genre-link" th:text="${#strings.capitalize(production.name)}" th:href="${'/user/discover?companies=' + production.id}"></a>
                         </th:block>
                     </div>
                 </div>
