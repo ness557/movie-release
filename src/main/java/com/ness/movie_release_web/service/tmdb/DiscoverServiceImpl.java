@@ -69,7 +69,7 @@ public class DiscoverServiceImpl implements DiscoverService {
         try {
             response = restTemplate.getForEntity(movieBuilder.toUriString(), MovieSearch.class);
         } catch (HttpStatusCodeException e) {
-            logger.error("Could not get movie: {}", e.getStatusCode().value());
+            logger.error("Could not discover for movies: {}", e.getStatusCode().value());
 
             if (e.getStatusCode().value() == 429) {
                 try {

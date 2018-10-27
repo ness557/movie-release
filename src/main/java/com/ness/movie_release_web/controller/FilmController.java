@@ -11,11 +11,13 @@ import com.ness.movie_release_web.model.wrapper.tmdb.movie.search.MovieSearch;
 import com.ness.movie_release_web.service.FilmService;
 import com.ness.movie_release_web.service.UserService;
 import com.ness.movie_release_web.service.tmdb.DiscoverService;
+import com.ness.movie_release_web.service.tmdb.GenreService;
 import com.ness.movie_release_web.service.tmdb.MovieServiceImpl;
 import com.ness.movie_release_web.service.tmdb.TmdbDatesService;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -27,17 +29,16 @@ import javax.servlet.http.HttpServletRequest;
 import java.security.Principal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 
+import static java.util.Collections.emptyList;
 import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toMap;
 
 @Controller
 @RequestMapping("/user")
-@SessionAttributes(names = {"query", "year", "language"}, types = {String.class, Integer.class, Language.class})
+@SessionAttributes(names = {"query", "year", "language"},
+        types = {String.class, Integer.class, Language.class, List.class})
 public class FilmController {
 
     @Autowired
@@ -54,6 +55,9 @@ public class FilmController {
 
     @Autowired
     private DiscoverService discoverService;
+
+    @Autowired
+    private GenreService genreService;
 
     @GetMapping("/getFilm")
     public String getFilm(@RequestParam("tmdbId") Integer tmdbId,
@@ -79,8 +83,8 @@ public class FilmController {
 
     @PostMapping("/subscribe")
     public ResponseEntity subscribe(@RequestParam(value = "tmdbId") Integer tmdbId,
-                            Principal principal,
-                            HttpServletRequest request) {
+                                    Principal principal,
+                                    HttpServletRequest request) {
 
         String login = principal.getName();
 
@@ -107,8 +111,8 @@ public class FilmController {
 
     @PostMapping("/unSubscribe")
     public ResponseEntity unSubscribe(@RequestParam(value = "tmdbId") Integer tmdbId,
-                              Principal principal,
-                              HttpServletRequest request) {
+                                      Principal principal,
+                                      HttpServletRequest request) {
 
         String login = principal.getName();
 
@@ -147,9 +151,9 @@ public class FilmController {
 
         Map<Movie, Boolean> filmsWithSubFlags = movieSearch.getResults().stream()
                 .collect(toMap(f -> f,
-                               f -> filmService.isExistsByTmdbIdAndUserId(f.getId(), user.getId()),
-                               (f1, f2) -> f1,
-                               LinkedHashMap::new));
+                        f -> filmService.isExistsByTmdbIdAndUserId(f.getId(), user.getId()),
+                        (f1, f2) -> f1,
+                        LinkedHashMap::new));
         model.addAttribute("films", filmsWithSubFlags);
 
         model.addAttribute("pageCount", movieSearch.getTotalPages());
@@ -176,10 +180,10 @@ public class FilmController {
 
         List<MovieDetails> tmdbFilms =
                 films.stream()
-                      .map(f -> movieService.getMovieDetails(f.getTmdbId(), language))
-                      .filter(Optional::isPresent)
-                      .map(Optional::get)
-                      .collect(toList());
+                        .map(f -> movieService.getMovieDetails(f.getTmdbId(), language))
+                        .filter(Optional::isPresent)
+                        .map(Optional::get)
+                        .collect(toList());
 
         model.addAttribute("botInitialized", !user.isTelegramNotify() || user.getTelegramChatId() != null);
 
@@ -190,12 +194,12 @@ public class FilmController {
     }
 
     @PostMapping("/setLanguage")
-    public ResponseEntity setLanguage(@RequestParam(value = "language") Language language, Principal principal, Model model){
+    public ResponseEntity setLanguage(@RequestParam(value = "language") Language language, Principal principal, Model model) {
         User user = userService.findByLogin(principal.getName());
         user.setLanguage(language);
         userService.save(user);
 
-        model.addAttribute("language",language);
+        model.addAttribute("language", language);
 
         return ResponseEntity.ok().build();
     }
@@ -204,13 +208,15 @@ public class FilmController {
     public String getByGenre(@RequestParam(value = "genres", required = false) List<Integer> genres,
                              @RequestParam(value = "companies", required = false) List<Integer> companies,
                              @RequestParam(value = "sortBy", required = false) SortBy sortBy,
-                             @RequestParam(value = "releaseDateMin", required = false) LocalDate releaseDateMin,
-                             @RequestParam(value = "releaseDateMax", required = false) LocalDate releaseDateMax,
+                             @RequestParam(value = "releaseDateMin", required = false)
+                             @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate releaseDateMin,
+                             @RequestParam(value = "releaseDateMax", required = false)
+                             @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate releaseDateMax,
                              @RequestParam(value = "voteAverageMin", required = false) Double voteAverageMin,
                              @RequestParam(value = "voteAverageMax", required = false) Double voteAverageMax,
                              @RequestParam(value = "page", required = false) Integer page,
                              Principal principal,
-                             Model model){
+                             Model model) {
 
         User user = userService.findByLogin(principal.getName());
         Language language = user.getLanguage();
@@ -229,7 +235,7 @@ public class FilmController {
 
         Optional<MovieSearch> optionalMovieSearch = discoverService.searchByGenre(criteria);
 
-        if(optionalMovieSearch.isPresent()){
+        if (optionalMovieSearch.isPresent()) {
 
             MovieSearch movieSearch = optionalMovieSearch.get();
 
@@ -244,6 +250,16 @@ public class FilmController {
             model.addAttribute("page", page);
         }
 
-        return "searchResult";
+        model.addAttribute("language", language);
+
+//        TODO all other params
+        model.addAttribute("genresSelected", genres != null ? genres : emptyList());
+        model.addAttribute("sortSelected", sortBy != null ? sortBy : SortBy.popularity_desc);
+        model.addAttribute("releaseDateMinSelected", releaseDateMin != null ? releaseDateMin : LocalDate.of(1800, 1, 1));
+        model.addAttribute("releaseDateMaxSelected", releaseDateMax != null ? releaseDateMax : LocalDate.of(2200, 1, 1));
+
+        model.addAttribute("genres", genreService.getGenres(language));
+
+        return "discover";
     }
 }

@@ -24,9 +24,22 @@ public enum SortBy {
     public String getSearchString(){
         return this.type + "." + order;
     }
+    public String getDisplayString(){
+        return this.type + " " + this.order.getType();
+    }
 }
 
 enum Order {
-    asc,
-    desc;
+    asc("to higher"),
+    desc("to lower");
+
+    private String type;
+
+    Order(String type){
+        this.type = type;
+    }
+
+    public String getType() {
+        return type;
+    }
 }
