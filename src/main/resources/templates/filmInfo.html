@@ -76,7 +76,7 @@
             <div class="row">
                 <div class="col-md-12">
                     <div class="filmPropSpaces">
-                        Tagline:
+                        <b>Tagline:</b>
                         <th:block th:text="${film.tagline}"/>
                     </div>
                 </div>
@@ -85,10 +85,9 @@
             <div class="row">
                 <div class="col-md-12">
                     <div class="filmPropSpaces">
-                        Genres:
-                        <!--<th:block th:text="${film.genres}"/>-->
+                        <b>Genres:</b>
                         <th:block th:each="genre: ${film.genres}">
-                            <a th:text="${genre.name}" th:href="${'/user/byGenres?genre=' + genre.id + '&page=1'}"></a>
+                            <a class="genre-link" th:text="${#strings.capitalize(genre.name)}" th:href="${'/user/byGenres?genre=' + genre.id + '&page=1'}"></a>
                         </th:block>
                     </div>
                 </div>
@@ -97,7 +96,7 @@
             <div class="row">
                 <div class="col-md-12">
                     <div class="filmPropSpaces">
-                        Production:
+                        <b>Production:</b>
 
                         <th:block th:each="production: ${film.productionCompanies}">
                             <span th:text="${production.name}"></span>
@@ -109,7 +108,7 @@
             <div class="row">
                 <div class="col-md-12">
                     <div class="filmPropSpaces">
-                        Countries:
+                        <b>Countries:</b>
                         <th:block th:each="country: ${film.productionCountries}">
                             <span th:text="${country.name}"></span>
                             <span> </span>
@@ -122,8 +121,8 @@
                 <div class="row">
                     <div class="col-md-12">
                         <div class="filmPropSpaces">
-                            <th:block th:text="${release.releaseType.name()}"/>
-                            Release Date:
+                            <b><th:block th:text="${release.releaseType.name()}"/>
+                            Release Date:</b>
                             <th:block th:text='${#temporals.format(release.releaseDate, "dd MMMM yyyy")}'/>
                         </div>
                     </div>
@@ -133,7 +132,7 @@
             <div class="row">
                 <div class="col-md-12">
                     <div class="filmPropSpaces">
-                        Budget:
+                        <b>Budget:</b>
                         <th:block th:text="${'$' + #numbers.formatDecimal(film.budget, 0, 'COMMA', 2, 'POINT')}"/>
                     </div>
                 </div>
@@ -142,9 +141,8 @@
             <div class="row">
                 <div class="col-md-12">
                     <div class="filmPropSpaces">
-                        Revenue:
+                        <b>Revenue:</b>
                         <th:block th:text="${'$' + #numbers.formatDecimal(film.revenue, 0, 'COMMA', 2, 'POINT')}"/>
-                        $
                     </div>
                 </div>
             </div>
@@ -152,7 +150,7 @@
             <div class="row">
                 <div class="col-md-12">
                     <div class="filmPropSpaces">
-                        Overview:
+                        <b>Overview:</b>
                         <th:block th:text="${film.overview}"/>
                     </div>
                 </div>

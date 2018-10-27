@@ -1,0 +1,24 @@
+/* navbar */
+.navbar-brand {
+  padding: 0px;
+}
+
+.navbar-brand > img {
+  height: 100%;
+  padding: 15px;
+  width: auto;
+}
+
+.navbar-brand {
+  display: flex;
+  align-items: center;
+}
+
+.navbar-brand > img {
+  padding: 7px 14px;
+}
+
+.col-centered {
+  float: none;
+  margin: 0 auto;
+}

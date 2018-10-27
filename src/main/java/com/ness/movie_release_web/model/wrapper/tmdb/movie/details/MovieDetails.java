@@ -9,7 +9,9 @@ import lombok.*;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @Getter
 @Setter
@@ -33,7 +35,7 @@ public class MovieDetails {
     private Integer budget;
 
     @JsonProperty("genres")
-    private List<Genre> genres = new ArrayList<>(); //used
+    private Set<Genre> genres = new HashSet<>(); //used
 
     @JsonProperty("homepage")
     private String homepage; //used
