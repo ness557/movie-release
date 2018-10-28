@@ -14,34 +14,61 @@
 
     <div class="collapse" id="collapseExample">
 
-        <form action="/user/discover" method="get">
-            <select class="form-control selectpicker" name="genres" multiple data-live-search="true">
+        <form action="/user/discover" method="get" th:object="${criteria}">
+            <label>Genres:</label>
+            <select class="form-control selectpicker" th:field="*{genres}" multiple data-live-search="true">
                 <option th:each="genre : ${genres}"
                         th:value="${genre.id}"
                         th:text="${genre.name}"
-                        th:selected="${genresSelected.contains(genre.id)}">
+                        th:selected="${criteria.getGenres().contains(genre.id)}">
+                </option>
+            </select>
+            <label>Genres mode:</label>
+            <select class="form-control" th:field="*{genresAnd}">
+                <option th:value="${false}" th:text="${'with OR'}"></option>
+                <option th:value="${true}" th:text="${'with AND'}"></option>
+            </select>
+
+            <label>Release types:</label>
+            <select class="form-control selectpicker" th:field="*{releaseTypes}" multiple data-live-search="true">
+                <option th:each="release : ${T(com.ness.movie_release_web.model.wrapper.tmdb.releaseDates.ReleaseType).values()}"
+                        th:value="${release}"
+                        th:text="${release.name()}"
+                        th:selected="${criteria.getReleaseTypes().contains(release)}">
                 </option>
             </select>
 
-            <select class="form-control selectpicker" name="releaseTypes" multiple data-live-search="true">
-                <option th:each="release : ${T(com.ness.movie_release_web.model.wrapper.tmdb.releaseDates.ReleaseType).values()}"
-                        th:value="${release.ordinal()}"
-                        th:text="${release.name()}"
-                        th:selected="${releaseTypesSelected.contains(release)}">
-                </option>
+            <label>Release types mode:</label>
+            <select class="form-control" th:field="*{releaseTypeAnd}">
+                <option th:value="${false}" th:text="${'with OR'}"></option>
+                <option th:value="${true}" th:text="${'with AND'}"></option>
             </select>
 
             <!-- todo something for companies -->
-            <select name="sortBy" class="form-control">
+            <label>Sort by:</label>
+            <select th:field="*{sortBy}" class="form-control">
                 <option th:each="sort : ${T(com.ness.movie_release_web.model.wrapper.tmdb.movie.discover.SortBy).values()}"
                         th:value="${sort}"
                         th:text="${sort.getDisplayString()}"
-                        th:selected="${sort == sortSelected}">
+                        th:selected="${criteria.getSortBy().equals(sort)}">
                 </option>
             </select>
 
-            <input type="date" name="releaseDateMin" th:value="${releaseDateMinSelected}" class="form-control">
-            <input type="date" name="releaseDateMax" th:value="${releaseDateMaxSelected}" class="form-control">
+            <label>Min Release date:</label>
+            <input type="date" th:field="*{releaseDateMin}" th:value="${criteria.getReleaseDateMin()}"
+                   class="form-control">
+
+            <label>Max Release date:</label>
+            <input type="date" th:field="*{releaseDateMax}" th:value="${criteria.getReleaseDateMax()}"
+                   class="form-control">
+
+            <label>Min User Score:</label>
+            <input type="number" th:field="*{voteAverageMin}" th:value="${criteria.getVoteAverageMin()}"
+                   class="form-control">
+
+            <label>Max User Score:</label>
+            <input type="number" th:field="*{voteAverageMax}" th:value="${criteria.getVoteAverageMax()}"
+                   class="form-control">
 
 
             <input type="submit" class="btn btn-primary" value="Discover">

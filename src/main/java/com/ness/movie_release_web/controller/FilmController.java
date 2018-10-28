@@ -5,17 +5,14 @@ import com.ness.movie_release_web.model.User;
 import com.ness.movie_release_web.model.wrapper.tmdb.Language;
 import com.ness.movie_release_web.model.wrapper.tmdb.movie.details.MovieDetails;
 import com.ness.movie_release_web.model.wrapper.tmdb.movie.discover.DiscoverSearchCriteria;
-import com.ness.movie_release_web.model.wrapper.tmdb.movie.discover.SortBy;
 import com.ness.movie_release_web.model.wrapper.tmdb.movie.search.Movie;
 import com.ness.movie_release_web.model.wrapper.tmdb.movie.search.MovieSearch;
-import com.ness.movie_release_web.model.wrapper.tmdb.releaseDates.ReleaseType;
 import com.ness.movie_release_web.service.FilmService;
 import com.ness.movie_release_web.service.UserService;
 import com.ness.movie_release_web.service.tmdb.*;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
-import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -25,11 +22,12 @@ import org.springframework.web.server.ResponseStatusException;
 
 import javax.servlet.http.HttpServletRequest;
 import java.security.Principal;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.*;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 
-import static java.util.Collections.emptyList;
 import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toMap;
 
@@ -206,52 +204,29 @@ public class FilmController {
     }
 
     @GetMapping("/discover")
-    public String getByGenre(@RequestParam(value = "genres", required = false) List<Integer> genres,
-                             @RequestParam(value = "companies", required = false) List<Integer> companies,
-                             @RequestParam(value = "releaseTypes", required = false) List<Integer> releaseTypeOrdinals,
-                             @RequestParam(value = "sortBy", required = false) SortBy sortBy,
-                             @RequestParam(value = "releaseDateMin", required = false)
-                             @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate releaseDateMin,
-                             @RequestParam(value = "releaseDateMax", required = false)
-                             @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate releaseDateMax,
-                             @RequestParam(value = "voteAverageMin", required = false) Double voteAverageMin,
-                             @RequestParam(value = "voteAverageMax", required = false) Double voteAverageMax,
-                             @RequestParam(value = "page", required = false) Integer page,
-                             Principal principal,
-                             Model model) {
+    public String discover(
+//                             @RequestParam(value = "sortBy", required = false) SortBy sortBy,
+//                             @RequestParam(value = "releaseDateMin", required = false)
+//                             @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate releaseDateMin,
+//                             @RequestParam(value = "releaseDateMax", required = false)
+//                             @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate releaseDateMax,
+//                             @RequestParam(value = "voteAverageMin", required = false) Double voteAverageMin,
+//                             @RequestParam(value = "voteAverageMax", required = false) Double voteAverageMax,
+
+            @ModelAttribute("criteria") DiscoverSearchCriteria criteria,
+            @RequestParam(value = "page", required = false) Integer page,
+            Principal principal,
+            Model model) {
 
         User user = userService.findByLogin(principal.getName());
         Language language = user.getLanguage();
 
-        // assigning default values if null
-        genres = genres != null ? genres : emptyList();
-        companies = companies != null ? companies : emptyList();
+        if(page == null)
+            page = 1;
 
-
-        List<ReleaseType> releaseType = releaseTypeOrdinals != null
-                ? releaseTypeOrdinals.stream()
-                        .map(o -> ReleaseType.values()[o])
-                        .collect(toList())
-                : emptyList();
-
-        sortBy = sortBy != null ? sortBy : SortBy.popularity_desc;
-        releaseDateMin = releaseDateMin != null ? releaseDateMin : LocalDate.of(1800, 1, 1);
-        releaseDateMax = releaseDateMax != null ? releaseDateMax : LocalDate.of(2200, 1, 1);
-        voteAverageMin = voteAverageMin != null ? voteAverageMin : 0;
-        voteAverageMax = voteAverageMax != null ? voteAverageMax : 10;
-
-        DiscoverSearchCriteria criteria = new DiscoverSearchCriteria(
-                genres,
-                companies,
-                releaseType,
-                sortBy,
-                releaseDateMin,
-                releaseDateMax,
-                voteAverageMin,
-                voteAverageMax,
-                page,
-                language
-        );
+        // assigning values for service
+        criteria.setPage(page);
+        criteria.setLanguage(language);
 
         Optional<MovieSearch> optionalMovieSearch = discoverService.discover(criteria);
 
@@ -273,14 +248,8 @@ public class FilmController {
         model.addAttribute("language", language);
 
         // adding all attributes to form
-        model.addAttribute("genresSelected", genres);
-        model.addAttribute("companiesSelected", companyService.getCompanies(companies, language));
-        model.addAttribute("releaseTypesSelected", releaseType);
-        model.addAttribute("sortSelected", sortBy);
-        model.addAttribute("releaseDateMinSelected", releaseDateMin);
-        model.addAttribute("releaseDateMaxSelected", releaseDateMax);
-        model.addAttribute("voteAverageMinSelected", voteAverageMin);
-        model.addAttribute("voteAverageMaxSelected", voteAverageMax);
+        model.addAttribute("criteria", criteria);
+        model.addAttribute("companiesSelected", companyService.getCompanies(criteria.getCompanies(), language));
 
         // adding genres to form
         model.addAttribute("genres", genreService.getGenres(language));

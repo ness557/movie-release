@@ -49,9 +49,9 @@ public class DiscoverServiceImpl implements DiscoverService {
             movieBuilder.queryParam("with_genres",
                     StringUtils.join(criteria.getGenres(), "|"));
 
-        if (!criteria.getReleaseType().isEmpty())
+        if (!criteria.getReleaseTypes().isEmpty())
             movieBuilder.queryParam("with_release_type",
-                    StringUtils.join(criteria.getReleaseType().stream().map(Enum::ordinal).collect(toList()), "|"));
+                    StringUtils.join(criteria.getReleaseTypes().stream().map(Enum::ordinal).collect(toList()), "|"));
 
         if (!criteria.getCompanies().isEmpty())
             movieBuilder.queryParam("with_companies",
