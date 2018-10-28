@@ -33,37 +33,24 @@ public class DiscoverServiceImpl implements DiscoverService {
     public Optional<MovieSearch> searchByGenre(DiscoverSearchCriteria criteria) {
 
         UriComponentsBuilder movieBuilder = UriComponentsBuilder.fromHttpUrl(url + "discover/movie")
-                .queryParam("api_key", apikey);
+                .queryParam("api_key", apikey)
+                .queryParam("sort_by", criteria.getSortBy().getSearchString())
+                .queryParam("release_date.gte",
+                        criteria.getReleaseDateMin().format(DateTimeFormatter.ofPattern("yyyy-MM-dd")))
+                .queryParam("release_date.lte",
+                        criteria.getReleaseDateMax().format(DateTimeFormatter.ofPattern("yyyy-MM-dd")))
+                .queryParam("vote_average.gte", criteria.getVoteAverageMin())
+                .queryParam("vote_average.lte", criteria.getVoteAverageMax())
+                .queryParam("page", criteria.getPage())
+                .queryParam("language", criteria.getLanguage());
 
-        if (criteria.getGenres() != null)
+        if (!criteria.getGenres().isEmpty())
             movieBuilder.queryParam("with_genres",
                     StringUtils.join(criteria.getGenres(), ","));
 
-        if (criteria.getCompanies() != null)
+        if (!criteria.getCompanies().isEmpty())
             movieBuilder.queryParam("with_companies",
                     StringUtils.join(criteria.getCompanies(), ","));
-
-        if (criteria.getSortBy() != null)
-            movieBuilder.queryParam("sort_by", criteria.getSortBy().getSearchString());
-
-        if (criteria.getReleaseDateMin() != null)
-            movieBuilder.queryParam("release_date.gte",
-                    criteria.getReleaseDateMin().format(DateTimeFormatter.ofPattern("yyyy-MM-dd")));
-
-        if (criteria.getReleaseDateMax() != null)
-            movieBuilder.queryParam("release_date.lte",
-                    criteria.getReleaseDateMax().format(DateTimeFormatter.ofPattern("yyyy-MM-dd")));
-
-        if (criteria.getReleaseDateMax() != null)
-            movieBuilder.queryParam("vote_average.gte", criteria.getVoteAverageMin());
-
-        if (criteria.getReleaseDateMax() != null)
-            movieBuilder.queryParam("vote_average.lte", criteria.getVoteAverageMax());
-
-        if (criteria.getPage() != null)
-            movieBuilder.queryParam("page", criteria.getPage());
-
-        movieBuilder.queryParam("language", criteria.getLanguage());
 
         ResponseEntity<MovieSearch> response = null;
         try {

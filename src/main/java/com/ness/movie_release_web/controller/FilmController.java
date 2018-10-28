@@ -10,10 +10,7 @@ import com.ness.movie_release_web.model.wrapper.tmdb.movie.search.Movie;
 import com.ness.movie_release_web.model.wrapper.tmdb.movie.search.MovieSearch;
 import com.ness.movie_release_web.service.FilmService;
 import com.ness.movie_release_web.service.UserService;
-import com.ness.movie_release_web.service.tmdb.DiscoverService;
-import com.ness.movie_release_web.service.tmdb.GenreService;
-import com.ness.movie_release_web.service.tmdb.MovieServiceImpl;
-import com.ness.movie_release_web.service.tmdb.TmdbDatesService;
+import com.ness.movie_release_web.service.tmdb.*;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -58,6 +55,9 @@ public class FilmController {
 
     @Autowired
     private GenreService genreService;
+
+    @Autowired
+    private CompanyService companyService;
 
     @GetMapping("/getFilm")
     public String getFilm(@RequestParam("tmdbId") Integer tmdbId,
@@ -221,6 +221,15 @@ public class FilmController {
         User user = userService.findByLogin(principal.getName());
         Language language = user.getLanguage();
 
+        // assigning default values if null
+        genres = genres != null ? genres : emptyList();
+        companies = companies != null ? companies : emptyList();
+        sortBy =  sortBy != null ? sortBy : SortBy.popularity_desc;
+        releaseDateMin = releaseDateMin != null ? releaseDateMin : LocalDate.of(1800, 1, 1);
+        releaseDateMax = releaseDateMax != null ? releaseDateMax : LocalDate.of(2200, 1, 1);
+        voteAverageMin = voteAverageMin != null ? voteAverageMin : 0;
+        voteAverageMax = voteAverageMax != null ? voteAverageMax : 10;
+
         DiscoverSearchCriteria criteria = new DiscoverSearchCriteria(
                 genres,
                 companies,
@@ -252,12 +261,16 @@ public class FilmController {
 
         model.addAttribute("language", language);
 
-//        TODO all other params
-        model.addAttribute("genresSelected", genres != null ? genres : emptyList());
-        model.addAttribute("sortSelected", sortBy != null ? sortBy : SortBy.popularity_desc);
-        model.addAttribute("releaseDateMinSelected", releaseDateMin != null ? releaseDateMin : LocalDate.of(1800, 1, 1));
-        model.addAttribute("releaseDateMaxSelected", releaseDateMax != null ? releaseDateMax : LocalDate.of(2200, 1, 1));
+        // adding all attributes to form
+        model.addAttribute("genresSelected", genres);
+        model.addAttribute("companiesSelected", companyService.getCompanies(companies, language));
+        model.addAttribute("sortSelected",sortBy);
+        model.addAttribute("releaseDateMinSelected", releaseDateMin);
+        model.addAttribute("releaseDateMaxSelected", releaseDateMax);
+        model.addAttribute("voteAverageMinSelected", voteAverageMin);
+        model.addAttribute("voteAverageMaxSelected", voteAverageMax);
 
+        // adding genres to form
         model.addAttribute("genres", genreService.getGenres(language));
 
         return "discover";
