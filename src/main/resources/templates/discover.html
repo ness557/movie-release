@@ -24,10 +24,8 @@
                 </option>
             </select>
             <label>Genres mode:</label>
-            <select class="form-control" th:field="*{genresAnd}">
-                <option th:value="${false}" th:text="${'with OR'}"></option>
-                <option th:value="${true}" th:text="${'with AND'}"></option>
-            </select>
+            <input type="radio" class="option-input radio" th:field="*{genresAnd}" th:value="${false}" th:text="${'with OR'}">
+            <input type="radio" class="option-input radio" th:field="*{genresAnd}" th:value="${true}" th:text="${'with AND'}">
 
             <label>Release types:</label>
             <select class="form-control selectpicker" th:field="*{releaseTypes}" multiple data-live-search="true">
@@ -39,10 +37,8 @@
             </select>
 
             <label>Release types mode:</label>
-            <select class="form-control" th:field="*{releaseTypeAnd}">
-                <option th:value="${false}" th:text="${'with OR'}"></option>
-                <option th:value="${true}" th:text="${'with AND'}"></option>
-            </select>
+            <input type="radio" class="option-input radio" th:field="*{releaseTypeAnd}" th:value="${false}" th:text="${'with OR'}">
+            <input type="radio" class="option-input radio" th:field="*{releaseTypeAnd}" th:value="${true}" th:text="${'with AND'}">
 
             <!-- todo something for companies -->
             <label>Sort by:</label>
@@ -73,7 +69,6 @@
 
             <input type="submit" class="btn btn-primary" value="Discover">
         </form>
-
     </div>
 
     <script>
