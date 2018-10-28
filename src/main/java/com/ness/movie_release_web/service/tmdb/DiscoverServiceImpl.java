@@ -47,7 +47,7 @@ public class DiscoverServiceImpl implements DiscoverService {
 
         if (!criteria.getGenres().isEmpty())
             movieBuilder.queryParam("with_genres",
-                    StringUtils.join(criteria.getGenres(), ","));
+                    StringUtils.join(criteria.getGenres(), "|"));
 
         if (!criteria.getReleaseType().isEmpty())
             movieBuilder.queryParam("with_release_type",
