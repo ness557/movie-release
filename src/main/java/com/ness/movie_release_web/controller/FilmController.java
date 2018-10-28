@@ -8,6 +8,7 @@ import com.ness.movie_release_web.model.wrapper.tmdb.movie.discover.DiscoverSear
 import com.ness.movie_release_web.model.wrapper.tmdb.movie.discover.SortBy;
 import com.ness.movie_release_web.model.wrapper.tmdb.movie.search.Movie;
 import com.ness.movie_release_web.model.wrapper.tmdb.movie.search.MovieSearch;
+import com.ness.movie_release_web.model.wrapper.tmdb.releaseDates.ReleaseType;
 import com.ness.movie_release_web.service.FilmService;
 import com.ness.movie_release_web.service.UserService;
 import com.ness.movie_release_web.service.tmdb.*;
@@ -207,6 +208,7 @@ public class FilmController {
     @GetMapping("/discover")
     public String getByGenre(@RequestParam(value = "genres", required = false) List<Integer> genres,
                              @RequestParam(value = "companies", required = false) List<Integer> companies,
+                             @RequestParam(value = "releaseTypes", required = false) List<Integer> releaseTypeOrdinals,
                              @RequestParam(value = "sortBy", required = false) SortBy sortBy,
                              @RequestParam(value = "releaseDateMin", required = false)
                              @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate releaseDateMin,
@@ -224,7 +226,15 @@ public class FilmController {
         // assigning default values if null
         genres = genres != null ? genres : emptyList();
         companies = companies != null ? companies : emptyList();
-        sortBy =  sortBy != null ? sortBy : SortBy.popularity_desc;
+
+
+        List<ReleaseType> releaseType = releaseTypeOrdinals != null
+                ? releaseTypeOrdinals.stream()
+                        .map(o -> ReleaseType.values()[o])
+                        .collect(toList())
+                : emptyList();
+
+        sortBy = sortBy != null ? sortBy : SortBy.popularity_desc;
         releaseDateMin = releaseDateMin != null ? releaseDateMin : LocalDate.of(1800, 1, 1);
         releaseDateMax = releaseDateMax != null ? releaseDateMax : LocalDate.of(2200, 1, 1);
         voteAverageMin = voteAverageMin != null ? voteAverageMin : 0;
@@ -233,6 +243,7 @@ public class FilmController {
         DiscoverSearchCriteria criteria = new DiscoverSearchCriteria(
                 genres,
                 companies,
+                releaseType,
                 sortBy,
                 releaseDateMin,
                 releaseDateMax,
@@ -242,7 +253,7 @@ public class FilmController {
                 language
         );
 
-        Optional<MovieSearch> optionalMovieSearch = discoverService.searchByGenre(criteria);
+        Optional<MovieSearch> optionalMovieSearch = discoverService.discover(criteria);
 
         if (optionalMovieSearch.isPresent()) {
 
@@ -264,7 +275,8 @@ public class FilmController {
         // adding all attributes to form
         model.addAttribute("genresSelected", genres);
         model.addAttribute("companiesSelected", companyService.getCompanies(companies, language));
-        model.addAttribute("sortSelected",sortBy);
+        model.addAttribute("releaseTypesSelected", releaseType);
+        model.addAttribute("sortSelected", sortBy);
         model.addAttribute("releaseDateMinSelected", releaseDateMin);
         model.addAttribute("releaseDateMaxSelected", releaseDateMax);
         model.addAttribute("voteAverageMinSelected", voteAverageMin);

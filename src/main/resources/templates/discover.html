@@ -14,24 +14,39 @@
 
     <div class="collapse" id="collapseExample">
 
-        <select class="form-control selectpicker" name="genres" multiple data-live-search="true">
-            <option th:each="genre : ${genres}"
-                    th:value="${genre.id}"
-                    th:text="${genre.name}"
-                    th:selected="${genresSelected.contains(genre.id)}">
-            </option>
-        </select>
-        <!-- todo something for companies -->
-        <select name="sortBy" class="form-control">
-            <option th:each="sort : ${T(com.ness.movie_release_web.model.wrapper.tmdb.movie.discover.SortBy).values()}"
-                    th:value="${sort}"
-                    th:text="${sort.getDisplayString()}"
-                    th:selected="${sort == sortSelected}">
-            </option>
-        </select>
+        <form action="/user/discover" method="get">
+            <select class="form-control selectpicker" name="genres" multiple data-live-search="true">
+                <option th:each="genre : ${genres}"
+                        th:value="${genre.id}"
+                        th:text="${genre.name}"
+                        th:selected="${genresSelected.contains(genre.id)}">
+                </option>
+            </select>
 
-        <input type="date" name="releaseDateMin" th:value="${releaseDateMinSelected}" class="form-control">
-        <input type="date" name="releaseDateMax" th:value="${releaseDateMaxSelected}" class="form-control">
+            <select class="form-control selectpicker" name="releaseTypes" multiple data-live-search="true">
+                <option th:each="release : ${T(com.ness.movie_release_web.model.wrapper.tmdb.releaseDates.ReleaseType).values()}"
+                        th:value="${release.ordinal()}"
+                        th:text="${release.name()}"
+                        th:selected="${releaseTypesSelected.contains(release)}">
+                </option>
+            </select>
+
+            <!-- todo something for companies -->
+            <select name="sortBy" class="form-control">
+                <option th:each="sort : ${T(com.ness.movie_release_web.model.wrapper.tmdb.movie.discover.SortBy).values()}"
+                        th:value="${sort}"
+                        th:text="${sort.getDisplayString()}"
+                        th:selected="${sort == sortSelected}">
+                </option>
+            </select>
+
+            <input type="date" name="releaseDateMin" th:value="${releaseDateMinSelected}" class="form-control">
+            <input type="date" name="releaseDateMax" th:value="${releaseDateMaxSelected}" class="form-control">
+
+
+            <input type="submit" class="btn btn-primary" value="Discover">
+        </form>
+
     </div>
 
     <script>

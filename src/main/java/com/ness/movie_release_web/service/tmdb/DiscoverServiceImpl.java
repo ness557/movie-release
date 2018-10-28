@@ -16,6 +16,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.Optional;
 
 import static java.lang.Thread.sleep;
+import static java.util.stream.Collectors.toList;
 
 @Service
 public class DiscoverServiceImpl implements DiscoverService {
@@ -30,7 +31,7 @@ public class DiscoverServiceImpl implements DiscoverService {
     private String url;
 
     @Override
-    public Optional<MovieSearch> searchByGenre(DiscoverSearchCriteria criteria) {
+    public Optional<MovieSearch> discover(DiscoverSearchCriteria criteria) {
 
         UriComponentsBuilder movieBuilder = UriComponentsBuilder.fromHttpUrl(url + "discover/movie")
                 .queryParam("api_key", apikey)
@@ -48,13 +49,17 @@ public class DiscoverServiceImpl implements DiscoverService {
             movieBuilder.queryParam("with_genres",
                     StringUtils.join(criteria.getGenres(), ","));
 
+        if (!criteria.getReleaseType().isEmpty())
+            movieBuilder.queryParam("with_release_type",
+                    StringUtils.join(criteria.getReleaseType().stream().map(Enum::ordinal).collect(toList()), "|"));
+
         if (!criteria.getCompanies().isEmpty())
             movieBuilder.queryParam("with_companies",
                     StringUtils.join(criteria.getCompanies(), ","));
 
         ResponseEntity<MovieSearch> response = null;
         try {
-            response = restTemplate.getForEntity(movieBuilder.toUriString(), MovieSearch.class);
+            response = restTemplate.getForEntity(movieBuilder.build(false).toUriString(), MovieSearch.class);
         } catch (HttpStatusCodeException e) {
             logger.error("Could not discover for movies: {}", e.getStatusCode().value());
 
@@ -66,7 +71,7 @@ public class DiscoverServiceImpl implements DiscoverService {
                     logger.error(e1.getMessage());
                 }
                 // and try again
-                return this.searchByGenre(criteria);
+                return this.discover(criteria);
             }
             return Optional.empty();
         }
