@@ -204,24 +204,15 @@ public class FilmController {
     }
 
     @GetMapping("/discover")
-    public String discover(
-//                             @RequestParam(value = "sortBy", required = false) SortBy sortBy,
-//                             @RequestParam(value = "releaseDateMin", required = false)
-//                             @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate releaseDateMin,
-//                             @RequestParam(value = "releaseDateMax", required = false)
-//                             @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate releaseDateMax,
-//                             @RequestParam(value = "voteAverageMin", required = false) Double voteAverageMin,
-//                             @RequestParam(value = "voteAverageMax", required = false) Double voteAverageMax,
-
-            @ModelAttribute("criteria") DiscoverSearchCriteria criteria,
-            @RequestParam(value = "page", required = false) Integer page,
-            Principal principal,
-            Model model) {
+    public String discover(@ModelAttribute("criteria") DiscoverSearchCriteria criteria,
+                           @RequestParam(value = "page", required = false) Integer page,
+                           Principal principal,
+                           Model model) {
 
         User user = userService.findByLogin(principal.getName());
         Language language = user.getLanguage();
 
-        if(page == null)
+        if (page == null)
             page = 1;
 
         // assigning values for service
@@ -255,5 +246,18 @@ public class FilmController {
         model.addAttribute("genres", genreService.getGenres(language));
 
         return "discover";
+    }
+
+    @GetMapping("/searchForCompany")
+    public ResponseEntity searchForCompany(@RequestParam(value = "query") String query,
+                                           @RequestParam(value = "page") Integer page,
+                                           Principal principal){
+        User user = userService.findByLogin(principal.getName());
+        Language language = user.getLanguage();
+
+        if (page == null)
+            page = 1;
+
+        return ResponseEntity.ok(companyService.search(query, page, language));
     }
 }
