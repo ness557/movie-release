@@ -23,24 +23,50 @@
                         th:selected="${criteria.getGenres().contains(genre.id)}">
                 </option>
             </select>
-            <label>Genres mode:</label>
-            <input type="radio" class="option-input radio" th:field="*{genresAnd}" th:value="${false}" th:text="${'with OR'}">
-            <input type="radio" class="option-input radio" th:field="*{genresAnd}" th:value="${true}" th:text="${'with AND'}">
 
+            <br>
+            <label>Genres mode:</label>
+            <input type="radio" class="option-input radio" th:field="*{genresAnd}" th:value="${false}"
+                   th:text="${'with OR'}">
+            <input type="radio" class="option-input radio" th:field="*{genresAnd}" th:value="${true}"
+                   th:text="${'with AND'}">
+
+            <br>
             <label>Release types:</label>
             <select class="form-control selectpicker" th:field="*{releaseTypes}" multiple data-live-search="true">
                 <option th:each="release : ${T(com.ness.movie_release_web.model.wrapper.tmdb.releaseDates.ReleaseType).values()}"
+                        th:if="${release.ordinal() != 0}"
                         th:value="${release}"
                         th:text="${release.name()}"
                         th:selected="${criteria.getReleaseTypes().contains(release)}">
                 </option>
             </select>
 
+            <br>
             <label>Release types mode:</label>
-            <input type="radio" class="option-input radio" th:field="*{releaseTypeAnd}" th:value="${false}" th:text="${'with OR'}">
-            <input type="radio" class="option-input radio" th:field="*{releaseTypeAnd}" th:value="${true}" th:text="${'with AND'}">
+            <input type="radio" class="option-input radio" th:field="*{releaseTypeAnd}" th:value="${false}"
+                   th:text="${'with OR'}">
+            <input type="radio" class="option-input radio" th:field="*{releaseTypeAnd}" th:value="${true}"
+                   th:text="${'with AND'}">
 
-            <!-- todo something for companies -->
+            <br>
+            <label>Companies:</label>
+            <select class="form-control selectpicker" id="companyselectpicker" th:field="*{companies}" multiple
+                    data-live-search="true">
+                <option th:each="company : ${companies}"
+                        th:value="${company.id}"
+                        th:text="${company.name}" selected>
+                </option>
+            </select>
+
+            <br>
+            <label>Companies mode:</label>
+            <input type="radio" class="option-input radio" th:field="*{companiesAnd}" th:value="${false}"
+                   th:text="${'with OR'}">
+            <input type="radio" class="option-input radio" th:field="*{companiesAnd}" th:value="${true}"
+                   th:text="${'with AND'}">
+
+            <br>
             <label>Sort by:</label>
             <select th:field="*{sortBy}" class="form-control">
                 <option th:each="sort : ${T(com.ness.movie_release_web.model.wrapper.tmdb.movie.discover.SortBy).values()}"
@@ -50,6 +76,7 @@
                 </option>
             </select>
 
+            <br>
             <label>Min Release date:</label>
             <input type="date" th:field="*{releaseDateMin}" th:value="${criteria.getReleaseDateMin()}"
                    class="form-control">
@@ -71,8 +98,47 @@
         </form>
     </div>
 
-    <script>
-        $('.selectpicker').selectpicker();
+    <script type="text/javascript">
+        $(document).ready(function () {
+            $('.selectpicker').selectpicker();
+            // $('.selectpicker').selectpicker('refresh');
+            $('#companyselectpicker').selectpicker().ajaxSelectPicker({
+
+                ajax: {
+                    // data source
+                    url: '/user/searchForCompany',
+                    // ajax type
+                    type: 'GET',
+
+                    // data type
+                    dataType: 'json',
+
+                    // Use "{{{q}}}" as a placeholder and Ajax Bootstrap Select will
+                    // automatically replace it with the value of the search query.
+                    data: {
+                        query: 'A'
+                    }
+                },
+
+                // function to preprocess JSON data
+                preprocessData: function (data) {
+                    var dataList = data.results;
+                    var i, l = dataList.length, array = [];
+                    if (l) {
+                        for (i = 0; i < l; i++) {
+                            array.push($.extend(true, dataList[i], {
+                                text: dataList[i].name,
+                                value: dataList[i].id,
+                            }));
+                        }
+                    }
+                    // You must always return a valid array when processing data. The
+                    // data argument passed is a clone and cannot be modified directly.
+                    return array;
+                }
+            });
+        })
+
     </script>
 
     <div class="container-fluid">
@@ -232,7 +298,7 @@
 
 </div>
 <footer th:insert="embeded/footer.html"></footer>
-
+<input type="hidden" th:value="${criteria}" id="criteria">
 <script>
     $(".subsForm").submit(subscribe);
     $(".unSubsForm").submit(unsubscribe);

@@ -5,6 +5,7 @@ import com.ness.movie_release_web.model.User;
 import com.ness.movie_release_web.model.wrapper.tmdb.Language;
 import com.ness.movie_release_web.model.wrapper.tmdb.movie.details.MovieDetails;
 import com.ness.movie_release_web.model.wrapper.tmdb.movie.discover.DiscoverSearchCriteria;
+import com.ness.movie_release_web.model.wrapper.tmdb.movie.search.CompanySearch;
 import com.ness.movie_release_web.model.wrapper.tmdb.movie.search.Movie;
 import com.ness.movie_release_web.model.wrapper.tmdb.movie.search.MovieSearch;
 import com.ness.movie_release_web.service.FilmService;
@@ -239,8 +240,8 @@ public class FilmController {
         model.addAttribute("language", language);
 
         // adding all attributes to form
+        model.addAttribute("companies", companyService.getCompanies(criteria.getCompanies(), language));
         model.addAttribute("criteria", criteria);
-        model.addAttribute("companiesSelected", companyService.getCompanies(criteria.getCompanies(), language));
 
         // adding genres to form
         model.addAttribute("genres", genreService.getGenres(language));
@@ -250,7 +251,7 @@ public class FilmController {
 
     @GetMapping("/searchForCompany")
     public ResponseEntity searchForCompany(@RequestParam(value = "query") String query,
-                                           @RequestParam(value = "page") Integer page,
+                                           @RequestParam(value = "page", required = false) Integer page,
                                            Principal principal){
         User user = userService.findByLogin(principal.getName());
         Language language = user.getLanguage();
@@ -258,6 +259,6 @@ public class FilmController {
         if (page == null)
             page = 1;
 
-        return ResponseEntity.ok(companyService.search(query, page, language));
+        return ResponseEntity.ok(companyService.search(query, page, language).orElse(new CompanySearch()));
     }
 }

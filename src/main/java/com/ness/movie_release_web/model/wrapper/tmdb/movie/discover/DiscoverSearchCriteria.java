@@ -21,6 +21,7 @@ public class DiscoverSearchCriteria {
     private List<Integer> genres = emptyList();
     private Boolean genresAnd = false;
     private List<Integer> companies = emptyList();
+    private Boolean companiesAnd = false;
     private List<ReleaseType> releaseTypes = emptyList();
     private Boolean releaseTypeAnd = false;
     private SortBy sortBy = SortBy.popularity_desc;
