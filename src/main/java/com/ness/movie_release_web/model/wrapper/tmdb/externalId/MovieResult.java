@@ -1,6 +1,8 @@
 package com.ness.movie_release_web.model.wrapper.tmdb.externalId;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.ness.movie_release_web.util.tmdb.TmdbPosterPathDeserializer;
 import lombok.*;
 
 import java.util.List;
@@ -14,8 +16,9 @@ public class MovieResult {
 
     @JsonProperty("adult")
     private Boolean adult;
+    @JsonDeserialize(using = TmdbPosterPathDeserializer.class)
     @JsonProperty("backdrop_path")
-    private Object backdropPath;
+    private String backdropPath;
     @JsonProperty("genre_ids")
     private List<Integer> genreIds = null;
     @JsonProperty("id")
@@ -28,8 +31,9 @@ public class MovieResult {
     private String overview;
     @JsonProperty("release_date")
     private String releaseDate;
+    @JsonDeserialize(using = TmdbPosterPathDeserializer.class)
     @JsonProperty("poster_path")
-    private Object posterPath;
+    private String posterPath;
     @JsonProperty("popularity")
     private Double popularity;
     @JsonProperty("title")

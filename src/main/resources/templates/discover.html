@@ -98,49 +98,6 @@
         </form>
     </div>
 
-    <script type="text/javascript">
-        $(document).ready(function () {
-            $('.selectpicker').selectpicker();
-            // $('.selectpicker').selectpicker('refresh');
-            $('#companyselectpicker').selectpicker().ajaxSelectPicker({
-
-                ajax: {
-                    // data source
-                    url: '/user/searchForCompany',
-                    // ajax type
-                    type: 'GET',
-
-                    // data type
-                    dataType: 'json',
-
-                    // Use "{{{q}}}" as a placeholder and Ajax Bootstrap Select will
-                    // automatically replace it with the value of the search query.
-                    data: {
-                        query: '{{{q}}}'
-                    }
-                },
-
-                // function to preprocess JSON data
-                preprocessData: function (data) {
-                    var dataList = data.results;
-                    var i, l = dataList.length, array = [];
-                    if (l) {
-                        for (i = 0; i < l; i++) {
-                            array.push($.extend(true, dataList[i], {
-                                text: dataList[i].name,
-                                value: dataList[i].id,
-                            }));
-                        }
-                    }
-                    // You must always return a valid array when processing data. The
-                    // data argument passed is a clone and cannot be modified directly.
-                    return array;
-                }
-            });
-        })
-
-    </script>
-
     <div class="container-fluid">
         <div class="row">
             <th:block th:each="film, iStat : ${films}">
@@ -298,10 +255,48 @@
 
 </div>
 <footer th:insert="embeded/footer.html"></footer>
-<input type="hidden" th:value="${criteria}" id="criteria">
 <script>
     $(".subsForm").submit(subscribe);
     $(".unSubsForm").submit(unsubscribe);
+    $(document).ready(function () {
+        $('.selectpicker').selectpicker();
+        // $('.selectpicker').selectpicker('refresh');
+        $('#companyselectpicker').selectpicker().ajaxSelectPicker({
+
+            ajax: {
+                url: '/user/searchForCompany',
+                type: 'GET',
+                dataType: 'json',
+
+                // Use "{{{q}}}" as a placeholder and Ajax Bootstrap Select will
+                // automatically replace it with the value of the search query.
+                data: {
+                    query: '{{{q}}}'
+                }
+            },
+
+            // function to preprocess JSON data
+            preprocessData: function (data) {
+                var dataList = data.results;
+                var i, l = dataList.length, array = [];
+                if (l) {
+                    for (i = 0; i < l; i++) {
+                        array.push($.extend(true, dataList[i], {
+                            text: dataList[i].name,
+                            value: dataList[i].id,
+                        }));
+                    }
+                }
+                // You must always return a valid array when processing data. The
+                // data argument passed is a clone and cannot be modified directly.
+                return array;
+            }
+        });
+
+        $('#companyselectpicker').trigger('change').data('AjaxBootstrapSelect').list.cache = {}
+        // $('#companyselectpicker').selectpicker();
+        // $('#companyselectpicker').val(selected_companies).trigger('change').selectpicker('refresh');
+    })
 </script>
 </body>
 </html>

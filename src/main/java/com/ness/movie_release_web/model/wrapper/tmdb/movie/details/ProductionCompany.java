@@ -17,7 +17,7 @@ public class ProductionCompany {
     private Integer id;
     @JsonDeserialize(using = TmdbPosterPathDeserializer.class)
     @JsonProperty("logo_path")
-    private Object logoPath;
+    private String logoPath;
     @JsonProperty("name")
     private String name;
     @JsonProperty("origin_country")
