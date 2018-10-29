@@ -2,6 +2,7 @@ package com.ness.movie_release_web.service.tmdb;
 
 import com.ness.movie_release_web.model.wrapper.tmdb.Language;
 import com.ness.movie_release_web.model.wrapper.tmdb.movie.details.ProductionCompany;
+import com.ness.movie_release_web.model.wrapper.tmdb.movie.search.CompanySearch;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -60,6 +61,36 @@ public class CompanyServiceImpl implements CompanyService {
                 }
                 // and try again
                 return this.getCompany(id, language);
+            }
+            return Optional.empty();
+        }
+
+        return Optional.ofNullable(response.getBody());
+    }
+
+    @Override
+    public Optional<CompanySearch> search(String query, Integer page, Language language) {
+        UriComponentsBuilder movieBuilder = UriComponentsBuilder.fromHttpUrl(url + "search/company")
+                .queryParam("query", query)
+                .queryParam("page", page)
+                .queryParam("api_key", apikey)
+                .queryParam("language", language);
+
+        ResponseEntity<CompanySearch> response = null;
+        try {
+            response = restTemplate.getForEntity(movieBuilder.toUriString(), CompanySearch.class);
+        } catch (HttpStatusCodeException e) {
+            logger.error("Could not get genres: {}", e.getStatusCode().value());
+
+            if (e.getStatusCode().value() == 429) {
+                try {
+                    // sleep current thread for 1s
+                    sleep(1000);
+                } catch (InterruptedException e1) {
+                    logger.error(e1.getMessage());
+                }
+                // and try again
+                return this.search(query, page, language);
             }
             return Optional.empty();
         }
