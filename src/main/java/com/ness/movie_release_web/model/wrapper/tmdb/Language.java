@@ -1,22 +1,24 @@
 package com.ness.movie_release_web.model.wrapper.tmdb;
 
+import java.util.Locale;
+
 public enum Language {
-    en("en", "English"),
-    ru("ru", "Russian");
+    en("en", Locale.ENGLISH),
+    ru("ru", new Locale.Builder().setLanguage("ru").setScript("Cyrl").build());
 
     private String value;
-    private String string;
+    private Locale locale;
 
-    Language(String value, String string) {
+    Language(String value, Locale locale) {
         this.value = value;
-        this.string = string;
+        this.locale = locale;
     }
 
     public String getValue() {
         return value;
     }
 
-    public String getString() {
-        return string;
+    public Locale getLocale() {
+        return locale;
     }
 }

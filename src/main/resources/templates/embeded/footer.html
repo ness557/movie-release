@@ -1,4 +1,4 @@
-<footer class="navbar fixed-bottom navbar-expand navbar-light bg-light-my">
+<footer class="navbar fixed-bottom navbar-expand navbar-light bg-light-my" xmlns:th="http://www.w3.org/1999/xhtml">
 
     <!-- Links -->
     <div class="collapse navbar-collapse" id="nav-content">
@@ -9,17 +9,16 @@
                     <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button"
                        data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                         <img style="width: 20px;" th:src="@{/img/language-dark.png}"/>
-                        <th:block th:text="${language.string}"/>
+                        <th:block th:text="#{'lang.' + ${language.value}}"/>
                     </a>
                     <div class="dropdown-menu"
                          aria-labelledby="navbarDropdown">
-                        <!--<a class="dropdown-item" href="#">Something else here</a>-->
 
                         <a href="#" class="dropdown-item languageSelect"
                            th:each="lang : ${T(com.ness.movie_release_web.model.wrapper.tmdb.Language).values()}">
                             <option class="langVal"
                                     th:value="${lang}"
-                                    th:text="${lang.string}"
+                                    th:text="#{'lang.' + ${lang.value}}"
                                     th:selected="${lang == language}">
                             </option>
                         </a>
@@ -31,13 +30,13 @@
             <ul class="navbar-nav ml-auto" style="padding-right: 20px">
 
                 <li class="nav-item" style="padding: 10px 30px 10px 0;">
-                    <a class="footer-link" href="/user/discover">Discover movies</a>
+                    <a class="footer-link" href="/user/discover" th:text="#{lang.discover_movies}"></a>
                 </li>
                 <li class="nav-item" style="padding: 10px 30px 10px 0;">
-                    <a class="footer-link" href="/user/subscriptions">My subscriptions</a>
+                    <a class="footer-link" href="/user/subscriptions" th:text="#{lang.my_subscriptions}"></a>
                 </li>
                 <li class="nav-item" style="padding: 10px 30px 10px 0;">
-                    <a class="footer-link"
+                    <a class="footer-link" th:text="#{lang.talk_to-bot}"
                        th:href="'tg://resolve?domain=' + ${@environment.getProperty('telegram.bot')}">Talk to bot</a>
                 </li>
             </ul>
