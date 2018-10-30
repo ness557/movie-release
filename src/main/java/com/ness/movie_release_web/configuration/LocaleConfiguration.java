@@ -17,7 +17,7 @@ public class LocaleConfiguration implements WebMvcConfigurer {
     private UserService userService;
 
     @Bean
-    public LocaleResolver localeResolver(){
+    public LocaleResolver localeResolver() {
         return new DBLocaleResolver(userService);
     }
 
