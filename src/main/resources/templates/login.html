@@ -56,6 +56,8 @@
     </div>
 </div>
 
+<input type="hidden" id="errorMessage" th:value="#{lang.login_error}">
+
 <script type='text/javascript'>
     /* attach a submit handler to the form */
     $("#loginForm").submit(function (event) {
@@ -78,7 +80,7 @@
         });
         posting.fail(
             function (response) {
-                $('#errorSpan').text('Wrong login or password')
+                $('#errorSpan').text($('#errorMessage').val())
             }
         )
     });
