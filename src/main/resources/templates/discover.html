@@ -139,17 +139,10 @@
                     </div>
                 </div>
 
-
                 <div class="row">
-                    <div class="col-6 col-sm-6 col-md-6 col-lg-6 col-xl-6">
-                        <label>Min Release date:</label>
-                        <input type="date" th:field="*{releaseDateMin}" th:value="${criteria.getReleaseDateMin()}"
-                               class="form-control">
-                    </div>
-
-                    <div class="col-6 col-sm-6 col-md-6 col-lg-6 col-xl-6">
-                        <label>Max Release date:</label>
-                        <input type="date" th:field="*{releaseDateMax}" th:value="${criteria.getReleaseDateMax()}"
+                    <div class="col-8 col-sm-8 col-md-8 col-lg-8 col-xl-8">
+                        <label>Date range</label>
+                        <input type="text" id="dates" th:field="*{dateRange}" th:value="${criteria.getDateRange()}"
                                class="form-control">
                     </div>
                 </div>
@@ -157,13 +150,15 @@
                 <div class="row">
                     <div class="col-6 col-sm-6 col-md-6 col-lg-6 col-xl-6">
                         <label>Min User Score:</label>
-                        <input type="number" min="0" max="10" step="0.1" th:field="*{voteAverageMin}" th:value="${criteria.getVoteAverageMin()}"
+                        <input type="number" min="0" max="10" step="0.1" th:field="*{voteAverageMin}"
+                               th:value="${criteria.getVoteAverageMin()}"
                                class="form-control">
                     </div>
                     <div class="col-6 col-sm-6 col-md-6 col-lg-6 col-xl-6">
 
                         <label>Max User Score:</label>
-                        <input type="number" min="0" max="10" step="0.1" th:field="*{voteAverageMax}" th:value="${criteria.getVoteAverageMax()}"
+                        <input type="number" min="0" max="10" step="0.1" th:field="*{voteAverageMax}"
+                               th:value="${criteria.getVoteAverageMax()}"
                                class="form-control">
                     </div>
                 </div>
@@ -334,6 +329,8 @@
     $(".subsForm").submit(subscribe);
     $(".unSubsForm").submit(unsubscribe);
     $(document).ready(function () {
+
+        $('#dates').daterangepicker();
         $('.selectpicker').selectpicker();
         $('#companyselectpicker').selectpicker().ajaxSelectPicker({
 
