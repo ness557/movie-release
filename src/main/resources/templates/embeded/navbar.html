@@ -23,17 +23,17 @@
 
                             <div class="form-group ml-auto" style="margin-right: 10px; margin-bottom:0">
                                 <div class="icon-addon addon-md">
-                                    <input id="query" type="text" style="width: 170px" name="query" placeholder="Title"
+                                    <input id="query" type="text" style="width: 170px" name="query" th:placeholder="#{lang.query_input_placeholder}"
                                            class="form-control" th:value="${query}">
                                 </div>
                             </div>
                             <div class="form-group" style="margin-right: 10px; margin-bottom:0">
                                 <div class="icon-addon addon-md">
                                     <input type="number" step="1" style="width: 100px" min="1000" max="3000" name="year"
-                                           placeholder="Year" class="form-control no-spinners" th:value="${year}">
+                                           th:placeholder="#{lang.year_input_placeholder}" class="form-control no-spinners" th:value="${year}">
                                 </div>
                             </div>
-                            <input type="submit" value="Find" class="btn btn-primary">
+                            <input type="submit" th:value="#{lang.find_button}" class="btn btn-primary">
                         </form>
                     </li>
                 </ul>
@@ -44,16 +44,18 @@
                     <li class="nav-item dropdown">
                         <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button"
                            data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                            <th:block th:text="${'You signed in as: ' + #request.getUserPrincipal().getName()}"/>
+                            <th:block
+                                    th:text="#{lang.sign_in_button} + ' ' + ${#request.getUserPrincipal().getName()}"/>
                             <img style="width: 20px;" th:src="@{/img/user-light.png}"/>
                         </a>
-                        <div class="dropdown-menu dropdown-menu-right text-right ml-auto" style="width: 200px" aria-labelledby="navbarDropdown">
+                        <div class="dropdown-menu dropdown-menu-right text-right ml-auto"
+                             aria-labelledby="navbarDropdown">
                             <a href="/userInfo" class="dropdown-item">
-                                Edit profile
+                                <span th:text="#{lang.edit_profile}"></span>
                                 <img style="width: 20px;" th:src="@{/img/edit-dark.png}"/>
                             </a>
                             <a href="/logout" class="dropdown-item ml-auto">
-                                Sign out
+                                <span th:text="#{lang.sign_out}"></span>
                                 <img style="width: 20px;" th:src="@{/img/sign-out-dark.png}"/>
                             </a>
                         </div>
