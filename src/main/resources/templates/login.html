@@ -9,7 +9,7 @@
         <div class="col-12 col-sm-8 col-md-6 col-lg-5 col-xl-4 col-centered">
             <div class="row">
                 <div class="col" style="text-align: center">
-                    <span style="font-family: 'Roboto', sans-serif; font-weight: 100; font-size: 34px">LOG IN</span>
+                    <span style="font-family: 'Roboto', sans-serif; font-weight: 100; font-size: 34px" th:text="#{lang.login}"></span>
                 </div>
             </div>
             <div class="row">
@@ -23,7 +23,7 @@
                     <div class="col">
                         <div class="form-group">
                             <div class="icon-addon addon-lg">
-                                <input type="text" placeholder="Login" id="username" name="username"
+                                <input type="text" th:placeholder="#{lang.login_input_placeholder}" id="username" name="username"
                                        class="form-control"
                                        required>
                                 <img th:src="@{/img/user-dark.png}" class="glyphicon glyphicon-search">
@@ -35,7 +35,7 @@
                     <div class="col">
                         <div class="form-group">
                             <div class="icon-addon addon-lg">
-                                <input type="password" placeholder="Password" id="password" name="password"
+                                <input type="password" th:placeholder="#{lang.password_input_placeholder}" id="password" name="password"
                                        class="form-control"
                                        required>
                                 <img th:src="@{/img/password-dark.png}" class="glyphicon glyphicon-search">
@@ -45,10 +45,10 @@
                 </div>
                 <div class="row">
                     <div class="col" style="text-align: left;">
-                        <a href="/register" class="sign-up-link">Sign up</a>
+                        <a href="/register" class="sign-up-link" th:text="#{lang.sign_up}">Sign up</a>
                     </div>
                     <div class="col" style="text-align: right;">
-                        <input type="submit" class="btn btn-warning" style="padding:7px 34px;" value="LOG IN"/>
+                        <input type="submit" class="btn btn-warning" style="padding:7px 34px;" th:value="#{lang.login}"/>
                     </div>
                 </div>
             </form>
