@@ -26,7 +26,7 @@
     <link href="../static/css/fonts/Roboto.css" th:href="@{/css/fonts/Roboto.css}" rel="stylesheet"/>
     <link href="../static/css/fonts/OpenSans.css" th:href="@{/css/fonts/OpenSans.css}" rel="stylesheet"/>
 
-    <script>
+    <script th:inline="javascript">
         function unsubscribe(event) {
 
             var form = $(this);
@@ -38,7 +38,7 @@
             par.html(
                 '<form class="subsForm" action="/user/subscribe" method="post" class="subsForm">' +
                 '    <input type="hidden" name="tmdbId" value="' + tmdbId + '"/>' +
-                '    <input type="submit" value="Subscribe" class="btn btn-warning"/>' +
+                '    <input type="submit" value="' + [[#{lang.subscribe}]] + '" class="btn btn-warning"/>' +
                 '</form>'
             );
             var newForm = par.find(".subsForm");
@@ -57,7 +57,7 @@
             par.html(
                 '<form class="unSubsForm" action="/user/unSubscribe" method="post" class="unSubsForm">' +
                 '    <input type="hidden" name="tmdbId" value="' + tmdbId + '"/>' +
-                '    <input type="submit" value="Unsubscribe" class="btn btn-danger"/>' +
+                '    <input type="submit" value="' + [[#{lang.unsubscribe}]] + '" class="btn btn-danger"/>' +
                 '</form>'
             );
             var newForm = par.find(".unSubsForm");
