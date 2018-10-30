@@ -1,11 +1,13 @@
 package com.ness.movie_release_web.controller;
 
 import com.ness.movie_release_web.model.User;
+import com.ness.movie_release_web.model.wrapper.tmdb.Language;
 import com.ness.movie_release_web.security.TokenService;
 import com.ness.movie_release_web.service.UserService;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.context.MessageSource;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -14,10 +16,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
 import javax.servlet.http.Cookie;
@@ -26,8 +25,10 @@ import javax.validation.Valid;
 import java.security.Principal;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 @Controller
+@SessionAttributes(names = {"language"}, types = {Language.class})
 public class SecurityController {
 
     @Autowired
@@ -38,18 +39,28 @@ public class SecurityController {
     private UserDetailsService userDetailsService;
 
     @Autowired
+    private MessageSource messageSource;
+
+    @Autowired
     private TokenService tokenService;
 
     @Autowired
     private PasswordEncoder passwordEncoder;
 
     @GetMapping("/login")
-    public String login() {
+    public String login(Model model, Principal principal) {
+        if (principal != null) {
+            model.addAttribute("language", service.findByLogin(principal.getName()).getLanguage());
+        }
+
         return "login";
     }
 
     @GetMapping("/register")
-    public String registerForm(Model model) {
+    public String registerForm(Model model, Principal principal) {
+        if (principal != null) {
+            model.addAttribute("language", service.findByLogin(principal.getName()).getLanguage());
+        }
 
         model.addAttribute(new User());
         return "register";
@@ -76,25 +87,31 @@ public class SecurityController {
     public String register(@Valid @ModelAttribute User user,
                            BindingResult bindingResult,
                            Model model,
-                           HttpServletResponse response) {
+                           Locale locale,
+                           HttpServletResponse response,
+                           Principal principal) {
+
+        if (principal != null) {
+            model.addAttribute("language", service.findByLogin(principal.getName()).getLanguage());
+        }
 
         List<String> errors = new ArrayList<>();
 
         if (!user.getEncPassword().equals(user.getMatchPassword()))
-            errors.add("Passwords does not match");
+            errors.add(messageSource.getMessage("lang.passwords_not_match", new Object[]{}, locale));
 
         if (user.getEmail().isEmpty() && !user.isTelegramNotify())
-            errors.add("Email address is empty");
+            errors.add(messageSource.getMessage("lang.empty_email", new Object[]{}, locale));
 
         if (user.getTelegramId().isEmpty() && user.isTelegramNotify())
-            errors.add("Telegram id is empty");
+            errors.add(messageSource.getMessage("lang.empty_telegram_id", new Object[]{}, locale));
 
         if (user.getId() == null) {
             if (service.isExists(user.getLogin()))
-                errors.add("Such user already exists");
+                errors.add(messageSource.getMessage("lang.user_exists", new Object[]{}, locale));
         } else {
-            if(service.existsByIdNotAndLogin(user.getId(), user.getLogin()))
-                errors.add("Login is already used");
+            if (service.existsByIdNotAndLogin(user.getId(), user.getLogin()))
+                errors.add(messageSource.getMessage("lang.login_used", new Object[]{}, locale));
         }
 
         if (!errors.isEmpty()) {

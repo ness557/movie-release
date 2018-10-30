@@ -22,22 +22,22 @@ public class User {
     @Column(name = "role")
     private String role;
 
-    @NotEmpty(message = "can not be empty")
+    @NotEmpty(message = "{lang.login_error_msg}")
     @Column(name = "login", unique = true)
     private String login;
 
-    @NotEmpty(message = "can not be empty")
+    @NotEmpty(message = "{lang.password_error_msg}")
     @Column(name = "encr_pass")
     private String encPassword;
 
     @Transient
     private String matchPassword;
 
-    @Pattern(regexp = "^$|@\\w*", message = "should starts with @")
+    @Pattern(regexp = "^$|@\\w*", message = "{lang.telegram_error_msg}")
     @Column(name = "telegram_id")
     private String telegramId;
 
-    @Email(message = "Email has wrong format")
+    @Email(message = "{lang.email_error_msg}")
     @Column(name = "email")
     private String email;
 

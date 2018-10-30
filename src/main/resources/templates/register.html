@@ -13,12 +13,11 @@
             <form th:action="@{/register}" method="post" th:object="${user}">
                 <div class="row">
                     <div class="col-10 col-sm-10 col-md-10 col-lg-10 col-xl-10 form-group">
-                        <span style="font-family: 'Roboto', sans-serif; font-weight: 100; font-size: 34px">SIGN UP</span>
+                        <span style="font-family: 'Roboto', sans-serif; font-weight: 100; font-size: 34px" th:text="#{lang.sign_up_title}"></span>
                     </div>
                     <th:block th:if="${#fields.hasErrors() or (errors != null)}">
                         <div class="col-2 col-sm-2 col-md-2 col-lg-2 col-xl-2">
                             <div class="row">
-
                             </div>
                         </div>
                     </th:block>
@@ -31,12 +30,10 @@
                         </th:block>
 
                         <th:block th:if="${#fields.hasErrors('login')}">
-                            <span class="error">Login </span>
                             <span th:errors="*{login}" class="error"></span><br>
                         </th:block>
 
                         <th:block th:if="${#fields.hasErrors('encPassword')}">
-                            <span class="error">Password </span>
                             <span th:errors="*{encPassword}" class="error"/><br>
                         </th:block>
 
@@ -45,7 +42,6 @@
                         </th:block>
 
                         <th:block th:if="${#fields.hasErrors('telegramId')}">
-                            <span class="error">Telegram id </span>
                             <span th:errors="*{telegramId}" class="error"/><br>
                         </th:block>
 
@@ -64,7 +60,7 @@
                 <div class="row">
                     <div class="col-10 col-sm-10 col-md-10 col-lg-10 col-xl-10 form-group">
                         <div class="icon-addon addon-lg">
-                            <input type="text" placeholder="Login" class="form-control" th:field="*{login}"/>
+                            <input type="text" th:placeholder="#{lang.login_input_placeholder}" class="form-control" th:field="*{login}"/>
                             <img th:src="@{/img/user-dark.png}" class="glyphicon glyphicon-search">
                         </div>
                     </div>
@@ -84,7 +80,7 @@
                             <select th:field="*{language}" class="form-control" style="height: 46px">
                                 <option th:each="lang : ${T(com.ness.movie_release_web.model.wrapper.tmdb.Language).values()}"
                                         th:value="${lang}"
-                                        th:text="${lang.string}"
+                                        th:text="#{'lang.' + ${lang.value}}"
                                         th:selected="${lang == language}">
                                 </option>
                             </select>
@@ -97,7 +93,7 @@
                 <div class="row">
                     <div class="col-10 col-sm-10 col-md-10 col-lg-10 col-xl-10 form-group">
                         <div class="icon-addon addon-lg">
-                            <input type="password" placeholder="Password" class="form-control"
+                            <input type="password" th:placeholder="#{lang.password_input_placeholder}" class="form-control"
                                    th:field="*{encPassword}"/>
                             <img th:src="@{/img/password-dark.png}" class="glyphicon glyphicon-search">
                         </div>
@@ -116,7 +112,7 @@
                 <div class="row">
                     <div class="col-10 col-sm-10 col-md-10 col-lg-10 col-xl-10 form-group">
                         <div class="icon-addon addon-lg">
-                            <input type="password" placeholder="Password confirm" class="form-control"
+                            <input type="password" th:placeholder="#{lang.password_confirm_input_placeholder}" class="form-control"
                                    th:field="*{matchPassword}"/>
                             <img th:src="@{/img/password-dark.png}" class="glyphicon glyphicon-search">
                         </div>
@@ -135,7 +131,7 @@
                 <div class="row">
                     <div class="col-10 col-sm-10 col-md-10 col-lg-10 col-xl-10 form-group">
                         <div class="icon-addon addon-lg">
-                            <input type="text" placeholder="Email" class="form-control" th:field="*{email}"/>
+                            <input type="text" th:placeholder="#{lang.email_input_placeholder}" class="form-control" th:field="*{email}"/>
                             <img th:src="@{/img/email-dark.png}" class="glyphicon glyphicon-search">
                         </div>
                     </div>
@@ -152,7 +148,7 @@
                 <div class="row">
                     <div class="col-10 col-sm-10 col-md-10 col-lg-10 col-xl-10 form-group">
                         <div class="icon-addon addon-lg">
-                            <input type="text" placeholder="Telegram Id" class="form-control" th:field="*{telegramId}"/>
+                            <input type="text" th:placeholder="#{lang.telegram_input_placeholder}" class="form-control" th:field="*{telegramId}"/>
                             <img th:src="@{/img/telegram-dark.png}" class="glyphicon glyphicon-search">
                         </div>
                     </div>
@@ -171,8 +167,7 @@
                         <div class="row mytext" style="height: 36px; font-size: 16px">
 
                             <div class="col-4 col-sm-4 col-md-4 col-lg-4 col-xl-4"
-                                 style="text-align: left; padding-right: 0">
-                                Notify me via
+                                 style="text-align: left; padding-right: 0" th:text="#{lang.notify_via}">
                             </div>
 
                             <div class="col-4 col-sm-4 col-md-4 col-lg-4 col-xl-4">
@@ -181,8 +176,7 @@
                                         <input type="radio" class="option-input radio"
                                                th:field="*{telegramNotify}" th:value="true"/>
                                     </div>
-                                    <div class="col-9 col-sm-9 col-md-9 col-lg-9 col-xl-9" style="padding: 0">
-                                        Telegram
+                                    <div class="col-9 col-sm-9 col-md-9 col-lg-9 col-xl-9" style="padding: 0" th:text="#{lang.via_telegram}">
                                     </div>
 
                                 </div>
@@ -191,12 +185,10 @@
                             <div class="col-4 col-sm-4 col-md-4 col-lg-4 col-xl-4">
                                 <div class="row">
                                     <div class="col-1 col-sm-1 col-md-1 col-lg-1 col-xl-1">
-
                                         <input type="radio" class="option-input radio"
                                                th:field="*{telegramNotify}" th:value="false"/>
                                     </div>
-                                    <div class="col-8 col-sm-8 col-md-8 col-lg-8 col-xl-8" style="padding: 0">
-                                        Email
+                                    <div class="col-8 col-sm-8 col-md-8 col-lg-8 col-xl-8" style="padding: 0" th:text="#{lang.via_email}">
                                     </div>
                                 </div>
                             </div>
@@ -216,10 +208,10 @@
                     <div class="col-10 col-sm-10 col-md-10 col-lg-10 col-xl-10 form-group">
                         <div class="row">
                             <div class="col-6 col-sm-6 col-md-6 col-lg-6 col-xl-6 form-group" style="text-align: left">
-                                <a href="/login" class="sign-up-link">Have an account?</a>
+                                <a href="/login" class="sign-up-link" th:text="#{lang.have_account}"></a>
                             </div>
                             <div class="col-6 col-sm-6 col-md-6 col-lg-6 col-xl-6 form-group" style="text-align: right">
-                                <input type="submit" class="btn btn-warning" style="padding:7px 34px;" value="SIGN UP"/>
+                                <input type="submit" class="btn btn-warning" style="padding:7px 34px;" th:value="#{lang.sign_up_title}"/>
                             </div>
                         </div>
                     </div>
