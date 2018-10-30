@@ -29,14 +29,14 @@
                 <div>
                     <form th:if="${subscribed}" action="/user/unSubscribe" method="post" class="subsForm">
                         <input type="hidden" name="tmdbId" th:value="${film.id}"/>
-                        <input type="submit" value="Unsubscribe" class="btn btn-danger"/>
+                        <input type="submit" th:value="#{lang.unsubscribe}" class="btn btn-danger"/>
                     </form>
                 </div>
 
                 <div>
                     <form th:unless="${subscribed}" action="/user/subscribe" method="post" class="unSubsForm">
                         <input type="hidden" name="tmdbId" th:value="${film.id}"/>
-                        <input type="submit" value="Subscribe" class="btn btn-warning"/>
+                        <input type="submit" th:value="#{lang.unsubscribe}" class="btn btn-warning"/>
                     </form>
                 </div>
             </div>

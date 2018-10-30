@@ -209,12 +209,12 @@
                         <div class="col-xl-12">
                             <form th:if="${film.value}" action="/user/unSubscribe" method="post" class="unSubsForm">
                                 <input type="hidden" name="tmdbId" th:value="${film.key.id}"/>
-                                <input type="submit" value="Unsubscribe" class="btn btn-danger"/>
+                                <input type="submit" th:value="#{lang.unbscribe}" class="btn btn-danger"/>
                             </form>
 
                             <form th:unless="${film.value}" action="/user/subscribe" method="post" class="subsForm">
                                 <input type="hidden" name="tmdbId" th:value="${film.key.id}"/>
-                                <input type="submit" value="Subscribe" class="btn btn-warning"/>
+                                <input type="submit" th:value="#{lang.subscribe}" class="btn btn-warning"/>
                             </form>
                         </div>
                     </div>
