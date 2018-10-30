@@ -11,7 +11,7 @@
                 <img th:src="${film.posterPath}" style="height: 400px; max-width: 300px" class="rounded"
                      th:onerror="'this.src=\'' + @{/img/no-image.png} + '\'; this.onerror=null'">
 
-                <p style="margin-bottom: 12px; margin-top: 16px;"> User Score:
+                <p style="margin-bottom: 12px; margin-top: 16px;"> <span th:text="#{lang.score}"></span>
                     <b th:if="${film.voteAverage > 6}"
                        style="color: #33CC00"
                        th:text="${film.voteAverage}"/>
@@ -27,16 +27,16 @@
                 </p>
 
                 <div>
-                    <form th:if="${subscribed}" action="/user/unSubscribe" method="post" class="subsForm">
+                    <form th:if="${subscribed}" action="/user/unSubscribe" method="post" class="unSubsForm">
                         <input type="hidden" name="tmdbId" th:value="${film.id}"/>
                         <input type="submit" th:value="#{lang.unsubscribe}" class="btn btn-danger"/>
                     </form>
                 </div>
 
                 <div>
-                    <form th:unless="${subscribed}" action="/user/subscribe" method="post" class="unSubsForm">
+                    <form th:unless="${subscribed}" action="/user/subscribe" method="post" class="subsForm">
                         <input type="hidden" name="tmdbId" th:value="${film.id}"/>
-                        <input type="submit" th:value="#{lang.unsubscribe}" class="btn btn-warning"/>
+                        <input type="submit" th:value="#{lang.subscribe}" class="btn btn-warning"/>
                     </form>
                 </div>
             </div>
@@ -66,17 +66,17 @@
                 <div class="col-auto col-sm-auto col-md-auto col-lg-auto col-xl-auto"
                      style="text-align: center; max-width: 100px">
                     <img style="width: 16px; margin-right: 3px" th:src="@{/img/clock.png}"/>
-                    <span class="plate-text" th:text="${film.runtime +' min'}"/>
+                    <span class="plate-text" th:text="${film.runtime} + ' ' + #{lang.minutes}"/>
                 </div>
                 <div class="col-auto col-sm-auto col-md-auto col-lg-auto col-xl-auto" style="padding: 0">
-                    <a class="plate-text site" style="color: #337ab7;" th:href="${film.homepage}"> Website </a>
+                    <a class="plate-text site" style="color: #337ab7;" th:href="${film.homepage}" th:text="#{lang.website}">  </a>
                 </div>
             </div>
 
             <div class="row">
                 <div class="col-md-12">
                     <div class="filmPropSpaces">
-                        <b>Tagline:</b>
+                        <b th:text="#{lang.tag_line} + ':'"></b>
                         <th:block th:text="${film.tagline}"/>
                     </div>
                 </div>
@@ -85,7 +85,7 @@
             <div class="row">
                 <div class="col-md-12">
                     <div class="filmPropSpaces">
-                        <b>Genres:</b>
+                        <b th:text="#{lang.genres} + ':'"></b>
                         <th:block th:each="genre: ${film.genres}">
                             <a class="genre-link" th:text="${#strings.capitalize(genre.name)}" th:href="${'/user/discover?genres=' + genre.id}"></a>
                         </th:block>
@@ -96,8 +96,7 @@
             <div class="row">
                 <div class="col-md-12">
                     <div class="filmPropSpaces">
-                        <b>Production:</b>
-
+                        <b th:text="#{lang.production} + ':'"></b>
                         <th:block th:each="production: ${film.productionCompanies}">
                             <a class="genre-link" th:text="${#strings.capitalize(production.name)}" th:href="${'/user/discover?companies=' + production.id}"></a>
                         </th:block>
@@ -108,7 +107,7 @@
             <div class="row">
                 <div class="col-md-12">
                     <div class="filmPropSpaces">
-                        <b>Countries:</b>
+                        <b th:text="#{lang.countries} + ':'"></b>
                         <th:block th:each="country: ${film.productionCountries}">
                             <span th:text="${country.name}"></span>
                             <span> </span>
@@ -121,8 +120,8 @@
                 <div class="row">
                     <div class="col-md-12">
                         <div class="filmPropSpaces">
-                            <b><th:block th:text="${release.releaseType.name()}"/>
-                            Release Date:</b>
+                            <b><th:block th:text="#{'lang.release.' + ${release.releaseType.name()}}"/>
+                            <span th:text="#{lang.release_date} + ':'"></span></b>
                             <th:block th:text='${#temporals.format(release.releaseDate, "dd MMMM yyyy")}'/>
                         </div>
                     </div>
@@ -132,7 +131,7 @@
             <div class="row">
                 <div class="col-md-12">
                     <div class="filmPropSpaces">
-                        <b>Budget:</b>
+                        <b th:text="#{lang.budget} + ':'"></b>
                         <th:block th:text="${'$' + #numbers.formatDecimal(film.budget, 0, 'COMMA', 2, 'POINT')}"/>
                     </div>
                 </div>
@@ -141,7 +140,7 @@
             <div class="row">
                 <div class="col-md-12">
                     <div class="filmPropSpaces">
-                        <b>Revenue:</b>
+                        <b th:text="#{lang.revenue} + ':'"></b>
                         <th:block th:text="${'$' + #numbers.formatDecimal(film.revenue, 0, 'COMMA', 2, 'POINT')}"/>
                     </div>
                 </div>
@@ -150,7 +149,7 @@
             <div class="row">
                 <div class="col-md-12">
                     <div class="filmPropSpaces">
-                        <b>Overview:</b>
+                        <b th:text="#{lang.overview} + ':'"></b>
                         <th:block th:text="${film.overview}"/>
                     </div>
                 </div>
