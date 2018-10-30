@@ -36,14 +36,18 @@ public class DiscoverServiceImpl implements DiscoverService {
         UriComponentsBuilder movieBuilder = UriComponentsBuilder.fromHttpUrl(url + "discover/movie")
                 .queryParam("api_key", apikey)
                 .queryParam("sort_by", criteria.getSortBy().getSearchString())
-                .queryParam("release_date.gte",
-                        criteria.getReleaseDateMin().format(DateTimeFormatter.ofPattern("yyyy-MM-dd")))
-                .queryParam("release_date.lte",
-                        criteria.getReleaseDateMax().format(DateTimeFormatter.ofPattern("yyyy-MM-dd")))
                 .queryParam("vote_average.gte", criteria.getVoteAverageMin())
                 .queryParam("vote_average.lte", criteria.getVoteAverageMax())
                 .queryParam("page", criteria.getPage())
                 .queryParam("language", criteria.getLanguage());
+
+        if (criteria.getReleaseDateMin() != null)
+            movieBuilder.queryParam("release_date.gte",
+                criteria.getReleaseDateMin().format(DateTimeFormatter.ofPattern("yyyy-MM-dd")));
+
+        if (criteria.getReleaseDateMax() != null)
+            movieBuilder.queryParam("release_date.lte",
+                criteria.getReleaseDateMax().format(DateTimeFormatter.ofPattern("yyyy-MM-dd")));
 
         if (!criteria.getGenres().isEmpty())
             movieBuilder.queryParam("with_genres",

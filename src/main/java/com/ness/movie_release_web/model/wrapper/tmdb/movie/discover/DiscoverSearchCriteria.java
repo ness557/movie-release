@@ -26,9 +26,9 @@ public class DiscoverSearchCriteria {
     private Boolean releaseTypeAnd = false;
     private SortBy sortBy = SortBy.popularity_desc;
     @DateTimeFormat(pattern = "yyyy-MM-dd")
-    private LocalDate releaseDateMin = LocalDate.of(1800, 1, 1);
+    private LocalDate releaseDateMin;
     @DateTimeFormat(pattern = "yyyy-MM-dd")
-    private LocalDate releaseDateMax = LocalDate.of(2200, 1, 1);
+    private LocalDate releaseDateMax;
     private Double voteAverageMin = 0d;
     private Double voteAverageMax = 10d;
     private Integer page;

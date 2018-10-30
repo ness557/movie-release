@@ -11,91 +11,166 @@
             aria-expanded="false" aria-controls="collapseExample">
         Button with data-target
     </button>
-
     <div class="collapse" id="collapseExample">
 
-        <form action="/user/discover" method="get" th:object="${criteria}">
-            <label>Genres:</label>
-            <select class="form-control selectpicker" th:field="*{genres}" multiple data-live-search="true">
-                <option th:each="genre : ${genres}"
-                        th:value="${genre.id}"
-                        th:text="${genre.name}"
-                        th:selected="${criteria.getGenres().contains(genre.id)}">
-                </option>
-            </select>
+        <div class="col-11 col-sm-11 col-md-8 col-lg-7 col-xl-6 col-centered">
+            <form action="/user/discover" method="get" th:object="${criteria}">
+                <div class="row">
 
-            <br>
-            <label>Genres mode:</label>
-            <input type="radio" class="option-input radio" th:field="*{genresAnd}" th:value="${false}"
-                   th:text="${'with OR'}">
-            <input type="radio" class="option-input radio" th:field="*{genresAnd}" th:value="${true}"
-                   th:text="${'with AND'}">
+                    <div class="col-8 col-sm-8 col-md-8 col-lg-8 col-xl-8">
+                        <label>Genres:</label>
+                        <select class="form-control selectpicker" th:field="*{genres}" multiple data-live-search="true">
+                            <option th:each="genre : ${genres}"
+                                    th:value="${genre.id}"
+                                    th:text="${genre.name}"
+                                    th:selected="${criteria.getGenres().contains(genre.id)}">
+                            </option>
+                        </select>
+                    </div>
 
-            <br>
-            <label>Release types:</label>
-            <select class="form-control selectpicker" th:field="*{releaseTypes}" multiple data-live-search="true">
-                <option th:each="release : ${T(com.ness.movie_release_web.model.wrapper.tmdb.releaseDates.ReleaseType).values()}"
-                        th:if="${release.ordinal() != 0}"
-                        th:value="${release}"
-                        th:text="${release.name()}"
-                        th:selected="${criteria.getReleaseTypes().contains(release)}">
-                </option>
-            </select>
+                    <div class="col-4 col-sm-4 col-md-4 col-lg-4 col-xl-4">
+                        <label>Genres mode:</label>
+                        <div class="row">
+                            <div class="col-1 col-sm-1 col-md-1 col-lg-1 col-xl-1">
+                                <input type="radio" class="option-input radio" th:field="*{genresAnd}"
+                                       th:value="${false}">
+                            </div>
+                            <div class="col-4 col-sm-4 col-md-4 col-lg-4 col-xl-4">
+                                OR
+                            </div>
 
-            <br>
-            <label>Release types mode:</label>
-            <input type="radio" class="option-input radio" th:field="*{releaseTypeAnd}" th:value="${false}"
-                   th:text="${'with OR'}">
-            <input type="radio" class="option-input radio" th:field="*{releaseTypeAnd}" th:value="${true}"
-                   th:text="${'with AND'}">
-
-            <br>
-            <label>Companies:</label>
-            <select class="form-control selectpicker" id="companyselectpicker" th:field="*{companies}" multiple
-                    data-live-search="true">
-                <option th:each="company : ${companies}"
-                        th:value="${company.id}"
-                        th:text="${company.name}" selected>
-                </option>
-            </select>
-
-            <br>
-            <label>Companies mode:</label>
-            <input type="radio" class="option-input radio" th:field="*{companiesAnd}" th:value="${false}"
-                   th:text="${'with OR'}">
-            <input type="radio" class="option-input radio" th:field="*{companiesAnd}" th:value="${true}"
-                   th:text="${'with AND'}">
-
-            <br>
-            <label>Sort by:</label>
-            <select th:field="*{sortBy}" class="form-control">
-                <option th:each="sort : ${T(com.ness.movie_release_web.model.wrapper.tmdb.movie.discover.SortBy).values()}"
-                        th:value="${sort}"
-                        th:text="${sort.getDisplayString()}"
-                        th:selected="${criteria.getSortBy().equals(sort)}">
-                </option>
-            </select>
-
-            <br>
-            <label>Min Release date:</label>
-            <input type="date" th:field="*{releaseDateMin}" th:value="${criteria.getReleaseDateMin()}"
-                   class="form-control">
-
-            <label>Max Release date:</label>
-            <input type="date" th:field="*{releaseDateMax}" th:value="${criteria.getReleaseDateMax()}"
-                   class="form-control">
-
-            <label>Min User Score:</label>
-            <input type="number" th:field="*{voteAverageMin}" th:value="${criteria.getVoteAverageMin()}"
-                   class="form-control">
-
-            <label>Max User Score:</label>
-            <input type="number" th:field="*{voteAverageMax}" th:value="${criteria.getVoteAverageMax()}"
-                   class="form-control">
+                            <div class="col-1 col-sm-1 col-md-1 col-lg-1 col-xl-1">
+                                <input type="radio" class="option-input radio" th:field="*{genresAnd}"
+                                       th:value="${true}">
+                            </div>
+                            <div class="col-4 col-sm-4 col-md-4 col-lg-4 col-xl-4">
+                                AND
+                            </div>
+                        </div>
+                    </div>
+                </div>
 
 
-            <input type="submit" class="btn btn-primary" value="Discover">
-        </form>
+                <div class="row">
+                    <div class="col-8 col-sm-8 col-md-8 col-lg-8 col-xl-8">
+                        <label>Release types:</label>
+                        <select class="form-control selectpicker" th:field="*{releaseTypes}" multiple
+                                data-live-search="true">
+                            <option th:each="release : ${T(com.ness.movie_release_web.model.wrapper.tmdb.releaseDates.ReleaseType).values()}"
+                                    th:if="${release.ordinal() != 0}"
+                                    th:value="${release}"
+                                    th:text="${release.name()}"
+                                    th:selected="${criteria.getReleaseTypes().contains(release)}">
+                            </option>
+                        </select>
+                    </div>
+
+                    <div class="col-4 col-sm-4 col-md-4 col-lg-4 col-xl-4">
+                        <label>Release types mode:</label>
+                        <div class="row">
+                            <div class="col-1 col-sm-1 col-md-1 col-lg-1 col-xl-1">
+                                <input type="radio" class="option-input radio" th:field="*{releaseTypeAnd}"
+                                       th:value="${false}">
+                            </div>
+                            <div class="col-4 col-sm-4 col-md-4 col-lg-4 col-xl-4">
+                                OR
+                            </div>
+
+                            <div class="col-1 col-sm-1 col-md-1 col-lg-1 col-xl-1">
+                                <input type="radio" class="option-input radio" th:field="*{releaseTypeAnd}"
+                                       th:value="${true}">
+                            </div>
+                            <div class="col-4 col-sm-4 col-md-4 col-lg-4 col-xl-4">
+                                AND
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+
+                <div class="row">
+                    <div class="col-8 col-sm-8 col-md-8 col-lg-8 col-xl-8">
+                        <label>Companies:</label>
+                        <select class="form-control selectpicker" id="companyselectpicker" th:field="*{companies}"
+                                multiple
+                                data-live-search="true">
+                            <option th:each="company : ${companies}"
+                                    th:value="${company.id}"
+                                    th:text="${company.name}" selected>
+                            </option>
+                        </select>
+                    </div>
+
+                    <div class="col-4 col-sm-4 col-md-4 col-lg-4 col-xl-4">
+                        <label>Companies mode:</label>
+                        <div class="row">
+                            <div class="col-1 col-sm-1 col-md-1 col-lg-1 col-xl-1">
+                                <input type="radio" class="option-input radio" th:field="*{companiesAnd}"
+                                       th:value="${false}">
+                            </div>
+                            <div class="col-4 col-sm-4 col-md-4 col-lg-4 col-xl-4">
+                                OR
+                            </div>
+
+                            <div class="col-1 col-sm-1 col-md-1 col-lg-1 col-xl-1">
+
+                                <input type="radio" class="option-input radio" th:field="*{companiesAnd}"
+                                       th:value="${true}">
+                            </div>
+                            <div class="col-4 col-sm-4 col-md-4 col-lg-4 col-xl-4">
+                                AND
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+
+
+                <div class="row">
+                    <div class="col-8 col-sm-8 col-md-8 col-lg-8 col-xl-8">
+                        <label>Sort by:</label>
+                        <select th:field="*{sortBy}" class="form-control">
+                            <option th:each="sort : ${T(com.ness.movie_release_web.model.wrapper.tmdb.movie.discover.SortBy).values()}"
+                                    th:value="${sort}"
+                                    th:text="${sort.getDisplayString()}"
+                                    th:selected="${criteria.getSortBy().equals(sort)}">
+                            </option>
+                        </select>
+                    </div>
+                </div>
+
+
+                <div class="row">
+                    <div class="col-6 col-sm-6 col-md-6 col-lg-6 col-xl-6">
+                        <label>Min Release date:</label>
+                        <input type="date" th:field="*{releaseDateMin}" th:value="${criteria.getReleaseDateMin()}"
+                               class="form-control">
+                    </div>
+
+                    <div class="col-6 col-sm-6 col-md-6 col-lg-6 col-xl-6">
+                        <label>Max Release date:</label>
+                        <input type="date" th:field="*{releaseDateMax}" th:value="${criteria.getReleaseDateMax()}"
+                               class="form-control">
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-6 col-sm-6 col-md-6 col-lg-6 col-xl-6">
+                        <label>Min User Score:</label>
+                        <input type="number" th:field="*{voteAverageMin}" th:value="${criteria.getVoteAverageMin()}"
+                               class="form-control">
+                    </div>
+                    <div class="col-6 col-sm-6 col-md-6 col-lg-6 col-xl-6">
+
+                        <label>Max User Score:</label>
+                        <input type="number" th:field="*{voteAverageMax}" th:value="${criteria.getVoteAverageMax()}"
+                               class="form-control">
+                    </div>
+                </div>
+                <input type="submit" class="btn btn-primary" value="Discover">
+
+            </form>
+        </div>
     </div>
 
     <div class="container-fluid">
@@ -260,7 +335,6 @@
     $(".unSubsForm").submit(unsubscribe);
     $(document).ready(function () {
         $('.selectpicker').selectpicker();
-        // $('.selectpicker').selectpicker('refresh');
         $('#companyselectpicker').selectpicker().ajaxSelectPicker({
 
             ajax: {
@@ -284,6 +358,7 @@
                         array.push($.extend(true, dataList[i], {
                             text: dataList[i].name,
                             value: dataList[i].id,
+                            'data-thumbnail': dataList[i].logo_path,
                         }));
                     }
                 }
@@ -294,8 +369,6 @@
         });
 
         $('#companyselectpicker').trigger('change').data('AjaxBootstrapSelect').list.cache = {}
-        // $('#companyselectpicker').selectpicker();
-        // $('#companyselectpicker').val(selected_companies).trigger('change').selectpicker('refresh');
     })
 </script>
 </body>
