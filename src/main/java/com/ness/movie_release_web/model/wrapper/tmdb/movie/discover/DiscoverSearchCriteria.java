@@ -47,7 +47,7 @@ public class DiscoverSearchCriteria {
 
     public void setDateRange(String dateRangeString) {
         List<LocalDate> dates = stream(dateRangeString.split("-"))
-                .map(d -> parse(trim(d), ofPattern("dd/MM/yyyy")))
+                .map(d -> parse(trim(d), ofPattern("dd.MM.yyyy")))
                 .collect(toList());
         releaseDateMin = dates.get(0);
         releaseDateMax = dates.get(1);
@@ -55,7 +55,7 @@ public class DiscoverSearchCriteria {
 
     public String getDateRange() {
         if (releaseDateMin != null && releaseDateMax != null)
-            return releaseDateMin.format(ofPattern("dd/MM/yyyy")) + " - " + releaseDateMax.format(ofPattern("dd/MM/yyyy"));
+            return releaseDateMin.format(ofPattern("dd.MM.yyyy")) + " - " + releaseDateMax.format(ofPattern("dd.MM.yyyy"));
         return "";
     }
 }
