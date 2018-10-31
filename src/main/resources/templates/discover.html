@@ -6,19 +6,21 @@
 
 <div class="container-fluid">
 
+    <form action="/user/discover" method="get" th:object="${criteria}">
 
-    <button class="btn btn-primary" type="button" data-toggle="collapse" data-target="#collapseExample"
-            aria-expanded="false" aria-controls="collapseExample">
-        Button with data-target
-    </button>
-    <div class="collapse" id="collapseExample">
+        <button class="btn btn-primary" type="button" data-toggle="collapse"
+                data-target="#collapseExample" aria-controls="#collapseExample">
+            <span th:text="#{lang.search_criteria_button}"></span>
+        </button>
+        <input type="submit" class="btn btn-primary" th:value="#{lang.discover_movies}">
 
-        <div class="col-11 col-sm-11 col-md-8 col-lg-7 col-xl-6 col-centered">
-            <form action="/user/discover" method="get" th:object="${criteria}">
+        <div class="collapse" id="collapseExample">
+
+            <div class="col-11 col-sm-11 col-md-8 col-lg-7 col-xl-6">
                 <div class="row">
 
                     <div class="col-8 col-sm-8 col-md-8 col-lg-8 col-xl-8">
-                        <label>Genres:</label>
+                        <label th:text="#{lang.genres} + ':'"></label>
                         <select class="form-control selectpicker" th:field="*{genres}" multiple data-live-search="true">
                             <option th:each="genre : ${genres}"
                                     th:value="${genre.id}"
@@ -29,14 +31,14 @@
                     </div>
 
                     <div class="col-4 col-sm-4 col-md-4 col-lg-4 col-xl-4">
-                        <label>Genres mode:</label>
+                        <label th:text="#{lang.genres_mode} + ':'"></label>
                         <div class="row">
                             <div class="col-1 col-sm-1 col-md-1 col-lg-1 col-xl-1">
                                 <input type="radio" class="option-input radio" th:field="*{genresAnd}"
                                        th:value="${false}">
                             </div>
                             <div class="col-4 col-sm-4 col-md-4 col-lg-4 col-xl-4">
-                                OR
+                                <span th:text="#{lang.or}"></span>
                             </div>
 
                             <div class="col-1 col-sm-1 col-md-1 col-lg-1 col-xl-1">
@@ -44,7 +46,7 @@
                                        th:value="${true}">
                             </div>
                             <div class="col-4 col-sm-4 col-md-4 col-lg-4 col-xl-4">
-                                AND
+                                <span th:text="#{lang.and}"></span>
                             </div>
                         </div>
                     </div>
@@ -53,27 +55,28 @@
 
                 <div class="row">
                     <div class="col-8 col-sm-8 col-md-8 col-lg-8 col-xl-8">
-                        <label>Release types:</label>
+                        <label th:text="#{lang.release_types} + ':'"></label>
+
                         <select class="form-control selectpicker" th:field="*{releaseTypes}" multiple
                                 data-live-search="true">
                             <option th:each="release : ${T(com.ness.movie_release_web.model.wrapper.tmdb.releaseDates.ReleaseType).values()}"
                                     th:if="${release.ordinal() != 0}"
                                     th:value="${release}"
-                                    th:text="${release.name()}"
+                                    th:text="#{'lang.release.' + ${release.name()}}"
                                     th:selected="${criteria.getReleaseTypes().contains(release)}">
                             </option>
                         </select>
                     </div>
 
                     <div class="col-4 col-sm-4 col-md-4 col-lg-4 col-xl-4">
-                        <label>Release types mode:</label>
+                        <label th:text="#{lang.release_type_mode} + ':'"></label>
                         <div class="row">
                             <div class="col-1 col-sm-1 col-md-1 col-lg-1 col-xl-1">
                                 <input type="radio" class="option-input radio" th:field="*{releaseTypeAnd}"
                                        th:value="${false}">
                             </div>
                             <div class="col-4 col-sm-4 col-md-4 col-lg-4 col-xl-4">
-                                OR
+                                <span th:text="#{lang.or}"></span>
                             </div>
 
                             <div class="col-1 col-sm-1 col-md-1 col-lg-1 col-xl-1">
@@ -81,7 +84,7 @@
                                        th:value="${true}">
                             </div>
                             <div class="col-4 col-sm-4 col-md-4 col-lg-4 col-xl-4">
-                                AND
+                                <span th:text="#{lang.and}"></span>
                             </div>
                         </div>
                     </div>
@@ -90,9 +93,10 @@
 
                 <div class="row">
                     <div class="col-8 col-sm-8 col-md-8 col-lg-8 col-xl-8">
-                        <label>Companies:</label>
+                        <label th:text="#{lang.companies} + ':'"></label>
                         <select class="form-control selectpicker" id="companyselectpicker" th:field="*{companies}"
                                 multiple
+                                data-actoins-box="true" data-select-all-headers="true"
                                 data-live-search="true">
                             <option th:each="company : ${companies}"
                                     th:value="${company.id}"
@@ -102,14 +106,14 @@
                     </div>
 
                     <div class="col-4 col-sm-4 col-md-4 col-lg-4 col-xl-4">
-                        <label>Companies mode:</label>
+                        <label th:text="#{lang.companies_mode} + ':'"></label>
                         <div class="row">
                             <div class="col-1 col-sm-1 col-md-1 col-lg-1 col-xl-1">
                                 <input type="radio" class="option-input radio" th:field="*{companiesAnd}"
                                        th:value="${false}">
                             </div>
                             <div class="col-4 col-sm-4 col-md-4 col-lg-4 col-xl-4">
-                                OR
+                                <span th:text="#{lang.or}"></span>
                             </div>
 
                             <div class="col-1 col-sm-1 col-md-1 col-lg-1 col-xl-1">
@@ -118,7 +122,7 @@
                                        th:value="${true}">
                             </div>
                             <div class="col-4 col-sm-4 col-md-4 col-lg-4 col-xl-4">
-                                AND
+                                <span th:text="#{lang.and}"></span>
                             </div>
 
                         </div>
@@ -128,45 +132,45 @@
 
                 <div class="row">
                     <div class="col-8 col-sm-8 col-md-8 col-lg-8 col-xl-8">
-                        <label>Sort by:</label>
-                        <select th:field="*{sortBy}" class="form-control">
+                        <label th:text="#{lang.sort_by} + ':'"></label>
+                        <select th:field="*{sortBy}" class="form-control selectpicker">
                             <option th:each="sort : ${T(com.ness.movie_release_web.model.wrapper.tmdb.movie.discover.SortBy).values()}"
                                     th:value="${sort}"
-                                    th:text="${sort.getDisplayString()}"
+                                    th:text="#{'lang.sort.' + ${sort.getType()}} + ' ' + #{'lang.order.' + ${sort.getOrder().name()}}"
                                     th:selected="${criteria.getSortBy().equals(sort)}">
                             </option>
                         </select>
                     </div>
                 </div>
 
+
                 <div class="row">
                     <div class="col-8 col-sm-8 col-md-8 col-lg-8 col-xl-8">
-                        <label>Date range</label>
+                        <label th:text="#{lang.date_range} + ':'"></label>
                         <input type="text" id="dates" th:field="*{dateRange}" th:value="${criteria.getDateRange()}"
                                class="form-control">
                     </div>
                 </div>
 
+
+                <label th:text="#{lang.user_score_range} + ':'"></label>
                 <div class="row">
-                    <div class="col-6 col-sm-6 col-md-6 col-lg-6 col-xl-6">
-                        <label>Min User Score:</label>
+                    <div class="col-4 col-sm-4 col-md-4 col-lg-4 col-xl-4">
                         <input type="number" min="0" max="10" step="0.1" th:field="*{voteAverageMin}"
                                th:value="${criteria.getVoteAverageMin()}"
                                class="form-control">
                     </div>
-                    <div class="col-6 col-sm-6 col-md-6 col-lg-6 col-xl-6">
-
-                        <label>Max User Score:</label>
+                    <div class="col-4 col-sm-4 col-md-4 col-lg-4 col-xl-4">
                         <input type="number" min="0" max="10" step="0.1" th:field="*{voteAverageMax}"
                                th:value="${criteria.getVoteAverageMax()}"
                                class="form-control">
                     </div>
                 </div>
-                <input type="submit" class="btn btn-primary" value="Discover">
 
-            </form>
+            </div>
         </div>
-    </div>
+    </form>
+
 
     <div class="container-fluid">
         <div class="row">
@@ -217,7 +221,6 @@
             </th:block>
         </div>
     </div>
-
 
     <th:block th:if="${pageCount > 0}">
 
@@ -325,13 +328,18 @@
 
 </div>
 <footer th:insert="embeded/footer.html"></footer>
-<script>
+<script th:inline="javascript">
     $(".subsForm").submit(subscribe);
     $(".unSubsForm").submit(unsubscribe);
     $(document).ready(function () {
 
         $('#dates').daterangepicker();
-        $('.selectpicker').selectpicker();
+
+        $('.selectpicker').selectpicker({
+            noneSelectedText: [[#{lang.none_selected_text}]],
+            noneResultsText: [[#{lang.none_results_text}]],
+            selectAllText: [[#{lang.select_all}]]
+        });
         $('#companyselectpicker').selectpicker().ajaxSelectPicker({
 
             ajax: {
@@ -344,6 +352,17 @@
                 data: {
                     query: '{{{q}}}'
                 }
+            },
+
+            locale: {
+                currentlySelected: [[#{lang.ajax.currently_selected}]],
+                emptyTitle: [[#{lang.ajax.empty_title}]],
+                errorText: [[#{lang.ajax.error_text}]],
+                searchPlaceholder: [[#{lang.ajax.search_placeholder}]],
+                statusInitialized: [[#{lang.ajax.status_initialized}]],
+                statusNoResults: [[#{lang.ajax.status_no_results}]],
+                statusSearching: [[#{lang.ajax.status_searching}]],
+                statusTooShort: [[#{lang.ajax.status_too_short}]]
             },
 
             // function to preprocess JSON data
