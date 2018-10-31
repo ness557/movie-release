@@ -56,6 +56,6 @@ public class DiscoverSearchCriteria {
     public String getDateRange() {
         if (releaseDateMin != null && releaseDateMax != null)
             return releaseDateMin.format(ofPattern("dd.MM.yyyy")) + " - " + releaseDateMax.format(ofPattern("dd.MM.yyyy"));
-        return "";
+        return LocalDate.now().minusMonths(1).format(ofPattern("dd.MM.yyyy")) + " - " + LocalDate.now().format(ofPattern("dd.MM.yyyy"));
     }
 }
