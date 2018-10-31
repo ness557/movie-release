@@ -333,7 +333,42 @@
     $(".unSubsForm").submit(unsubscribe);
     $(document).ready(function () {
 
-        $('#dates').daterangepicker();
+        $('#dates').daterangepicker({
+                locale: {
+                    format: "DD/MM/YYYY",
+                    separator: " - ",
+                    applyLabel: [[#{lang.apply}]],
+                    cancelLabel: [[#{lang.cancel}]],
+                    fromLabel: [[#{lang.from}]],
+                    toLabel: [[#{lang.to}]],
+                    customRangeLabel: [[#{lang.custom}]],
+                    weekLabel: [[#{lang.week}]],
+                    daysOfWeek: [
+                        [[#{lang.day.su}]],
+                        [[#{lang.day.mo}]],
+                        [[#{lang.day.tu}]],
+                        [[#{lang.day.we}]],
+                        [[#{lang.day.th}]],
+                        [[#{lang.day.fr}]],
+                        [[#{lang.day.sa}]]
+                    ],
+                    monthNames: [
+                        [[#{lang.month.january}]],
+                        [[#{lang.month.february}]],
+                        [[#{lang.month.march}]],
+                        [[#{lang.month.april}]],
+                        [[#{lang.month.may}]],
+                        [[#{lang.month.june}]],
+                        [[#{lang.month.july}]],
+                        [[#{lang.month.august}]],
+                        [[#{lang.month.september}]],
+                        [[#{lang.month.october}]],
+                        [[#{lang.month.november}]],
+                        [[#{lang.month.december}]]
+                    ],
+                    firstDay: 1
+                }
+            });
 
         $('.selectpicker').selectpicker({
             noneSelectedText: [[#{lang.none_selected_text}]],

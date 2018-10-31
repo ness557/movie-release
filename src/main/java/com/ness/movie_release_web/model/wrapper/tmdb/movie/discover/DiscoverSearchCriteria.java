@@ -29,33 +29,33 @@ public class DiscoverSearchCriteria {
     private List<ReleaseType> releaseTypes = emptyList();
     private Boolean releaseTypeAnd = false;
     private SortBy sortBy = SortBy.popularity_desc;
-    private List<LocalDate> dateRange = emptyList();
+    private LocalDate releaseDateMax;
+    private LocalDate releaseDateMin;
+    //    private List<LocalDate> dateRange = emptyList();
     private Double voteAverageMin = 0d;
     private Double voteAverageMax = 10d;
     private Integer page;
     private Language language;
 
     public LocalDate getReleaseDateMin() {
-        if (dateRange != null && !dateRange.isEmpty()) {
-            return dateRange.get(0);
-        }
-        return null;
+        return releaseDateMin;
     }
 
     public LocalDate getReleaseDateMax() {
-        if (dateRange != null && !dateRange.isEmpty()) {
-            return dateRange.get(1);
-        }
-        return null;
+        return releaseDateMax;
     }
 
     public void setDateRange(String dateRangeString) {
-        this.dateRange = stream(dateRangeString.split("-"))
-                .map(d -> parse(trim(d), ofPattern("MM/dd/yyyy")))
+        List<LocalDate> dates = stream(dateRangeString.split("-"))
+                .map(d -> parse(trim(d), ofPattern("dd/MM/yyyy")))
                 .collect(toList());
+        releaseDateMin = dates.get(0);
+        releaseDateMax = dates.get(1);
     }
 
     public String getDateRange() {
-        return String.join(" - ", dateRange.stream().map(d -> d.format(ofPattern("MM/dd/yyyy"))).collect(toList()));
+        if (releaseDateMin != null && releaseDateMax != null)
+            return releaseDateMin.format(ofPattern("dd/MM/yyyy")) + " - " + releaseDateMax.format(ofPattern("dd/MM/yyyy"));
+        return "";
     }
 }
