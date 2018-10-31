@@ -1,7 +1,5 @@
 package com.ness.movie_release_web.model.wrapper.tmdb.movie.discover;
 
-import static org.apache.commons.lang3.StringUtils.replace;
-
 public enum SortBy {
 
     popularity_desc("popularity", Order.desc),
@@ -25,10 +23,6 @@ public enum SortBy {
 
     public String getSearchString() {
         return this.type + "." + order;
-    }
-
-    public String getDisplayString() {
-        return replace(this.type, "_", " ") + " " + this.order.getType();
     }
 
     public String getType() {
