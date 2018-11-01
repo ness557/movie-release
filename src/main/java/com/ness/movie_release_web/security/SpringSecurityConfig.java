@@ -42,7 +42,7 @@ public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Override
     public void configure(WebSecurity web) throws Exception {
-        web.ignoring().antMatchers("/img/**", "/css/**", "/js/**", "/favicon.ico");
+        web.ignoring().antMatchers("/img/**", "/css/**", "/js/**", "/favicon.ico", "/webjars/**");
     }
 
     @Bean

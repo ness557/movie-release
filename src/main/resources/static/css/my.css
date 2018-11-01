@@ -1,14 +1,13 @@
 html * {
-    font-family: 'Roboto', sans-serif !important;
+    font-family: 'Roboto', sans-serif;
 }
 
 html, body {
     height: 100%
 }
 
-
 .bg-light-my {
-    background-color: #F3F3F3 !important;
+    background-color: #F3F3F3;
 }
 
 .error {
@@ -78,4 +77,23 @@ html, body {
 .genre-link:hover {
     color: #6E6E6E;
     text-decoration: none;
+}
+
+/* discover button */
+.discover-collapse-button, .discover-collapse-button:hover, .discover-collapse-button:active{
+    color: #676767;
+    font-weight: bold;
+    font-family: 'Roboto', sans-serif;
+    padding-left: 20px;
+    background-color: #F9F9F9;
+    padding-bottom: -1px;
+    text-align: left;
+    margin-left: 15px;
+    width: 270px;
+    outline: none;
+    box-shadow: none;
+}
+
+.discover-form-control{
+    background-color: #F9F9FB;
 }

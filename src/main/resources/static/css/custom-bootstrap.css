@@ -2176,10 +2176,6 @@ select.form-control-lg:not([size]):not([multiple]), .input-group-lg > select.for
     text-decoration: none
 }
 
-.btn:focus, .btn.focus {
-    outline: 0;
-    box-shadow: 0 0 0 .2rem rgba(0, 123, 255, 0.25)
-}
 
 .btn.disabled, .btn:disabled {
     opacity: .65
@@ -2391,7 +2387,7 @@ a.btn.disabled, fieldset:disabled a.btn {
 
 .btn-light {
     color: #212529;
-    background-color: #f8f9fa;
+    background-color: #f3f3f3;
     border-color: #f8f9fa
 }
 
