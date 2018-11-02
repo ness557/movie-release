@@ -3,6 +3,7 @@ package com.ness.movie_release_web.controller;
 import com.ness.movie_release_web.model.User;
 import com.ness.movie_release_web.model.wrapper.tmdb.Language;
 import com.ness.movie_release_web.security.TokenService;
+import com.ness.movie_release_web.service.google.recapcha.RecaptchaService;
 import com.ness.movie_release_web.service.UserService;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,6 +21,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
 import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 import java.security.Principal;
@@ -47,6 +49,9 @@ public class SecurityController {
     @Autowired
     private PasswordEncoder passwordEncoder;
 
+    @Autowired
+    private RecaptchaService recaptchaService;
+
     @GetMapping("/login")
     public String login(Model model, Principal principal) {
         if (principal != null) {
@@ -69,12 +74,18 @@ public class SecurityController {
     @PostMapping("/login")
     public ResponseEntity postLogin(@RequestParam("username") String username,
                                     @RequestParam("password") String password,
-                                    HttpServletResponse response) {
+                                    @RequestParam(name="g-recaptcha-response") String recaptchaResponse,
+                                    HttpServletResponse response,
+                                    HttpServletRequest request) {
 
         UserDetails userDetails = userDetailsService.loadUserByUsername(username);
 
         if (!passwordEncoder.matches(password, userDetails.getPassword())) {
             throw new ResponseStatusException(HttpStatus.FORBIDDEN);
+        }
+
+        if (!recaptchaService.verifyRecaptcha(request.getRemoteAddr(), recaptchaResponse)) {
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED);
         }
 
         String token = tokenService.getToken(userDetails);
@@ -86,9 +97,11 @@ public class SecurityController {
     @PostMapping("/register")
     public String register(@Valid @ModelAttribute User user,
                            BindingResult bindingResult,
+                           @RequestParam(name="g-recaptcha-response") String recaptchaResponse,
                            Model model,
                            Locale locale,
                            HttpServletResponse response,
+                           HttpServletRequest request,
                            Principal principal) {
 
         if (principal != null) {
@@ -114,6 +127,9 @@ public class SecurityController {
                 errors.add(messageSource.getMessage("lang.login_used", new Object[]{}, locale));
         }
 
+        if(!recaptchaService.verifyRecaptcha(request.getRemoteAddr(), recaptchaResponse))
+            errors.add(messageSource.getMessage("lang.recaptcha_error", new Object[]{}, locale));
+
         if (!errors.isEmpty()) {
             model.addAttribute("errors", errors);
             return "register";
@@ -126,7 +142,7 @@ public class SecurityController {
         user.setTelegramId(StringUtils.lowerCase(user.getTelegramId()));
         service.saveWithPassEncryption(user);
 
-        postLogin(user.getLogin(), user.getMatchPassword(), response);
+        postLogin(user.getLogin(), user.getMatchPassword(), recaptchaResponse, response, request);
 
         return "redirect:/user/subscriptions";
     }

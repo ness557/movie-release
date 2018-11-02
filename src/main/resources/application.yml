@@ -35,3 +35,8 @@ server:
 
 my_jwt:
   seed: uHwuPV3iUFVMeK5m7VVZDhmkywFZoN
+
+google:
+  recaptcha:
+    site: 6LcUS3gUAAAAAAc09fr__CsINv6N751HtyVw5D_j
+    secret: 6LcUS3gUAAAAAFKbqkepCbRPq3PK3fPmlYprq01k

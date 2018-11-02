@@ -206,12 +206,19 @@
 
                 <div class="row">
                     <div class="col-10 col-sm-10 col-md-10 col-lg-10 col-xl-10 form-group">
+                        <div class="g-recaptcha" th:data-sitekey="${@environment.getProperty('google.recaptcha.site')}"
+                             data-callback="enableButton" data-theme="light" data-size="normal"></div>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-10 col-sm-10 col-md-10 col-lg-10 col-xl-10 form-group">
                         <div class="row">
                             <div class="col-6 col-sm-6 col-md-6 col-lg-6 col-xl-6 form-group" style="text-align: left">
                                 <a href="/login" class="sign-up-link" th:text="#{lang.have_account}"></a>
                             </div>
                             <div class="col-6 col-sm-6 col-md-6 col-lg-6 col-xl-6 form-group" style="text-align: right">
-                                <input type="submit" class="btn btn-warning" style="padding:7px 34px;" th:value="#{lang.sign_up_title}"/>
+                                <input type="submit" id="submitButton" class="btn btn-warning" style="padding:7px 34px;" th:value="#{lang.sign_up_title}"/>
                             </div>
                         </div>
                     </div>
@@ -222,12 +229,20 @@
                         </div>
                     </div>
                 </th:block>
-
             </form>
         </div>
     </div>
 </div>
 
 <footer th:insert="embeded/footer.html"></footer>
+<script>
+    $(document).ready(function () {
+        $('#submitButton').attr("disabled", "disabled");
+    });
+
+    function enableButton() {
+        $('#submitButton').removeAttr("disabled");
+    }
+</script>
 </body>
 </html>
