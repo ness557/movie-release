@@ -2,7 +2,7 @@ package com.ness.movie_release_web.service.tmdb;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.ness.movie_release_web.model.wrapper.tmdb.Language;
-import com.ness.movie_release_web.model.wrapper.tmdb.movie.details.GenreWrapper;
+import com.ness.movie_release_web.model.wrapper.tmdb.GenreWrapper;
 import lombok.Getter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
