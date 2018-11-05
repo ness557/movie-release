@@ -35,7 +35,7 @@ import static java.util.stream.Collectors.toMap;
 @RequestMapping("/movie")
 @SessionAttributes(names = {"query", "year", "language" },
         types = {String.class, Integer.class, Language.class})
-public class FilmController {
+public class MovieController {
 
     @Autowired
     private MovieServiceImpl movieService;
