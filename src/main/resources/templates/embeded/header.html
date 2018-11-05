@@ -36,11 +36,11 @@
             var form = $(this);
             var tmdbId = form.find('input').val();
 
-            $.post('/user/unSubscribe', form.serialize());
+            $.post('/movie/unSubscribe', form.serialize());
 
             var par = form.parent();
             par.html(
-                '<form class="subsForm" action="/user/subscribe" method="post" class="subsForm">' +
+                '<form class="subsForm" action="/movie/subscribe" method="post" class="subsForm">' +
                 '    <input type="hidden" name="tmdbId" value="' + tmdbId + '"/>' +
                 '    <input type="submit" value="' + [[#{lang.subscribe}]] + '" class="btn btn-warning"/>' +
                 '</form>'
@@ -55,11 +55,11 @@
             var form = $(this);
             var tmdbId = form.find('input').val();
 
-            $.post('/user/subscribe', $(this).serialize());
+            $.post('/movie/subscribe', $(this).serialize());
 
             var par = form.parent();
             par.html(
-                '<form class="unSubsForm" action="/user/unSubscribe" method="post" class="unSubsForm">' +
+                '<form class="unSubsForm" action="/movie/unSubscribe" method="post" class="unSubsForm">' +
                 '    <input type="hidden" name="tmdbId" value="' + tmdbId + '"/>' +
                 '    <input type="submit" value="' + [[#{lang.unsubscribe}]] + '" class="btn btn-danger"/>' +
                 '</form>'

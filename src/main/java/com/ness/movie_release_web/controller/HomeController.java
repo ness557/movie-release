@@ -22,7 +22,7 @@ public class HomeController {
     private String home(Model model, Principal principal){
 
         if (principal != null) {
-            return "redirect:/user/subscriptions";
+            return "redirect:/movie/subscriptions";
         }
 
         model.addAttribute("telegram", telegramBot);

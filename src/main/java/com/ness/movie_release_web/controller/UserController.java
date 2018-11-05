@@ -31,7 +31,7 @@ import java.util.Locale;
 
 @Controller
 @SessionAttributes(names = {"language"}, types = {Language.class})
-public class SecurityController {
+public class UserController {
 
     @Autowired
     private UserService service;
@@ -74,7 +74,7 @@ public class SecurityController {
     @PostMapping("/login")
     public ResponseEntity postLogin(@RequestParam("username") String username,
                                     @RequestParam("password") String password,
-                                    @RequestParam(name="g-recaptcha-response") String recaptchaResponse,
+                                    @RequestParam(name = "g-recaptcha-response") String recaptchaResponse,
                                     HttpServletResponse response,
                                     HttpServletRequest request) {
 
@@ -84,20 +84,16 @@ public class SecurityController {
             throw new ResponseStatusException(HttpStatus.FORBIDDEN);
         }
 
-        if (!recaptchaService.verifyRecaptcha(request.getRemoteAddr(), recaptchaResponse)) {
-            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED);
-        }
-
         String token = tokenService.getToken(userDetails);
         response.addCookie(new Cookie("authorization", "bearer:" + token));
 
-        return ResponseEntity.ok("/user/subscriptions");
+        return ResponseEntity.ok("/movie/subscriptions");
     }
 
     @PostMapping("/register")
     public String register(@Valid @ModelAttribute User user,
                            BindingResult bindingResult,
-                           @RequestParam(name="g-recaptcha-response") String recaptchaResponse,
+                           @RequestParam(name = "g-recaptcha-response") String recaptchaResponse,
                            Model model,
                            Locale locale,
                            HttpServletResponse response,
@@ -105,7 +101,9 @@ public class SecurityController {
                            Principal principal) {
 
         if (principal != null) {
-            model.addAttribute("language", service.findByLogin(principal.getName()).getLanguage());
+            User fromDB = service.findByLogin(principal.getName());
+            model.addAttribute("language", fromDB.getLanguage());
+            user.setTelegramId(fromDB.getTelegramId());
         }
 
         List<String> errors = new ArrayList<>();
@@ -127,7 +125,7 @@ public class SecurityController {
                 errors.add(messageSource.getMessage("lang.login_used", new Object[]{}, locale));
         }
 
-        if(!recaptchaService.verifyRecaptcha(request.getRemoteAddr(), recaptchaResponse))
+        if (!recaptchaService.verifyRecaptcha(request.getRemoteAddr(), recaptchaResponse))
             errors.add(messageSource.getMessage("lang.recaptcha_error", new Object[]{}, locale));
 
         if (!errors.isEmpty()) {
@@ -140,11 +138,12 @@ public class SecurityController {
 
         user.setRole("ROLE_USER");
         user.setTelegramId(StringUtils.lowerCase(user.getTelegramId()));
+
         service.saveWithPassEncryption(user);
 
         postLogin(user.getLogin(), user.getMatchPassword(), recaptchaResponse, response, request);
 
-        return "redirect:/user/subscriptions";
+        return "redirect:/movie/subscriptions";
     }
 
     @GetMapping("/userInfo")
@@ -154,5 +153,16 @@ public class SecurityController {
         model.addAttribute("language", user.getLanguage());
         model.addAttribute(user);
         return "register";
+    }
+
+    @PostMapping("/setLanguage")
+    public ResponseEntity setLanguage(@RequestParam(value = "language") Language language, Principal principal, Model model) {
+        User user = service.findByLogin(principal.getName());
+        user.setLanguage(language);
+        service.save(user);
+
+        model.addAttribute("language", language);
+
+        return ResponseEntity.ok().build();
     }
 }

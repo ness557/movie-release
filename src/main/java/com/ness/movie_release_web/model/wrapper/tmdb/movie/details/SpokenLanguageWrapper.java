@@ -9,11 +9,10 @@ import lombok.*;
 @AllArgsConstructor
 @ToString
 @EqualsAndHashCode
-public class Genre {
+public class SpokenLanguageWrapper {
 
-    @JsonProperty("id")
-    private Integer id;
+    @JsonProperty("iso_639_1")
+    private String iso6391;
     @JsonProperty("name")
     private String name;
-
 }

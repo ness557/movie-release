@@ -2,7 +2,7 @@ package com.ness.movie_release_web.service.tmdb;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.ness.movie_release_web.model.wrapper.tmdb.Language;
-import com.ness.movie_release_web.model.wrapper.tmdb.movie.details.Genre;
+import com.ness.movie_release_web.model.wrapper.tmdb.movie.details.GenreWrapper;
 import lombok.Getter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -32,7 +32,7 @@ public class GenreServiceImpl implements GenreService {
     private String url;
 
     @Override
-    public List<Genre> getGenres(Language language) {
+    public List<GenreWrapper> getGenres(Language language) {
 
         UriComponentsBuilder movieBuilder = UriComponentsBuilder.fromHttpUrl(url + "genre/movie/list")
                 .queryParam("api_key", apikey)
@@ -57,12 +57,12 @@ public class GenreServiceImpl implements GenreService {
             return emptyList();
         }
 
-        return response.getBody().getGenres();
+        return response.getBody().getGenreWrappers();
     }
 }
 
 @Getter
 class GenreList{
     @JsonProperty("genres")
-    private List<Genre> genres = new ArrayList<>();
+    private List<GenreWrapper> genreWrappers = new ArrayList<>();
 }

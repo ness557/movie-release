@@ -30,10 +30,10 @@
             <ul class="navbar-nav ml-auto">
 
                 <li class="nav-item" style="padding: 10px 15px 10px 0;">
-                    <a class="footer-link" href="/user/discover" th:text="#{lang.discover_movies}"></a>
+                    <a class="footer-link" href="/movie/discover" th:text="#{lang.discover_movies}"></a>
                 </li>
                 <li class="nav-item" style="padding: 10px 15px 10px 0;">
-                    <a class="footer-link" href="/user/subscriptions" th:text="#{lang.my_subscriptions}"></a>
+                    <a class="footer-link" href="/movie/subscriptions" th:text="#{lang.my_subscriptions}"></a>
                 </li>
                 <li class="nav-item" style="padding: 10px 15px 10px 0;">
                     <a class="footer-link" th:text="#{lang.talk_to-bot}"
@@ -47,7 +47,7 @@
     <script>
         $('.languageSelect').click(function () {
             var langVal = $(this).find(".langVal").val()
-                $.post("/user/setLanguage", {"language": langVal}, function () {
+                $.post("/setLanguage", {"language": langVal}, function () {
                     setTimeout(20);
                     location.reload();
                 });

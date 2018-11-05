@@ -3,11 +3,10 @@ package com.ness.movie_release_web.controller;
 import com.ness.movie_release_web.model.Film;
 import com.ness.movie_release_web.model.User;
 import com.ness.movie_release_web.model.wrapper.tmdb.Language;
-import com.ness.movie_release_web.model.wrapper.tmdb.movie.details.MovieDetails;
+import com.ness.movie_release_web.model.wrapper.tmdb.movie.details.MovieDetailsWrapper;
 import com.ness.movie_release_web.model.wrapper.tmdb.movie.discover.DiscoverSearchCriteria;
-import com.ness.movie_release_web.model.wrapper.tmdb.movie.search.CompanySearch;
-import com.ness.movie_release_web.model.wrapper.tmdb.movie.search.Movie;
-import com.ness.movie_release_web.model.wrapper.tmdb.movie.search.MovieSearch;
+import com.ness.movie_release_web.model.wrapper.tmdb.movie.search.MovieSearchWrapper;
+import com.ness.movie_release_web.model.wrapper.tmdb.movie.search.MovieWrapper;
 import com.ness.movie_release_web.service.FilmService;
 import com.ness.movie_release_web.service.UserService;
 import com.ness.movie_release_web.service.tmdb.*;
@@ -33,7 +32,7 @@ import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toMap;
 
 @Controller
-@RequestMapping("/user")
+@RequestMapping("/movie")
 @SessionAttributes(names = {"query", "year", "language" },
         types = {String.class, Integer.class, Language.class})
 public class FilmController {
@@ -59,7 +58,7 @@ public class FilmController {
     @Autowired
     private CompanyService companyService;
 
-    @GetMapping("/getFilm")
+    @GetMapping("/getMovie")
     public String getFilm(@RequestParam("tmdbId") Integer tmdbId,
                           Principal principal,
                           Model model) {
@@ -72,7 +71,7 @@ public class FilmController {
             model.addAttribute("subscribed", true);
         }
 
-        Optional<MovieDetails> movieDetails = movieService.getMovieDetails(tmdbId, language);
+        Optional<MovieDetailsWrapper> movieDetails = movieService.getMovieDetails(tmdbId, language);
         if (!movieDetails.isPresent())
             throw new ResponseStatusException(HttpStatus.NOT_FOUND);
 
@@ -93,21 +92,22 @@ public class FilmController {
         if (filmService.isExistsByTmdbIdAndUserId(tmdbId, user.getId()))
             throw new ResponseStatusException(HttpStatus.CONFLICT);
 
-        Optional<MovieDetails> optionalMovieDetails = movieService.getMovieDetails(tmdbId, Language.en);
+        Optional<MovieDetailsWrapper> optionalMovieDetails = movieService.getMovieDetails(tmdbId, Language.en);
 
         if (!optionalMovieDetails.isPresent())
             throw new ResponseStatusException(HttpStatus.CONFLICT);
 
-        MovieDetails movieDetails = optionalMovieDetails.get();
+        MovieDetailsWrapper movieDetailsWrapper = optionalMovieDetails.get();
 
         Film film = new Film(null,
-                movieDetails.getId(),
+                movieDetailsWrapper.getId(),
                 LocalDateTime.now(),
                 user);
 
         filmService.save(film);
         return ResponseEntity.ok().build();
     }
+
 
     @PostMapping("/unSubscribe")
     public ResponseEntity unSubscribe(@RequestParam(value = "tmdbId") Integer tmdbId,
@@ -141,22 +141,22 @@ public class FilmController {
         model.addAttribute("year", year);
         model.addAttribute("language", language);
 
-        Optional<MovieSearch> optionalMovieSearch = movieService.searchForMovies(query, page, year, language);
+        Optional<MovieSearchWrapper> optionalMovieSearch = movieService.searchForMovies(query, page, year, language);
 
         if (!optionalMovieSearch.isPresent()) {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR);
         }
 
-        MovieSearch movieSearch = optionalMovieSearch.get();
+        MovieSearchWrapper movieSearchWrapper = optionalMovieSearch.get();
 
-        Map<Movie, Boolean> filmsWithSubFlags = movieSearch.getResults().stream()
+        Map<MovieWrapper, Boolean> filmsWithSubFlags = movieSearchWrapper.getResults().stream()
                 .collect(toMap(f -> f,
                         f -> filmService.isExistsByTmdbIdAndUserId(f.getId(), user.getId()),
                         (f1, f2) -> f1,
                         LinkedHashMap::new));
         model.addAttribute("films", filmsWithSubFlags);
 
-        model.addAttribute("pageCount", movieSearch.getTotalPages());
+        model.addAttribute("pageCount", movieSearchWrapper.getTotalPages());
         model.addAttribute("page", page);
         return "searchResult";
     }
@@ -178,7 +178,7 @@ public class FilmController {
         Page<Film> filmPage = filmService.getAllByUserWithPages(page, 10, user);
         List<Film> films = filmPage.getContent();
 
-        List<MovieDetails> tmdbFilms =
+        List<MovieDetailsWrapper> tmdbFilms =
                 films.stream()
                         .map(f -> movieService.getMovieDetails(f.getTmdbId(), language))
                         .filter(Optional::isPresent)
@@ -191,17 +191,6 @@ public class FilmController {
                 .addAttribute("page", page)
                 .addAttribute("pageCount", filmPage.getTotalPages());
         return "subscriptions";
-    }
-
-    @PostMapping("/setLanguage")
-    public ResponseEntity setLanguage(@RequestParam(value = "language") Language language, Principal principal, Model model) {
-        User user = userService.findByLogin(principal.getName());
-        user.setLanguage(language);
-        userService.save(user);
-
-        model.addAttribute("language", language);
-
-        return ResponseEntity.ok().build();
     }
 
     @GetMapping("/discover")
@@ -220,20 +209,20 @@ public class FilmController {
         criteria.setPage(page);
         criteria.setLanguage(language);
 
-        Optional<MovieSearch> optionalMovieSearch = discoverService.discover(criteria);
+        Optional<MovieSearchWrapper> optionalMovieSearch = discoverService.discover(criteria);
 
         if (optionalMovieSearch.isPresent()) {
 
-            MovieSearch movieSearch = optionalMovieSearch.get();
+            MovieSearchWrapper movieSearchWrapper = optionalMovieSearch.get();
 
-            Map<Movie, Boolean> filmsWithSubFlags = movieSearch.getResults().stream()
+            Map<MovieWrapper, Boolean> filmsWithSubFlags = movieSearchWrapper.getResults().stream()
                     .collect(toMap(f -> f,
                             f -> filmService.isExistsByTmdbIdAndUserId(f.getId(), user.getId()),
                             (f1, f2) -> f1,
                             LinkedHashMap::new));
             model.addAttribute("films", filmsWithSubFlags);
 
-            model.addAttribute("pageCount", movieSearch.getTotalPages());
+            model.addAttribute("pageCount", movieSearchWrapper.getTotalPages());
             model.addAttribute("page", page);
         }
 
@@ -243,22 +232,9 @@ public class FilmController {
         model.addAttribute("companies", companyService.getCompanies(criteria.getCompanies(), language));
         model.addAttribute("criteria", criteria);
 
-        // adding genres to form
+        // adding genreWrappers to form
         model.addAttribute("genres", genreService.getGenres(language));
 
         return "discover";
-    }
-
-    @GetMapping("/searchForCompany")
-    public ResponseEntity searchForCompany(@RequestParam(value = "query") String query,
-                                           @RequestParam(value = "page", required = false) Integer page,
-                                           Principal principal){
-        User user = userService.findByLogin(principal.getName());
-        Language language = user.getLanguage();
-
-        if (page == null)
-            page = 1;
-
-        return ResponseEntity.ok(companyService.search(query, page, language).orElse(new CompanySearch()));
     }
 }

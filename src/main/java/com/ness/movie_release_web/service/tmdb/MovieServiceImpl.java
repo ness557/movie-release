@@ -1,9 +1,9 @@
 package com.ness.movie_release_web.service.tmdb;
 
 import com.ness.movie_release_web.model.wrapper.tmdb.Language;
-import com.ness.movie_release_web.model.wrapper.tmdb.movie.details.MovieDetails;
-import com.ness.movie_release_web.model.wrapper.tmdb.movie.search.MovieSearch;
-import com.ness.movie_release_web.model.wrapper.tmdb.releaseDates.ReleaseDate;
+import com.ness.movie_release_web.model.wrapper.tmdb.movie.details.MovieDetailsWrapper;
+import com.ness.movie_release_web.model.wrapper.tmdb.movie.search.MovieSearchWrapper;
+import com.ness.movie_release_web.model.wrapper.tmdb.releaseDates.ReleaseDateWrapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,16 +35,16 @@ public class MovieServiceImpl implements MovieService {
     private TmdbDatesService releaseDatesService;
 
     @Override
-    public Optional<MovieDetails> getMovieDetails(Integer tmdbId, Language language) {
+    public Optional<MovieDetailsWrapper> getMovieDetails(Integer tmdbId, Language language) {
 
         UriComponentsBuilder movieUrlBuilder = UriComponentsBuilder.fromHttpUrl(url + "movie/")
                 .path(tmdbId.toString())
                 .queryParam("api_key", apikey)
                 .queryParam("language", language.name());
 
-        ResponseEntity<MovieDetails> response = null;
+        ResponseEntity<MovieDetailsWrapper> response = null;
         try {
-            response = restTemplate.getForEntity(movieUrlBuilder.toUriString(), MovieDetails.class);
+            response = restTemplate.getForEntity(movieUrlBuilder.toUriString(), MovieDetailsWrapper.class);
         } catch (HttpStatusCodeException e) {
             logger.error("Could not get movie by id: {}, status: {}", tmdbId, e.getStatusCode().value());
 
@@ -62,19 +62,19 @@ public class MovieServiceImpl implements MovieService {
             return Optional.empty();
         }
 
-        MovieDetails result = response.getBody();
+        MovieDetailsWrapper result = response.getBody();
 
         if (result != null) {
 
-            List<ReleaseDate> releaseDates = releaseDatesService.getReleaseDates(result.getId());
-            result.setReleaseDates(releaseDates);
+            List<ReleaseDateWrapper> releaseDateWrappers = releaseDatesService.getReleaseDates(result.getId());
+            result.setReleaseDateWrappers(releaseDateWrappers);
         }
 
         return Optional.ofNullable(result);
     }
 
     @Override
-    public Optional<MovieSearch> searchForMovies(String query, Integer page, Integer year, Language language) {
+    public Optional<MovieSearchWrapper> searchForMovies(String query, Integer page, Integer year, Language language) {
         UriComponentsBuilder searchUrlBuilder = UriComponentsBuilder.fromHttpUrl(url + "search/movie/")
                 .queryParam("api_key", apikey)
                 .queryParam("language", language.name())
@@ -84,9 +84,9 @@ public class MovieServiceImpl implements MovieService {
         if (year != null)
             searchUrlBuilder.queryParam("year", year);
 
-        ResponseEntity<MovieSearch> response = null;
+        ResponseEntity<MovieSearchWrapper> response = null;
         try {
-            response = restTemplate.getForEntity(searchUrlBuilder.build(false).toUriString(), MovieSearch.class);
+            response = restTemplate.getForEntity(searchUrlBuilder.build(false).toUriString(), MovieSearchWrapper.class);
         } catch (HttpStatusCodeException e) {
             logger.error("Could not search for movie: {}, status: ", query, e.getStatusCode().value());
 

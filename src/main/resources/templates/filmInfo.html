@@ -27,14 +27,14 @@
                 </p>
 
                 <div>
-                    <form th:if="${subscribed}" action="/user/unSubscribe" method="post" class="unSubsForm">
+                    <form th:if="${subscribed}" action="/movie/unSubscribe" method="post" class="unSubsForm">
                         <input type="hidden" name="tmdbId" th:value="${film.id}"/>
                         <input type="submit" th:value="#{lang.unsubscribe}" class="btn btn-danger"/>
                     </form>
                 </div>
 
                 <div>
-                    <form th:unless="${subscribed}" action="/user/subscribe" method="post" class="subsForm">
+                    <form th:unless="${subscribed}" action="/movie/subscribe" method="post" class="subsForm">
                         <input type="hidden" name="tmdbId" th:value="${film.id}"/>
                         <input type="submit" th:value="#{lang.subscribe}" class="btn btn-warning"/>
                     </form>
@@ -86,8 +86,8 @@
                 <div class="col-md-12">
                     <div class="filmPropSpaces">
                         <b th:text="#{lang.genres} + ':'"></b>
-                        <th:block th:each="genre: ${film.genres}">
-                            <a class="genre-link" th:text="${#strings.capitalize(genre.name)}" th:href="${'/user/discover?genres=' + genre.id}"></a>
+                        <th:block th:each="genre: ${film.genreWrappers}">
+                            <a class="genre-link" th:text="${#strings.capitalize(genre.name)}" th:href="${'/discover?genreWrappers=' + genre.id}"></a>
                         </th:block>
                     </div>
                 </div>
@@ -98,7 +98,7 @@
                     <div class="filmPropSpaces">
                         <b th:text="#{lang.production} + ':'"></b>
                         <th:block th:each="production: ${film.productionCompanies}">
-                            <a class="genre-link" th:text="${#strings.capitalize(production.name)}" th:href="${'/user/discover?companies=' + production.id}"></a>
+                            <a class="genre-link" th:text="${#strings.capitalize(production.name)}" th:href="${'/discover?companies=' + production.id}"></a>
                         </th:block>
                     </div>
                 </div>

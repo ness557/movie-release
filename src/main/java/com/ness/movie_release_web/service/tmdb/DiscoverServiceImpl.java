@@ -1,7 +1,7 @@
 package com.ness.movie_release_web.service.tmdb;
 
 import com.ness.movie_release_web.model.wrapper.tmdb.movie.discover.DiscoverSearchCriteria;
-import com.ness.movie_release_web.model.wrapper.tmdb.movie.search.MovieSearch;
+import com.ness.movie_release_web.model.wrapper.tmdb.movie.search.MovieSearchWrapper;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -31,7 +31,7 @@ public class DiscoverServiceImpl implements DiscoverService {
     private String url;
 
     @Override
-    public Optional<MovieSearch> discover(DiscoverSearchCriteria criteria) {
+    public Optional<MovieSearchWrapper> discover(DiscoverSearchCriteria criteria) {
 
         UriComponentsBuilder movieBuilder = UriComponentsBuilder.fromHttpUrl(url + "discover/movie")
                 .queryParam("api_key", apikey)
@@ -61,9 +61,9 @@ public class DiscoverServiceImpl implements DiscoverService {
             movieBuilder.queryParam("with_companies",
                     StringUtils.join(criteria.getCompanies(), criteria.getCompaniesAnd() ? "," : "|"));
 
-        ResponseEntity<MovieSearch> response = null;
+        ResponseEntity<MovieSearchWrapper> response = null;
         try {
-            response = restTemplate.getForEntity(movieBuilder.build(false).toUriString(), MovieSearch.class);
+            response = restTemplate.getForEntity(movieBuilder.build(false).toUriString(), MovieSearchWrapper.class);
         } catch (HttpStatusCodeException e) {
             logger.error("Could not discover for movies: {}", e.getStatusCode().value());
 

@@ -15,7 +15,7 @@ import java.util.List;
 @AllArgsConstructor
 @ToString
 @EqualsAndHashCode
-public class Movie {
+public class MovieWrapper {
     @JsonProperty("vote_count")
     private Integer voteCount;
     @JsonProperty("id")

@@ -11,7 +11,7 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @ToString
-public class ReleaseDateResultList {
+public class ReleaseDateResultListWrapper {
     @JsonProperty("results")
-    private List<ReleaseDateResult> releaseDates = new ArrayList<>();
+    private List<ReleaseDateResultWrapper> releaseDates = new ArrayList<>();
 }

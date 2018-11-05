@@ -9,7 +9,7 @@ import lombok.*;
 @AllArgsConstructor
 @ToString
 @EqualsAndHashCode
-public class ProductionCountry {
+public class ProductionCountryWrapper {
 
     @JsonProperty("iso_3166_1")
     private String iso31661;

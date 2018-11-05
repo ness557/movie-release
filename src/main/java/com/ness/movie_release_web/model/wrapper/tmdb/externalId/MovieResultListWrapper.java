@@ -11,7 +11,7 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @ToString
-public class MovieResultList {
+public class MovieResultListWrapper {
     @JsonProperty("movie_results")
-    private List<MovieResult> movieResultList = new ArrayList<>();
+    private List<MovieResultWrapper> movieResultWrapperList = new ArrayList<>();
 }

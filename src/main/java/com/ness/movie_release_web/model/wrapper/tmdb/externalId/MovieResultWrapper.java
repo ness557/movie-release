@@ -12,7 +12,7 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @ToString
-public class MovieResult {
+public class MovieResultWrapper {
 
     @JsonProperty("adult")
     private Boolean adult;

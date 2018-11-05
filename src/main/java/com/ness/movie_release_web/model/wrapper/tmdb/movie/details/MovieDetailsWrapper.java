@@ -2,7 +2,7 @@ package com.ness.movie_release_web.model.wrapper.tmdb.movie.details;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
-import com.ness.movie_release_web.model.wrapper.tmdb.releaseDates.ReleaseDate;
+import com.ness.movie_release_web.model.wrapper.tmdb.releaseDates.ReleaseDateWrapper;
 import com.ness.movie_release_web.util.tmdb.TmdbMovieReleaseDateDeserializer;
 import com.ness.movie_release_web.util.tmdb.TmdbPosterPathDeserializer;
 import lombok.*;
@@ -19,7 +19,7 @@ import java.util.Set;
 @AllArgsConstructor
 @ToString
 @EqualsAndHashCode
-public class MovieDetails {
+public class MovieDetailsWrapper {
 
     @JsonProperty("adult")
     private Boolean adult;
@@ -35,7 +35,7 @@ public class MovieDetails {
     private Integer budget;
 
     @JsonProperty("genres")
-    private Set<Genre> genres = new HashSet<>(); //used
+    private Set<GenreWrapper> genreWrappers = new HashSet<>(); //used
 
     @JsonProperty("homepage")
     private String homepage; //used
@@ -63,10 +63,10 @@ public class MovieDetails {
     private String posterPath; //used
 
     @JsonProperty("production_companies")
-    private List<ProductionCompany> productionCompanies = new ArrayList<>(); //used
+    private List<ProductionCompanyWrapper> productionCompanies = new ArrayList<>(); //used
 
     @JsonProperty("production_countries")
-    private List<ProductionCountry> productionCountries = new ArrayList<>(); //used
+    private List<ProductionCountryWrapper> productionCountries = new ArrayList<>(); //used
 
     @JsonDeserialize(using = TmdbMovieReleaseDateDeserializer.class)
     @JsonProperty("release_date")
@@ -79,7 +79,7 @@ public class MovieDetails {
     private Integer runtime; // minutes used
 
     @JsonProperty("spoken_languages")
-    private List<SpokenLanguage> spokenLanguages = new ArrayList<>();
+    private List<SpokenLanguageWrapper> spokenLanguageWrappers = new ArrayList<>();
 
     @JsonProperty("status")
     private String status; //used
@@ -99,5 +99,5 @@ public class MovieDetails {
     @JsonProperty("vote_count")
     private Integer voteCount;
 
-    private List<ReleaseDate> releaseDates = new ArrayList<>(); //used
+    private List<ReleaseDateWrapper> releaseDateWrappers = new ArrayList<>(); //used
 }

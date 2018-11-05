@@ -13,7 +13,7 @@ import java.util.Objects;
 @NoArgsConstructor
 @AllArgsConstructor
 @ToString
-public class ReleaseDate implements Comparable {
+public class ReleaseDateWrapper implements Comparable {
 
     @JsonProperty("release_date")
     @JsonDeserialize(using = TmdbReleaseDateDateDeserializer.class)
@@ -26,7 +26,7 @@ public class ReleaseDate implements Comparable {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        ReleaseDate that = (ReleaseDate) o;
+        ReleaseDateWrapper that = (ReleaseDateWrapper) o;
         return Objects.equals(releaseDate, that.releaseDate) &&
                 releaseType.equals(that.releaseType);
     }
@@ -35,7 +35,7 @@ public class ReleaseDate implements Comparable {
     public int compareTo(Object o) {
         if (this == o) return 0;
         if (o == null || getClass() != o.getClass()) return 1;
-        ReleaseDate that = (ReleaseDate) o;
+        ReleaseDateWrapper that = (ReleaseDateWrapper) o;
         if (this.releaseDate.isBefore(that.releaseDate))
             return -1;
         else if (this.releaseDate.isAfter(that.releaseDate))

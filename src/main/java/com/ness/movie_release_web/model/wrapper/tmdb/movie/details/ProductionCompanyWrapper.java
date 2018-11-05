@@ -11,7 +11,7 @@ import lombok.*;
 @AllArgsConstructor
 @ToString
 @EqualsAndHashCode
-public class ProductionCompany {
+public class ProductionCompanyWrapper {
 
     @JsonProperty("id")
     private Integer id;

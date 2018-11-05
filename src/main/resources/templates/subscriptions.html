@@ -36,7 +36,7 @@
                      style="text-align: center; font-weight: bold; padding-bottom: 40px; padding-top: 40px;">
                     <div class="row" style="padding-bottom: 6px; height: 320px">
                         <div class="col-xl-12">
-                            <a th:href="'/user/getFilm?tmdbId=' + ${film.id}">
+                            <a th:href="'/movie/getMovie?tmdbId=' + ${film.id}">
                                 <img class="rounded" th:src="${film.posterPath}"
                                      style="height: 300px; max-width: 260px">
                             </a>
@@ -44,7 +44,7 @@
                     </div>
                     <div class="row" style="min-height: 70px;padding-bottom: 12px">
                         <div class="col-xl-12">
-                            <a th:href="'/user/getFilm?tmdbId=' + ${film.id}"
+                            <a th:href="'/movie/getMovie?tmdbId=' + ${film.id}"
                                style="color: #555555; text-decoration: none;">
                                 <span th:text="${film.title} + ' (' + ${film.releaseDate.getYear()} + ')'"/>
                             </a>
@@ -53,7 +53,7 @@
                     <div class="row">
                         <div class="col-xl-12">
 
-                            <form action="/user/unSubscribe" method="post" class="unSubsForm">
+                            <form action="/movie/unSubscribe" method="post" class="unSubsForm">
                                 <input type="hidden" name="tmdbId" th:value="${film.id}"/>
                                 <input type="submit" th:value="#{lang.unsubscribe}" class="btn btn-danger"/>
                             </form>

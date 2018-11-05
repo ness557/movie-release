@@ -1,6 +1,7 @@
 package com.ness.movie_release_web.model.wrapper.tmdb.movie.search;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.ness.movie_release_web.model.wrapper.tmdb.movie.details.ProductionCompanyWrapper;
 import lombok.*;
 
 import java.util.ArrayList;
@@ -12,7 +13,7 @@ import java.util.List;
 @AllArgsConstructor
 @ToString
 @EqualsAndHashCode
-public class MovieSearch {
+public class CompanySearchWrapper {
 
     @JsonProperty("page")
     private Integer page;
@@ -21,5 +22,5 @@ public class MovieSearch {
     @JsonProperty("total_pages")
     private Integer totalPages;
     @JsonProperty("results")
-    private List<Movie> results = new ArrayList<>();
+    private List<ProductionCompanyWrapper> results = new ArrayList<>();
 }

@@ -15,7 +15,7 @@
         </a>
 
         <div id="collapseble-div" style="background-color: #F9F9F9;">
-            <form action="/user/discover" method="get" th:object="${criteria}">
+            <form action="/movie/discover" method="get" th:object="${criteria}">
 
                 <div class="collapse" id="collapseForm">
 
@@ -198,7 +198,7 @@
                      style="text-align: center; font-weight: bold; padding-bottom: 40px; padding-top: 40px;">
                     <div class="row" style="padding-bottom: 6px; height: 320px">
                         <div class="col-xl-12">
-                            <a th:href="'/user/getFilm?tmdbId=' + ${film.key.id}">
+                            <a th:href="'/movie/getMovie?tmdbId=' + ${film.key.id}">
                                 <img class="rounded"
                                      th:onerror="'this.src=\'' + @{/img/no-image.png} + '\'; this.onerror=null'"
                                      th:src="${film.key.posterPath}" style="height: 300px; max-width: 230px">
@@ -207,7 +207,7 @@
                     </div>
                     <div class="row" style="min-height: 70px; padding-bottom: 12px">
                         <div class="col-xl-12">
-                            <a th:href="'/user/getFilm?tmdbId=' + ${film.key.id}"
+                            <a th:href="'/movie/getMovie?tmdbId=' + ${film.key.id}"
                                style="color: #555555; text-decoration: none;">
                                 <span th:text="${film.key.title} + ' (' + ${film.key.releaseDate.getYear()} + ')'"></span>
                             </a>
@@ -216,12 +216,12 @@
 
                     <div class="row">
                         <div class="col-xl-12">
-                            <form th:if="${film.value}" action="/user/unSubscribe" method="post" class="unSubsForm">
+                            <form th:if="${film.value}" action="/movie/unSubscribe" method="post" class="unSubsForm">
                                 <input type="hidden" name="tmdbId" th:value="${film.key.id}"/>
                                 <input type="submit" th:value="#{lang.unsubscribe}" class="btn btn-danger"/>
                             </form>
 
-                            <form th:unless="${film.value}" action="/user/subscribe" method="post" class="subsForm">
+                            <form th:unless="${film.value}" action="/movie/subscribe" method="post" class="subsForm">
                                 <input type="hidden" name="tmdbId" th:value="${film.key.id}"/>
                                 <input type="submit" th:value="#{lang.subscribe}" class="btn btn-warning"/>
                             </form>
@@ -422,7 +422,7 @@
         $('#companyselectpicker').selectpicker().ajaxSelectPicker({
 
             ajax: {
-                url: '/user/searchForCompany',
+                url: '/company/search',
                 type: 'GET',
                 dataType: 'json',
 

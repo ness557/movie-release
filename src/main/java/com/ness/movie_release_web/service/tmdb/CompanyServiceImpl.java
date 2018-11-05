@@ -1,8 +1,8 @@
 package com.ness.movie_release_web.service.tmdb;
 
 import com.ness.movie_release_web.model.wrapper.tmdb.Language;
-import com.ness.movie_release_web.model.wrapper.tmdb.movie.details.ProductionCompany;
-import com.ness.movie_release_web.model.wrapper.tmdb.movie.search.CompanySearch;
+import com.ness.movie_release_web.model.wrapper.tmdb.movie.details.ProductionCompanyWrapper;
+import com.ness.movie_release_web.model.wrapper.tmdb.movie.search.CompanySearchWrapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -32,25 +32,25 @@ public class CompanyServiceImpl implements CompanyService {
 
 
     @Override
-    public List<ProductionCompany> getCompanies(List<Integer> ids, Language language) {
+    public List<ProductionCompanyWrapper> getCompanies(List<Integer> ids, Language language) {
 
-        List<ProductionCompany> result = new ArrayList<>();
+        List<ProductionCompanyWrapper> result = new ArrayList<>();
         ids.forEach(id -> getCompany(id, language).ifPresent(result::add));
         return result;
     }
 
     @Override
-    public Optional<ProductionCompany> getCompany(Integer id, Language language) {
+    public Optional<ProductionCompanyWrapper> getCompany(Integer id, Language language) {
         UriComponentsBuilder movieBuilder = UriComponentsBuilder.fromHttpUrl(url + "company/")
                 .path(id.toString())
                 .queryParam("api_key", apikey)
                 .queryParam("language", language);
 
-        ResponseEntity<ProductionCompany> response = null;
+        ResponseEntity<ProductionCompanyWrapper> response = null;
         try {
-            response = restTemplate.getForEntity(movieBuilder.toUriString(), ProductionCompany.class);
+            response = restTemplate.getForEntity(movieBuilder.toUriString(), ProductionCompanyWrapper.class);
         } catch (HttpStatusCodeException e) {
-            logger.error("Could not get genres: {}", e.getStatusCode().value());
+            logger.error("Could not get companies: {}", e.getStatusCode().value());
 
             if (e.getStatusCode().value() == 429) {
                 try {
@@ -69,18 +69,18 @@ public class CompanyServiceImpl implements CompanyService {
     }
 
     @Override
-    public Optional<CompanySearch> search(String query, Integer page, Language language) {
+    public Optional<CompanySearchWrapper> search(String query, Integer page, Language language) {
         UriComponentsBuilder movieBuilder = UriComponentsBuilder.fromHttpUrl(url + "search/company")
                 .queryParam("query", query)
                 .queryParam("page", page)
                 .queryParam("api_key", apikey)
                 .queryParam("language", language);
 
-        ResponseEntity<CompanySearch> response = null;
+        ResponseEntity<CompanySearchWrapper> response = null;
         try {
-            response = restTemplate.getForEntity(movieBuilder.toUriString(), CompanySearch.class);
+            response = restTemplate.getForEntity(movieBuilder.toUriString(), CompanySearchWrapper.class);
         } catch (HttpStatusCodeException e) {
-            logger.error("Could not get genres: {}", e.getStatusCode().value());
+            logger.error("Could not get companies: {}", e.getStatusCode().value());
 
             if (e.getStatusCode().value() == 429) {
                 try {
