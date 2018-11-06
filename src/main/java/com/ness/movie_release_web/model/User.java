@@ -8,6 +8,8 @@ import javax.persistence.*;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.Pattern;
+import java.util.HashSet;
+import java.util.Set;
 
 @Entity
 @Table(name = "uzer")
@@ -51,4 +53,7 @@ public class User {
     @Enumerated
     @Column(name = "language")
     private Language language;
+
+    @OneToMany(mappedBy = "tvSeries")
+    private Set<UserTVSeries> userTVSeries = new HashSet<>();
 }
