@@ -11,24 +11,25 @@ import javax.persistence.*;
 @AllArgsConstructor
 @NoArgsConstructor
 @ToString
+@EqualsAndHashCode
 public class UserTVSeries {
 
     @EmbeddedId
-    private UserTVSeriesPK id;
+    private UserTVSeriesPK id = new UserTVSeriesPK();
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.EAGER)
     @MapsId("userId")
     @JoinColumn(name = "uzer_id")
     private User user;
 
-    @ManyToOne
-    @MapsId("tvseriesId")
+    @ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.PERSIST)
+    @MapsId("tvSeriesId")
     @JoinColumn(name = "tvseries_id")
     private TVSeries tvSeries;
 
     @Column(name = "current_season_number")
-    private Integer current_season;
+    private Integer currentSeason;
 
     @Column(name = "current_episode_number")
-    private Integer current_episode;
+    private Integer currentEpisode;
 }
