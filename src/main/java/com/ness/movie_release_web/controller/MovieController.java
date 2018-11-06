@@ -35,7 +35,7 @@ import static java.util.stream.Collectors.toMap;
 @RequestMapping("/movie")
 @SessionAttributes(names = {"query", "year", "language" },
         types = {String.class, Integer.class, Language.class})
-public class FilmController {
+public class MovieController {
 
     @Autowired
     private MovieServiceImpl movieService;
@@ -158,7 +158,7 @@ public class FilmController {
 
         model.addAttribute("pageCount", movieSearchWrapper.getTotalPages());
         model.addAttribute("page", page);
-        return "searchResult";
+        return "movieSearchResult";
     }
 
     @GetMapping("/subscriptions")
@@ -190,7 +190,7 @@ public class FilmController {
         model.addAttribute("films", tmdbFilms)
                 .addAttribute("page", page)
                 .addAttribute("pageCount", filmPage.getTotalPages());
-        return "subscriptions";
+        return "movieSubscriptions";
     }
 
     @GetMapping("/discover")
@@ -235,6 +235,6 @@ public class FilmController {
         // adding genreWrappers to form
         model.addAttribute("genres", genreService.getGenres(language));
 
-        return "discover";
+        return "discoverMovies";
     }
 }

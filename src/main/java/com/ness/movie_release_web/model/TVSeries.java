@@ -20,5 +20,4 @@ public class TVSeries {
     @Id
     @Column(name = "tmdb_id")
     private Long id;
-
 }

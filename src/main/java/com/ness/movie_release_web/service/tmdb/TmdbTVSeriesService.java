@@ -8,7 +8,7 @@ import com.ness.movie_release_web.model.wrapper.tmdb.tvSeries.search.TVSearchWra
 
 import java.util.Optional;
 
-public interface TVSeriesService {
+public interface TmdbTVSeriesService {
     Optional<TVDetailsWrapper> getTVDetails(Integer tmdbId, Language language);
 
     Optional<SeasonWrapper> getSeasonDetails(Integer tmdbId, Integer season, Language language);

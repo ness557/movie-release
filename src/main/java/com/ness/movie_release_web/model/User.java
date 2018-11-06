@@ -52,5 +52,4 @@ public class User {
     @Enumerated
     @Column(name = "language")
     private Language language;
-
 }

@@ -22,7 +22,7 @@ public class UserTVSeries {
     @JoinColumn(name = "uzer_id")
     private User user;
 
-    @ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.PERSIST)
+    @ManyToOne(fetch = FetchType.EAGER, cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     @MapsId("tvSeriesId")
     @JoinColumn(name = "tvseries_id")
     private TVSeries tvSeries;

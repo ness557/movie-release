@@ -19,7 +19,7 @@ import static java.lang.Thread.sleep;
 
 @Service
 @Slf4j
-public class TVSeriesServiceImpl implements TVSeriesService {
+public class TmdbTVSeriesServiceImpl implements TmdbTVSeriesService {
 
     private RestTemplate restTemplate = new RestTemplate();
 
