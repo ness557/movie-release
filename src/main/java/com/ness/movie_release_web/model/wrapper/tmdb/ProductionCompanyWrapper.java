@@ -1,4 +1,4 @@
-package com.ness.movie_release_web.model.wrapper.tmdb.movie.details;
+package com.ness.movie_release_web.model.wrapper.tmdb;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
@@ -15,11 +15,14 @@ public class ProductionCompanyWrapper {
 
     @JsonProperty("id")
     private Integer id;
+
     @JsonDeserialize(using = TmdbPosterPathDeserializer.class)
     @JsonProperty("logo_path")
     private String logoPath;
+
     @JsonProperty("name")
     private String name;
+
     @JsonProperty("origin_country")
     private String originCountry;
 }

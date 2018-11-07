@@ -4,6 +4,47 @@
 <body>
 <nav th:insert="embeded/navbar.html"></nav>
 
+<script th:inline="javascript">
+    function unsubscribe(event) {
+
+        var form = $(this);
+        var tmdbId = form.find('input').val();
+
+        $.post('/movie/unSubscribe', form.serialize());
+
+        var par = form.parent();
+        par.html(
+            '<form class="subsForm" action="/movie/subscribe" method="post" class="subsForm">' +
+            '    <input type="hidden" name="tmdbId" value="' + tmdbId + '"/>' +
+            '    <input type="submit" value="' + [[#{lang.subscribe}]] + '" class="btn btn-warning"/>' +
+            '</form>'
+        );
+        var newForm = par.find(".subsForm");
+        newForm.on('submit', subscribe);
+        return false;
+    }
+
+    function subscribe(event) {
+
+        var form = $(this);
+        var tmdbId = form.find('input').val();
+
+        $.post('/movie/subscribe', $(this).serialize());
+
+        var par = form.parent();
+        par.html(
+            '<form class="unSubsForm" action="/movie/unSubscribe" method="post" class="unSubsForm">' +
+            '    <input type="hidden" name="tmdbId" value="' + tmdbId + '"/>' +
+            '    <input type="submit" value="' + [[#{lang.unsubscribe}]] + '" class="btn btn-danger"/>' +
+            '</form>'
+        );
+        var newForm = par.find(".unSubsForm");
+        newForm.on('submit', unsubscribe);
+        return false;
+    }
+</script>
+
+
 <div class="container-fluid mytext" style="padding-top: 30px">
     <div class="row">
         <div class="col-10 col-sm-6 col-md-5 col-lg-4 col-xl-3" style="text-align: right">
@@ -11,7 +52,7 @@
                 <img th:src="${film.posterPath}" style="height: 400px; max-width: 300px" class="rounded"
                      th:onerror="'this.src=\'' + @{/img/no-image.png} + '\'; this.onerror=null'">
 
-                <p style="margin-bottom: 12px; margin-top: 16px;"> <span th:text="#{lang.score}"></span>
+                <p style="margin-bottom: 12px; margin-top: 16px;"><span th:text="#{lang.score}"></span>
                     <b th:if="${film.voteAverage > 6}"
                        style="color: #33CC00"
                        th:text="${film.voteAverage}"/>
@@ -69,7 +110,8 @@
                     <span class="plate-text" th:text="${film.runtime} + ' ' + #{lang.minutes}"/>
                 </div>
                 <div class="col-auto col-sm-auto col-md-auto col-lg-auto col-xl-auto" style="padding: 0">
-                    <a class="plate-text site" style="color: #337ab7;" th:href="${film.homepage}" th:text="#{lang.website}">  </a>
+                    <a class="plate-text site" style="color: #337ab7;" th:href="${film.homepage}"
+                       th:text="#{lang.website}"> </a>
                 </div>
             </div>
 
@@ -87,7 +129,8 @@
                     <div class="filmPropSpaces">
                         <b th:text="#{lang.genres} + ':'"></b>
                         <th:block th:each="genre: ${film.genreWrappers}">
-                            <a class="genre-link" th:text="${#strings.capitalize(genre.name)}" th:href="${'/discover?genreWrappers=' + genre.id}"></a>
+                            <a class="genre-link" th:text="${#strings.capitalize(genre.name)}"
+                               th:href="${'/movie/discover?genreWrappers=' + genre.id}"></a>
                         </th:block>
                     </div>
                 </div>
@@ -98,7 +141,8 @@
                     <div class="filmPropSpaces">
                         <b th:text="#{lang.production} + ':'"></b>
                         <th:block th:each="production: ${film.productionCompanies}">
-                            <a class="genre-link" th:text="${#strings.capitalize(production.name)}" th:href="${'/discover?companies=' + production.id}"></a>
+                            <a class="genre-link" th:text="${#strings.capitalize(production.name)}"
+                               th:href="${'/movie/discover?companies=' + production.id}"></a>
                         </th:block>
                     </div>
                 </div>
@@ -120,8 +164,9 @@
                 <div class="row">
                     <div class="col-md-12">
                         <div class="filmPropSpaces">
-                            <b><th:block th:text="#{'lang.release.' + ${release.releaseType.name()}}"/>
-                            <span th:text="#{lang.release_date} + ':'"></span></b>
+                            <b>
+                                <th:block th:text="#{'lang.release.' + ${release.releaseType.name()}}"/>
+                                <span th:text="#{lang.release_date} + ':'"></span></b>
                             <th:block th:text='${#temporals.format(release.releaseDate, "dd MMMM yyyy")}'/>
                         </div>
                     </div>
@@ -166,7 +211,7 @@
 
 <footer th:insert="embeded/footer.html"></footer>
 
-<script>
+<script th:inline="javascript">
     $(".subsForm").submit(subscribe);
     $(".unSubsForm").submit(unsubscribe);
 </script>

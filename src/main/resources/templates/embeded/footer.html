@@ -6,13 +6,13 @@
         <th:block sec:authorize="isAuthenticated()">
             <ul class="navbar-nav mr-auto">
                 <li class="nav-item mr-auto dropup">
-                    <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button"
+                    <a class="nav-link dropdown-toggle" href="#" id="languageDropdown" role="button"
                        data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                         <img style="width: 20px;" th:src="@{/img/language-dark.png}"/>
                         <th:block th:text="#{'lang.' + ${language.value}}"/>
                     </a>
                     <div class="dropdown-menu"
-                         aria-labelledby="navbarDropdown">
+                         aria-labelledby="languageDropdown">
 
                         <a href="#" class="dropdown-item languageSelect"
                            th:each="lang : ${T(com.ness.movie_release_web.model.wrapper.tmdb.Language).values()}">
@@ -24,16 +24,39 @@
                         </a>
                     </div>
                 </li>
+
+                <li class="nav-item mr-auto dropup">
+                    <a class="nav-link dropdown-toggle" href="#" id="modeDropdown" role="button"
+                       data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        <th:block th:text="#{'lang.mode.' + ${mode.name()}}"/>
+                    </a>
+                    <div class="dropdown-menu"
+                         aria-labelledby="modeDropdown">
+
+                        <a href="#" class="dropdown-item modeSelect"
+                           th:each="modd : ${T(com.ness.movie_release_web.model.wrapper.tmdb.Mode).values()}">
+                            <option class="modVal"
+                                    th:value="${modd}"
+                                    th:text="#{'lang.mode.' + ${modd.name()}}"
+                                    th:selected="${modd == mode}">
+                            </option>
+                        </a>
+                    </div>
+                </li>
             </ul>
 
 
             <ul class="navbar-nav ml-auto">
 
                 <li class="nav-item" style="padding: 10px 15px 10px 0;">
-                    <a class="footer-link" href="/movie/discover" th:text="#{lang.discover_movies}"></a>
+                    <a class="footer-link"
+                       th:href="${'/' + mode.name() + '/discover'}"
+                       th:text="#{lang.discover_movies}"></a>
                 </li>
                 <li class="nav-item" style="padding: 10px 15px 10px 0;">
-                    <a class="footer-link" href="/movie/subscriptions" th:text="#{lang.my_subscriptions}"></a>
+                    <a class="footer-link"
+                       th:href="${'/' + mode.name() + '/subscriptions'}"
+                       th:text="#{lang.my_subscriptions}"></a>
                 </li>
                 <li class="nav-item" style="padding: 10px 15px 10px 0;">
                     <a class="footer-link" th:text="#{lang.talk_to-bot}"
@@ -46,11 +69,21 @@
 
     <script>
         $('.languageSelect').click(function () {
-            var langVal = $(this).find(".langVal").val()
+                var langVal = $(this).find(".langVal").val();
                 $.post("/setLanguage", {"language": langVal}, function () {
                     setTimeout(20);
                     location.reload();
                 });
+                $("#languageDropdown").text($(this).text());
+            }
+        );
+        $('.modeSelect').click(function () {
+                var modVal = $(this).find(".modVal").val();
+                $.post("/setMode", {"mode": modVal}, function () {
+                    setTimeout(20);
+                    window.location = ("http://" + location.host + "/" + modVal + "/subscriptions");
+                });
+                $("#modeDropdown").text($(this).text());
             }
         )
     </script>

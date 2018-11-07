@@ -2,6 +2,7 @@ package com.ness.movie_release_web.service.tmdb;
 
 import com.ness.movie_release_web.model.wrapper.tmdb.movie.discover.DiscoverSearchCriteria;
 import com.ness.movie_release_web.model.wrapper.tmdb.movie.search.MovieSearchWrapper;
+import com.ness.movie_release_web.model.wrapper.tmdb.tvSeries.search.TVSearchWrapper;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -31,7 +32,7 @@ public class DiscoverServiceImpl implements DiscoverService {
     private String url;
 
     @Override
-    public Optional<MovieSearchWrapper> discover(DiscoverSearchCriteria criteria) {
+    public Optional<MovieSearchWrapper> discoverMovie(DiscoverSearchCriteria criteria) {
 
         UriComponentsBuilder movieBuilder = UriComponentsBuilder.fromHttpUrl(url + "discover/movie")
                 .queryParam("api_key", apikey)
@@ -43,11 +44,11 @@ public class DiscoverServiceImpl implements DiscoverService {
 
         if (criteria.getReleaseDateMin() != null)
             movieBuilder.queryParam("release_date.gte",
-                criteria.getReleaseDateMin().format(DateTimeFormatter.ofPattern("yyyy-MM-dd")));
+                    criteria.getReleaseDateMin().format(DateTimeFormatter.ofPattern("yyyy-MM-dd")));
 
         if (criteria.getReleaseDateMax() != null)
             movieBuilder.queryParam("release_date.lte",
-                criteria.getReleaseDateMax().format(DateTimeFormatter.ofPattern("yyyy-MM-dd")));
+                    criteria.getReleaseDateMax().format(DateTimeFormatter.ofPattern("yyyy-MM-dd")));
 
         if (!criteria.getGenres().isEmpty())
             movieBuilder.queryParam("with_genres",
@@ -75,7 +76,55 @@ public class DiscoverServiceImpl implements DiscoverService {
                     logger.error(e1.getMessage());
                 }
                 // and try again
-                return this.discover(criteria);
+                return this.discoverMovie(criteria);
+            }
+            return Optional.empty();
+        }
+
+        return Optional.ofNullable(response.getBody());
+    }
+
+    @Override
+    public Optional<TVSearchWrapper> discoverSeries(DiscoverSearchCriteria criteria) {
+        UriComponentsBuilder movieBuilder = UriComponentsBuilder.fromHttpUrl(url + "discover/tv")
+                .queryParam("api_key", apikey)
+                .queryParam("sort_by", criteria.getSortBy().getSearchString())
+                .queryParam("vote_average.gte", criteria.getVoteAverageMin())
+                .queryParam("vote_average.lte", criteria.getVoteAverageMax())
+                .queryParam("page", criteria.getPage())
+                .queryParam("language", criteria.getLanguage());
+
+        if (criteria.getReleaseDateMin() != null)
+            movieBuilder.queryParam("first_air_date.gte",
+                    criteria.getReleaseDateMin().format(DateTimeFormatter.ofPattern("yyyy-MM-dd")));
+
+        if (criteria.getReleaseDateMax() != null)
+            movieBuilder.queryParam("first_air_date.lte",
+                    criteria.getReleaseDateMax().format(DateTimeFormatter.ofPattern("yyyy-MM-dd")));
+
+        if (!criteria.getGenres().isEmpty())
+            movieBuilder.queryParam("with_genres",
+                    StringUtils.join(criteria.getGenres(), criteria.getGenresAnd() ? "," : "|"));
+
+        if (!criteria.getCompanies().isEmpty())
+            movieBuilder.queryParam("with_companies",
+                    StringUtils.join(criteria.getCompanies(), criteria.getCompaniesAnd() ? "," : "|"));
+
+        ResponseEntity<TVSearchWrapper> response;
+        try {
+            response = restTemplate.getForEntity(movieBuilder.build(false).toUriString(), TVSearchWrapper.class);
+        } catch (HttpStatusCodeException e) {
+            logger.error("Could not discover for series: {}", e.getStatusCode().value());
+
+            if (e.getStatusCode().value() == 429) {
+                try {
+                    // sleep current thread for 1s
+                    sleep(1000);
+                } catch (InterruptedException e1) {
+                    logger.error(e1.getMessage());
+                }
+                // and try again
+                return this.discoverSeries(criteria);
             }
             return Optional.empty();
         }

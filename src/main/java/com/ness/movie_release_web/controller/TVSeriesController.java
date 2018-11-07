@@ -1,14 +1,14 @@
 package com.ness.movie_release_web.controller;
 
-import com.ness.movie_release_web.model.Film;
 import com.ness.movie_release_web.model.User;
+import com.ness.movie_release_web.model.UserTVSeries;
 import com.ness.movie_release_web.model.wrapper.tmdb.Language;
 import com.ness.movie_release_web.model.wrapper.tmdb.Mode;
-import com.ness.movie_release_web.model.wrapper.tmdb.movie.details.MovieDetailsWrapper;
 import com.ness.movie_release_web.model.wrapper.tmdb.movie.discover.DiscoverSearchCriteria;
-import com.ness.movie_release_web.model.wrapper.tmdb.movie.search.MovieSearchWrapper;
-import com.ness.movie_release_web.model.wrapper.tmdb.movie.search.MovieWrapper;
-import com.ness.movie_release_web.service.FilmService;
+import com.ness.movie_release_web.model.wrapper.tmdb.tvSeries.details.TVDetailsWrapper;
+import com.ness.movie_release_web.model.wrapper.tmdb.tvSeries.search.TVSearchWrapper;
+import com.ness.movie_release_web.model.wrapper.tmdb.tvSeries.search.TVWrapper;
+import com.ness.movie_release_web.service.TVSeriesService;
 import com.ness.movie_release_web.service.UserService;
 import com.ness.movie_release_web.service.tmdb.*;
 import org.apache.commons.lang3.StringUtils;
@@ -21,9 +21,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
-import javax.servlet.http.HttpServletRequest;
 import java.security.Principal;
-import java.time.LocalDateTime;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -33,33 +31,30 @@ import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toMap;
 
 @Controller
-@RequestMapping("/movie")
+@RequestMapping("/series")
 @SessionAttributes(names = {"query", "year", "language", "mode"},
         types = {String.class, Integer.class, Language.class, Mode.class})
-public class MovieController {
-
-    @Autowired
-    private MovieServiceImpl movieService;
-
-    @Autowired
-    private FilmService filmService;
+public class TVSeriesController {
 
     @Autowired
     private UserService userService;
 
     @Autowired
-    private TmdbDatesService tmdbDatesService;
+    private TVSeriesService dbSeriesService;
+
+    @Autowired
+    private TmdbTVSeriesService tmdbSeriesService;
 
     @Autowired
     private DiscoverService discoverService;
 
     @Autowired
-    private GenreService genreService;
-
-    @Autowired
     private CompanyService companyService;
 
-    @GetMapping("/getMovie")
+    @Autowired
+    private GenreService genreService;
+
+    @GetMapping("/getSeries")
     public String getFilm(@RequestParam("tmdbId") Integer tmdbId,
                           Principal principal,
                           Model model) {
@@ -70,58 +65,44 @@ public class MovieController {
         model.addAttribute("language", language);
         model.addAttribute("mode", mode);
 
-        if (filmService.isExistsByTmdbIdAndUserId(tmdbId, user.getId())) {
+        if (dbSeriesService.isExistsByTmdbIdAndUserId(tmdbId, user.getId())) {
             model.addAttribute("subscribed", true);
         }
 
-        Optional<MovieDetailsWrapper> movieDetails = movieService.getMovieDetails(tmdbId, language);
-        if (!movieDetails.isPresent())
+        Optional<TVDetailsWrapper> tvDetails = tmdbSeriesService.getTVDetails(tmdbId, language);
+        if (!tvDetails.isPresent())
             throw new ResponseStatusException(HttpStatus.NOT_FOUND);
 
-        model.addAttribute("film", movieDetails.get());
-        model.addAttribute("releases", tmdbDatesService.getReleaseDates(tmdbId));
-        return "movieInfo";
+        model.addAttribute("series", tvDetails.get());
+
+        return "seriesInfo";
     }
 
     @PostMapping("/subscribe")
     public ResponseEntity subscribe(@RequestParam(value = "tmdbId") Integer tmdbId,
-                                    Principal principal,
-                                    HttpServletRequest request) {
+                                    Principal principal) {
 
         String login = principal.getName();
-
         User user = userService.findByLogin(login);
 
-        if (filmService.isExistsByTmdbIdAndUserId(tmdbId, user.getId()))
+        Optional<TVDetailsWrapper> optionalTvDetails = tmdbSeriesService.getTVDetails(tmdbId, Language.en);
+
+        if (!optionalTvDetails.isPresent())
             throw new ResponseStatusException(HttpStatus.CONFLICT);
 
-        Optional<MovieDetailsWrapper> optionalMovieDetails = movieService.getMovieDetails(tmdbId, Language.en);
+        dbSeriesService.subscribeUser(tmdbId, user);
 
-        if (!optionalMovieDetails.isPresent())
-            throw new ResponseStatusException(HttpStatus.CONFLICT);
-
-        MovieDetailsWrapper movieDetailsWrapper = optionalMovieDetails.get();
-
-        Film film = new Film(null,
-                movieDetailsWrapper.getId(),
-                LocalDateTime.now(),
-                user);
-
-        filmService.save(film);
         return ResponseEntity.ok().build();
     }
 
-
     @PostMapping("/unSubscribe")
     public ResponseEntity unSubscribe(@RequestParam(value = "tmdbId") Integer tmdbId,
-                                      Principal principal,
-                                      HttpServletRequest request) {
+                                      Principal principal) {
 
         String login = principal.getName();
-
         User user = userService.findByLogin(login);
 
-        filmService.getByTmdbIdAndUserId(tmdbId, user.getId()).forEach(filmService::delete);
+        dbSeriesService.unSubscribeUser(tmdbId, user);
 
         return ResponseEntity.ok().build();
     }
@@ -146,24 +127,27 @@ public class MovieController {
         model.addAttribute("language", language);
         model.addAttribute("mode", mode);
 
-        Optional<MovieSearchWrapper> optionalMovieSearch = movieService.searchForMovies(query, page, year, language);
+        Optional<TVSearchWrapper> optionalSearchResult = tmdbSeriesService.search(query, page, year, language);
 
-        if (!optionalMovieSearch.isPresent()) {
+        if (!optionalSearchResult.isPresent()) {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR);
         }
 
-        MovieSearchWrapper movieSearchWrapper = optionalMovieSearch.get();
+        TVSearchWrapper searchWrapper = optionalSearchResult.get();
 
-        Map<MovieWrapper, Boolean> filmsWithSubFlags = movieSearchWrapper.getResults().stream()
-                .collect(toMap(f -> f,
-                        f -> filmService.isExistsByTmdbIdAndUserId(f.getId(), user.getId()),
+        Map<TVWrapper, Boolean> filmsWithSubFlags = searchWrapper.getResults().stream()
+                .collect(toMap(
+                        f -> f,
+                        f -> dbSeriesService.isExistsByTmdbIdAndUserId(f.getId(), user.getId()),
                         (f1, f2) -> f1,
                         LinkedHashMap::new));
-        model.addAttribute("films", filmsWithSubFlags);
 
-        model.addAttribute("pageCount", movieSearchWrapper.getTotalPages());
+        model.addAttribute("series", filmsWithSubFlags);
+
+        model.addAttribute("pageCount", searchWrapper.getTotalPages());
         model.addAttribute("page", page);
-        return "movieSearchResult";
+
+        return "seriesSearchResult";
     }
 
     @GetMapping("/subscriptions")
@@ -182,22 +166,23 @@ public class MovieController {
         model.addAttribute("language", language);
         model.addAttribute("mode", mode);
 
-        Page<Film> filmPage = filmService.getAllByUserWithPages(page, 10, user);
-        List<Film> films = filmPage.getContent();
+        Page<UserTVSeries> userTVSeries = dbSeriesService.getAllByUserWithPages(page, 10, user);
+        List<UserTVSeries> series = userTVSeries.getContent();
 
-        List<MovieDetailsWrapper> tmdbFilms =
-                films.stream()
-                        .map(f -> movieService.getMovieDetails(f.getTmdbId(), language))
-                        .filter(Optional::isPresent)
-                        .map(Optional::get)
-                        .collect(toList());
+
+        List<TVDetailsWrapper> subscriptions = series.stream()
+                .map(f -> tmdbSeriesService.getTVDetails(f.getId().getTvSeriesId().intValue(), language))
+                .filter(Optional::isPresent)
+                .map(Optional::get)
+                .collect(toList());
 
         model.addAttribute("botInitialized", !user.isTelegramNotify() || user.getTelegramChatId() != null);
 
-        model.addAttribute("films", tmdbFilms)
+        model.addAttribute("series", subscriptions)
                 .addAttribute("page", page)
-                .addAttribute("pageCount", filmPage.getTotalPages());
-        return "movieSubscriptions";
+                .addAttribute("pageCount", userTVSeries.getTotalPages());
+
+        return "seriesSubscriptions";
     }
 
     @GetMapping("/discover")
@@ -217,18 +202,18 @@ public class MovieController {
         criteria.setPage(page);
         criteria.setLanguage(language);
 
-        Optional<MovieSearchWrapper> optionalMovieSearch = discoverService.discoverMovie(criteria);
+        Optional<TVSearchWrapper> optionalMovieSearch = discoverService.discoverSeries(criteria);
 
         if (optionalMovieSearch.isPresent()) {
 
-            MovieSearchWrapper movieSearchWrapper = optionalMovieSearch.get();
+            TVSearchWrapper movieSearchWrapper = optionalMovieSearch.get();
 
-            Map<MovieWrapper, Boolean> filmsWithSubFlags = movieSearchWrapper.getResults().stream()
+            Map<TVWrapper, Boolean> filmsWithSubFlags = movieSearchWrapper.getResults().stream()
                     .collect(toMap(f -> f,
-                            f -> filmService.isExistsByTmdbIdAndUserId(f.getId(), user.getId()),
+                            f -> dbSeriesService.isExistsByTmdbIdAndUserId(f.getId(), user.getId()),
                             (f1, f2) -> f1,
                             LinkedHashMap::new));
-            model.addAttribute("films", filmsWithSubFlags);
+            model.addAttribute("series", filmsWithSubFlags);
 
             model.addAttribute("pageCount", movieSearchWrapper.getTotalPages());
             model.addAttribute("page", page);
@@ -242,8 +227,8 @@ public class MovieController {
         model.addAttribute("criteria", criteria);
 
         // adding genreWrappers to form
-        model.addAttribute("genres", genreService.getMovieGenres(language));
+        model.addAttribute("genres", genreService.getTVGenres(language));
 
-        return "discoverMovies";
+        return "discoverSeries";
     }
 }

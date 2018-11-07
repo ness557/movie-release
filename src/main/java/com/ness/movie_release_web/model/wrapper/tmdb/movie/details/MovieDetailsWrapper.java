@@ -2,6 +2,8 @@ package com.ness.movie_release_web.model.wrapper.tmdb.movie.details;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.ness.movie_release_web.model.wrapper.tmdb.GenreWrapper;
+import com.ness.movie_release_web.model.wrapper.tmdb.ProductionCompanyWrapper;
 import com.ness.movie_release_web.model.wrapper.tmdb.releaseDates.ReleaseDateWrapper;
 import com.ness.movie_release_web.util.tmdb.TmdbMovieReleaseDateDeserializer;
 import com.ness.movie_release_web.util.tmdb.TmdbPosterPathDeserializer;

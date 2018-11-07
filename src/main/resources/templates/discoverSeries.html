@@ -1,0 +1,471 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sh="http://www.thymeleaf.org">
+<head th:insert="embeded/header.html"></head>
+<body>
+<nav th:insert="embeded/navbar.html"></nav>
+
+<div class="container-fluid" style="padding-right: 0; padding-left: 0">
+
+    <div id="collapse-form">
+        <a href="#" id="collapse-button" class="btn discover-collapse-button"
+           data-target="#collapseForm" data-toggle="collapse">
+            <i class="fas fa-lg fa-angle-down" id="collapse-button-icon"
+               style="color: #676767; padding-right: 15px"></i>
+            <span id="collapse-button-text" th:text="#{lang.search_criteria_button_show}"></span>
+        </a>
+
+        <div id="collapseble-div" style="background-color: #F9F9F9;">
+            <form action="/series/discover" method="get" th:object="${criteria}">
+
+                <div class="collapse" id="collapseForm">
+
+                    <div class="col-11 col-sm-11 col-md-8 col-lg-7 col-xl-6">
+                        <div class="row">
+
+                            <div class="col-8 col-sm-8 col-md-8 col-lg-8 col-xl-8">
+                                <label th:text="#{lang.genres} + ':'"></label>
+                                <select class="form-control selectpicker" th:field="*{genres}" multiple
+                                        data-live-search="true">
+                                    <option th:each="genre : ${genres}"
+                                            th:value="${genre.id}"
+                                            th:text="${genre.name}"
+                                            th:selected="${criteria.getGenres().contains(genre.id)}">
+                                    </option>
+                                </select>
+                            </div>
+
+                            <div class="col-4 col-sm-4 col-md-4 col-lg-4 col-xl-4">
+                                <label th:text="#{lang.genres_mode} + ':'"></label>
+                                <div class="row">
+                                    <div class="col-1 col-sm-1 col-md-1 col-lg-1 col-xl-1">
+                                        <input type="radio" class="option-input radio" th:field="*{genresAnd}"
+                                               th:value="${false}">
+                                    </div>
+                                    <div class="col-4 col-sm-4 col-md-4 col-lg-4 col-xl-4">
+                                        <span th:text="#{lang.or}"></span>
+                                    </div>
+
+                                    <div class="col-1 col-sm-1 col-md-1 col-lg-1 col-xl-1">
+                                        <input type="radio" class="option-input radio" th:field="*{genresAnd}"
+                                               th:value="${true}">
+                                    </div>
+                                    <div class="col-4 col-sm-4 col-md-4 col-lg-4 col-xl-4">
+                                        <span th:text="#{lang.and}"></span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-8 col-sm-8 col-md-8 col-lg-8 col-xl-8">
+                                <label th:text="#{lang.companies} + ':'"></label>
+                                <select class="form-control selectpicker" id="companyselectpicker"
+                                        th:field="*{companies}"
+                                        multiple
+                                        data-actoins-box="true" data-select-all-headers="true"
+                                        data-live-search="true">
+                                    <option th:each="company : ${companies}"
+                                            th:value="${company.id}"
+                                            th:text="${company.name}" selected>
+                                    </option>
+                                </select>
+                            </div>
+
+                            <div class="col-4 col-sm-4 col-md-4 col-lg-4 col-xl-4">
+                                <label th:text="#{lang.companies_mode} + ':'"></label>
+                                <div class="row">
+                                    <div class="col-1 col-sm-1 col-md-1 col-lg-1 col-xl-1">
+                                        <input type="radio" class="option-input radio" th:field="*{companiesAnd}"
+                                               th:value="${false}">
+                                    </div>
+                                    <div class="col-4 col-sm-4 col-md-4 col-lg-4 col-xl-4">
+                                        <span th:text="#{lang.or}"></span>
+                                    </div>
+
+                                    <div class="col-1 col-sm-1 col-md-1 col-lg-1 col-xl-1">
+
+                                        <input type="radio" class="option-input radio" th:field="*{companiesAnd}"
+                                               th:value="${true}">
+                                    </div>
+                                    <div class="col-4 col-sm-4 col-md-4 col-lg-4 col-xl-4">
+                                        <span th:text="#{lang.and}"></span>
+                                    </div>
+
+                                </div>
+                            </div>
+                        </div>
+
+
+                        <div class="row">
+                            <div class="col-8 col-sm-8 col-md-8 col-lg-8 col-xl-8">
+                                <label th:text="#{lang.sort_by} + ':'"></label>
+                                <select th:field="*{sortBy}" class="form-control selectpicker">
+                                    <option th:each="sort : ${T(com.ness.movie_release_web.model.wrapper.tmdb.movie.discover.SortBy).values()}"
+                                            th:value="${sort}"
+                                            th:text="#{'lang.sort.' + ${sort.getType()}} + ' ' + #{'lang.order.' + ${sort.getOrder().name()}}"
+                                            th:selected="${criteria.getSortBy().equals(sort)}">
+                                    </option>
+                                </select>
+                            </div>
+                        </div>
+
+
+                        <div class="row">
+                            <div class="col-8 col-sm-8 col-md-8 col-lg-8 col-xl-8">
+                                <label th:text="#{lang.date_range} + ':'"></label>
+                                <input type="text" id="dates" th:field="*{dateRange}"
+                                       th:value="${criteria.getDateRange()}"
+                                       class="form-control discover-form-control">
+                            </div>
+                        </div>
+
+
+                        <label th:text="#{lang.user_score_range} + ':'"></label>
+                        <div class="row">
+                            <div class="col-4 col-sm-4 col-md-4 col-lg-4 col-xl-4">
+                                <input type="number" min="0" max="10" step="0.1" th:field="*{voteAverageMin}"
+                                       th:value="${criteria.getVoteAverageMin()}"
+                                       class="form-control discover-form-control">
+                            </div>
+                            <div class="col-4 col-sm-4 col-md-4 col-lg-4 col-xl-4">
+                                <input type="number" min="0" max="10" step="0.1" th:field="*{voteAverageMax}"
+                                       th:value="${criteria.getVoteAverageMax()}"
+                                       class="form-control discover-form-control">
+                            </div>
+                            <div class="col-4 col-sm-4 col-md-4 col-lg-4 col-xl-4">
+                                <input type="submit" class="btn btn-warning" th:value="#{lang.discover_movies}">
+                            </div>
+                        </div>
+                        <div class="row" style="height: 25px;"></div>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div class="container-fluid">
+        <div class="row">
+            <th:block th:each="serie, iStat : ${series}">
+
+                <th:block th:if="${iStat.index % 5 == 0}">
+                    <div class="offset-xl-1"></div>
+                </th:block>
+                <th:block th:if="${iStat.index > 0 && iStat.index % 5 == 0}">
+                    <div class="offset-xl-1"></div>
+                </th:block>
+
+                <div class="col-xs-6 col-sm-5 col-md-4 col-lg-3 col-xl-2"
+                     th:id="${serie.key.id}"
+                     style="text-align: center; font-weight: bold; padding-bottom: 40px; padding-top: 40px;">
+                    <div class="row" style="padding-bottom: 6px; height: 320px">
+                        <div class="col-xl-12">
+                            <a th:href="'/series/getSeries?tmdbId=' + ${serie.key.id}">
+                                <img class="rounded"
+                                     th:onerror="'this.src=\'' + @{/img/no-image.png} + '\'; this.onerror=null'"
+                                     th:src="${serie.key.posterPath}" style="height: 300px; max-width: 230px">
+                            </a>
+                        </div>
+                    </div>
+                    <div class="row" style="min-height: 70px; padding-bottom: 12px">
+                        <div class="col-xl-12">
+                            <a th:href="'/series/getSeries?tmdbId=' + ${serie.key.id}"
+                               style="color: #555555; text-decoration: none;">
+                                <span th:text="${serie.key.name} + ' (' + ${serie.key.firstAirDate.getYear()} + ')'"></span>
+                            </a>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-xl-12">
+                            <form th:if="${serie.value}" action="/series/unSubscribe" method="post" class="unSubsForm">
+                                <input type="hidden" name="tmdbId" th:value="${serie.key.id}"/>
+                                <input type="submit" th:value="#{lang.unsubscribe}" class="btn btn-danger"/>
+                            </form>
+
+                            <form th:unless="${serie.value}" action="/series/subscribe" method="post" class="subsForm">
+                                <input type="hidden" name="tmdbId" th:value="${serie.key.id}"/>
+                                <input type="submit" th:value="#{lang.subscribe}" class="btn btn-warning"/>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </th:block>
+        </div>
+    </div>
+
+    <th:block th:if="${pageCount > 0}">
+
+        <!-- PAGINATION -->
+        <div class="container-fluid" style="padding-bottom: 60px"
+             th:with="urlBuilder=${T(org.springframework.web.servlet.support.ServletUriComponentsBuilder)}, page = ${page == null ? 1 : page}">
+            <div class="row">
+                <div class="col-12 col-sm-10 col-md-9 col-lg-8 col-xl-6 col-centered">
+                    <div class="row">
+
+                        <div class="col-1 col-sm-1 col-md-1 col-lg-1 col-xl-1 col-centered"></div>
+
+                        <!-- ARROW BACK -->
+                        <div class="col col-fixed-arrow my-page-link">
+                            <!-- active link -->
+                            <th:block th:if="${page > 1}">
+                                <a th:href="${urlBuilder.fromCurrentRequest().replaceQueryParam('page', page - 1).toUriString()}">
+                                    <img class="page-arrow" th:src="@{/img/pagination/page-back.png}">
+                                </a>
+                            </th:block>
+
+                            <!-- inactive link-->
+                            <th:block th:unless="${page > 1}">
+                                <a style="pointer-events: none">
+                                    <img class="page-arrow" th:src="@{/img/pagination/page-back-inactive.png}">
+                                </a>
+                            </th:block>
+                        </div>
+
+                        <!--separate link to first page -->
+                        <th:block th:if="${page > 2}">
+                            <div class="col col-fixed-page my-page-link my-page-number">
+                                <a class="text-secondary"
+                                   th:href="${urlBuilder.fromCurrentRequest().replaceQueryParam('page', 1).toUriString()}"
+                                   th:text="${1}"></a>
+                            </div>
+
+                            <div class="col my-page-splitter col-fixed-splitter">
+                                <span>...</span>
+                            </div>
+                        </th:block>
+
+                        <!-- pages loop -->
+                        <th:block th:each="i : ${#numbers.sequence(page - 1, page + 1)}">
+                            <!-- skip first-1  and last+1 pages-->
+                            <th:block th:if="${i >= 1 and i <= pageCount}">
+
+                                <!-- CURRENT PAGE -->
+                                <!-- my-page-current -->
+                                <div class="col col-fixed-page my-page-link  my-page-current " th:if="${page == i}">
+                                    <a class="text-secondary" th:href="'#'" th:text="${i}"></a>
+                                </div>
+
+                                <!-- Link To Page -->
+                                <div class="col col-fixed-page my-page-link my-page-number" th:unless="${page == i}">
+                                    <a class="text-secondary my-page-number"
+                                       th:href="${urlBuilder.fromCurrentRequest().replaceQueryParam('page', i).toUriString()}"
+                                       th:text="${i}"></a>
+                                </div>
+                            </th:block>
+                        </th:block>
+
+                        <!--separate link to last page -->
+                        <th:block th:if="${page < pageCount - 1}">
+                            <div class="col my-page-splitter col-fixed-splitter">
+                                <span>...</span>
+                            </div>
+
+                            <div class="col col-fixed-page my-page-link my-page-number">
+                                <a class="text-secondary"
+                                   th:href="${urlBuilder.fromCurrentRequest().replaceQueryParam('page', pageCount).toUriString()}"
+                                   th:text="${pageCount}"></a>
+                            </div>
+                        </th:block>
+
+                        <!-- ARROW FORWARD-->
+                        <div class="col col-fixed-arrow my-page-link">
+                            <!-- active link -->
+                            <th:block th:if="${page < pageCount}">
+                                <a th:href="${urlBuilder.fromCurrentRequest().replaceQueryParam('page', page + 1).toUriString()}">
+                                    <img class="page-arrow" th:src="@{/img/pagination/page-next.png}">
+                                </a>
+                            </th:block>
+
+                            <!-- inactive link-->
+                            <th:block th:unless="${page < pageCount}">
+                                <a style="pointer-events: none">
+                                    <img class="page-arrow" th:src="@{/img/pagination/page-next-inactive.png}">
+                                </a>
+                            </th:block>
+                        </div>
+
+                        <div class="col-1 col-sm-1 col-md-1 col-lg-1 col-xl-1 col-centered"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </th:block>
+
+    <div class="back-to-top" style="display: inline;">
+        <a style="pointer-events: none">
+            <img th:src="@{/img/scroll-up-button.png}">
+        </a>
+    </div>
+
+</div>
+<footer th:insert="embeded/footer.html"></footer>
+<script th:inline="javascript">
+
+    $(document).ready(function () {
+
+        var collapseButton = $('#collapse-button');
+        var width = collapseButton.width() + 45;
+        var collapseDiv = $('#collapseForm');
+        var span = $('#collapse-button-text');
+        var icon = $('#collapse-button-icon');
+
+        collapseDiv.on('shown.bs.collapse', function () {
+            span.text([[#{lang.search_criteria_button_hide}]]);
+            icon.removeClass('fa-angle-down');
+            icon.addClass('fa-angle-up');
+        });
+
+        collapseDiv.on('hidden.bs.collapse', function () {
+            span.text([[#{lang.search_criteria_button_show}]]);
+            icon.removeClass('fa-angle-up');
+            icon.addClass('fa-angle-down');
+        });
+
+        collapseDiv.on('show.bs.collapse', function () {
+            collapseButton.animate({
+                width: '100%',
+                marginLeft: "0px",
+                paddingLeft: "30px"
+            }, 200);
+        });
+
+        collapseDiv.on('hide.bs.collapse', function () {
+            collapseButton.animate({
+                width: width,
+                marginLeft: "15px",
+                paddingLeft: "15px"
+            }, 200);
+        });
+
+        $('#dates').daterangepicker({
+            locale: {
+                format: "DD.MM.YYYY",
+                separator: " - ",
+                applyLabel: [[#{lang.apply}]],
+                cancelLabel: [[#{lang.cancel}]],
+                fromLabel: [[#{lang.from}]],
+                toLabel: [[#{lang.to}]],
+                customRangeLabel: [[#{lang.custom}]],
+                weekLabel: [[#{lang.week}]],
+                daysOfWeek: [
+                    [[#{lang.day.su}]],
+                    [[#{lang.day.mo}]],
+                    [[#{lang.day.tu}]],
+                    [[#{lang.day.we}]],
+                    [[#{lang.day.th}]],
+                    [[#{lang.day.fr}]],
+                    [[#{lang.day.sa}]]
+                ],
+                monthNames: [
+                    [[#{lang.month.january}]],
+                    [[#{lang.month.february}]],
+                    [[#{lang.month.march}]],
+                    [[#{lang.month.april}]],
+                    [[#{lang.month.may}]],
+                    [[#{lang.month.june}]],
+                    [[#{lang.month.july}]],
+                    [[#{lang.month.august}]],
+                    [[#{lang.month.september}]],
+                    [[#{lang.month.october}]],
+                    [[#{lang.month.november}]],
+                    [[#{lang.month.december}]]
+                ],
+                firstDay: 1
+            }
+        });
+
+        $('.selectpicker').selectpicker({
+            noneSelectedText: [[#{lang.none_selected_text}]],
+            noneResultsText: [[#{lang.none_results_text}]],
+            selectAllText: [[#{lang.select_all}]]
+        });
+        $('#companyselectpicker').selectpicker().ajaxSelectPicker({
+
+            ajax: {
+                url: '/company/search',
+                type: 'GET',
+                dataType: 'json',
+
+                // Use "{{{q}}}" as a placeholder and Ajax Bootstrap Select will
+                // automatically replace it with the value of the search query.
+                data: {
+                    query: '{{{q}}}'
+                }
+            },
+
+            locale: {
+                currentlySelected: [[#{lang.ajax.currently_selected}]],
+                emptyTitle: [[#{lang.ajax.empty_title}]],
+                errorText: [[#{lang.ajax.error_text}]],
+                searchPlaceholder: [[#{lang.ajax.search_placeholder}]],
+                statusInitialized: [[#{lang.ajax.status_initialized}]],
+                statusNoResults: [[#{lang.ajax.status_no_results}]],
+                statusSearching: [[#{lang.ajax.status_searching}]],
+                statusTooShort: [[#{lang.ajax.status_too_short}]]
+            },
+
+            // function to preprocess JSON data
+            preprocessData: function (data) {
+                var dataList = data.results;
+                var i, l = dataList.length, array = [];
+                if (l) {
+                    for (i = 0; i < l; i++) {
+                        array.push($.extend(true, dataList[i], {
+                            text: dataList[i].name,
+                            value: dataList[i].id,
+                            'data-thumbnail': dataList[i].logo_path,
+                        }));
+                    }
+                }
+                // You must always return a valid array when processing data. The
+                // data argument passed is a clone and cannot be modified directly.
+                return array;
+            }
+        });
+
+        $('#companyselectpicker').trigger('change').data('AjaxBootstrapSelect').list.cache = {}
+    })
+
+    function unsubscribe(event) {
+
+        var form = $(this);
+        var tmdbId = form.find('input').val();
+
+        $.post('/series/unSubscribe', form.serialize());
+
+        var par = form.parent();
+        par.html(
+            '<form class="subsForm" action="/series/subscribe" method="post" class="subsForm">' +
+            '    <input type="hidden" name="tmdbId" value="' + tmdbId + '"/>' +
+            '    <input type="submit" value="' + [[#{lang.subscribe}]] + '" class="btn btn-warning"/>' +
+            '</form>'
+        );
+        var newForm = par.find(".subsForm");
+        newForm.on('submit', subscribe);
+        return false;
+    }
+
+    function subscribe(event) {
+
+        var form = $(this);
+        var tmdbId = form.find('input').val();
+
+        $.post('/series/subscribe', $(this).serialize());
+
+        var par = form.parent();
+        par.html(
+            '<form class="unSubsForm" action="/series/unSubscribe" method="post" class="unSubsForm">' +
+            '    <input type="hidden" name="tmdbId" value="' + tmdbId + '"/>' +
+            '    <input type="submit" value="' + [[#{lang.unsubscribe}]] + '" class="btn btn-danger"/>' +
+            '</form>'
+        );
+        var newForm = par.find(".unSubsForm");
+        newForm.on('submit', unsubscribe);
+        return false;
+    }
+
+    $(".subsForm").submit(subscribe);
+    $(".unSubsForm").submit(unsubscribe);
+</script>
+</body>
+</html>

@@ -1,8 +1,8 @@
 package com.ness.movie_release_web.service.tmdb;
 
 import com.ness.movie_release_web.model.wrapper.tmdb.Language;
-import com.ness.movie_release_web.model.wrapper.tmdb.movie.details.ProductionCompanyWrapper;
-import com.ness.movie_release_web.model.wrapper.tmdb.movie.search.CompanySearchWrapper;
+import com.ness.movie_release_web.model.wrapper.tmdb.ProductionCompanyWrapper;
+import com.ness.movie_release_web.model.wrapper.tmdb.company.search.CompanySearchWrapper;
 
 import java.util.List;
 import java.util.Optional;

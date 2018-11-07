@@ -2,9 +2,10 @@ package com.ness.movie_release_web.controller;
 
 import com.ness.movie_release_web.model.User;
 import com.ness.movie_release_web.model.wrapper.tmdb.Language;
+import com.ness.movie_release_web.model.wrapper.tmdb.Mode;
 import com.ness.movie_release_web.security.TokenService;
-import com.ness.movie_release_web.service.google.recapcha.RecaptchaService;
 import com.ness.movie_release_web.service.UserService;
+import com.ness.movie_release_web.service.google.recapcha.RecaptchaService;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -138,6 +139,7 @@ public class UserController {
 
         user.setRole("ROLE_USER");
         user.setTelegramId(StringUtils.lowerCase(user.getTelegramId()));
+        user.setMode(Mode.movie);
 
         service.saveWithPassEncryption(user);
 
@@ -153,7 +155,7 @@ public class UserController {
         model.addAttribute("language", user.getLanguage());
         model.addAttribute(user);
         return "register";
-    }
+}
 
     @PostMapping("/setLanguage")
     public ResponseEntity setLanguage(@RequestParam(value = "language") Language language, Principal principal, Model model) {
@@ -162,6 +164,17 @@ public class UserController {
         service.save(user);
 
         model.addAttribute("language", language);
+
+        return ResponseEntity.ok().build();
+    }
+
+    @PostMapping("/setMode")
+    public ResponseEntity setMode(@RequestParam(value = "mode") Mode mode, Principal principal, Model model){
+        User user = service.findByLogin(principal.getName());
+        user.setMode(mode);
+        service.save(user);
+
+        model.addAttribute("mode", mode);
 
         return ResponseEntity.ok().build();
     }

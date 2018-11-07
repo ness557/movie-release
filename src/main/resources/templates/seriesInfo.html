@@ -1,0 +1,201 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:insert="embeded/header.html"></head>
+<body>
+<nav th:insert="embeded/navbar.html"></nav>
+
+<script th:inline="javascript">
+    function unsubscribe(event) {
+
+        var form = $(this);
+        var tmdbId = form.find('input').val();
+
+        $.post('/movie/unSubscribe', form.serialize());
+
+        var par = form.parent();
+        par.html(
+            '<form class="subsForm" action="/series/subscribe" method="post" class="subsForm">' +
+            '    <input type="hidden" name="tmdbId" value="' + tmdbId + '"/>' +
+            '    <input type="submit" value="' + [[#{lang.subscribe}]] + '" class="btn btn-warning"/>' +
+            '</form>'
+        );
+        var newForm = par.find(".subsForm");
+        newForm.on('submit', subscribe);
+        return false;
+    }
+
+    function subscribe(event) {
+
+        var form = $(this);
+        var tmdbId = form.find('input').val();
+
+        $.post('/movie/subscribe', $(this).serialize());
+
+        var par = form.parent();
+        par.html(
+            '<form class="unSubsForm" action="/series/unSubscribe" method="post" class="unSubsForm">' +
+            '    <input type="hidden" name="tmdbId" value="' + tmdbId + '"/>' +
+            '    <input type="submit" value="' + [[#{lang.unsubscribe}]] + '" class="btn btn-danger"/>' +
+            '</form>'
+        );
+        var newForm = par.find(".unSubsForm");
+        newForm.on('submit', unsubscribe);
+        return false;
+    }
+</script>
+
+<div class="container-fluid mytext" style="padding-top: 30px">
+    <div class="row">
+        <div class="col-10 col-sm-6 col-md-5 col-lg-4 col-xl-3" style="text-align: right">
+            <div style="text-align: center; display: inline-block;">
+                <img th:src="${series.posterPath}" style="height: 400px; max-width: 300px" class="rounded"
+                     th:onerror="'this.src=\'' + @{/img/no-image.png} + '\'; this.onerror=null'">
+
+                <p style="margin-bottom: 12px; margin-top: 16px;"><span th:text="#{lang.score}"></span>
+                    <b th:if="${series.voteAverage > 6}"
+                       style="color: #33CC00"
+                       th:text="${series.voteAverage}"/>
+
+                    <b th:if="${series.voteAverage < 4}"
+                       style="color: #FD0100"
+                       th:text="${series.voteAverage}"/>
+
+
+                    <b th:if="${series.voteAverage >= 4 and series.voteAverage <= 6}"
+                       style="color: #E1AC00"
+                       th:text="${series.voteAverage}"/>
+                </p>
+
+                <div>
+                    <form th:if="${subscribed}" action="/series/unSubscribe" method="post" class="unSubsForm">
+                        <input type="hidden" name="tmdbId" th:value="${series.id}"/>
+                        <input type="submit" th:value="#{lang.unsubscribe}" class="btn btn-danger"/>
+                    </form>
+                </div>
+
+                <div>
+                    <form th:unless="${subscribed}" action="/series/subscribe" method="post" class="subsForm">
+                        <input type="hidden" name="tmdbId" th:value="${series.id}"/>
+                        <input type="submit" th:value="#{lang.subscribe}" class="btn btn-warning"/>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-12 col-sm-6 col-md-6 col-lg-8 col-xl-7">
+            <div class="row">
+                <div class="col-md-8">
+                    <div style="font-size: 27px;">
+                        <b th:text="${series.name} + ' (' + ${series.firstAirDate.getYear()} + ')'"/>
+                    </div>
+                </div>
+            </div>
+            <div class="row" style="font-size: 12px; height: 32px; vertical-align: center; padding-top: 4px">
+                <div class="col-auto col-sm-auto col-md-auto col-lg-auto col-xl-auto">
+                    <div class="plate">
+                        <span class="plate-text" th:text="${#strings.capitalize(series.status)}"/>
+                    </div>
+                </div>
+
+                <div class="col-auto col-sm-auto col-md-auto col-lg-auto col-xl-auto">
+                    <div class="plate">
+                        <p class="plate-text" th:text="${#strings.capitalize(series.originalLanguage)}"/>
+                    </div>
+                </div>
+
+                <div class="col-auto col-sm-auto col-md-auto col-lg-auto col-xl-auto"
+                     th:each="runtime: ${series.episodeRunTime}"
+                     style="text-align: center; max-width: 100px">
+                    <img style="width: 16px; margin-right: 3px" th:src="@{/img/clock.png}"/>
+                    <span class="plate-text" th:text="${runtime} + ' ' + #{lang.minutes}"/>
+                </div>
+                <div class="col-auto col-sm-auto col-md-auto col-lg-auto col-xl-auto" style="padding: 0">
+                    <a class="plate-text site" style="color: #337ab7;" th:href="${series.homepage}"
+                       th:text="#{lang.website}"> </a>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="filmPropSpaces">
+                        <b th:text="#{lang.genres} + ':'"></b>
+                        <th:block th:each="genre: ${series.genres}">
+                            <a class="genre-link" th:text="${#strings.capitalize(genre.name)}"
+                               th:href="${'/series/discover?genreWrappers=' + genre.id}"></a>
+                        </th:block>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="filmPropSpaces">
+                        <b th:text="#{lang.networks} + ':'"></b>
+                        <th:block th:each="production: ${series.networks}">
+                            <span th:text="${#strings.capitalize(production.name)}"></span>
+                        </th:block>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="filmPropSpaces">
+                        <b th:text="#{lang.production} + ':'"></b>
+                        <th:block th:each="production: ${series.productionCompanies}">
+                            <a class="genre-link" th:text="${#strings.capitalize(production.name)}"
+                               th:href="${'/series/discover?companies=' + production.id}"></a>
+                        </th:block>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="filmPropSpaces">
+                        <b th:text="#{lang.countries} + ':'"></b>
+                        <th:block th:each="country: ${series.originCountry}">
+                            <span th:text="${country}"></span>
+                            <span> </span>
+                        </th:block>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="filmPropSpaces">
+                        <b>
+                            <span th:text="#{lang.release_date} + ':'"></span>
+                        </b>
+                        <th:block th:text='${#temporals.format(series.firstAirDate, "dd MMMM yyyy")}'/>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="filmPropSpaces">
+                        <b th:text="#{lang.overview} + ':'"></b>
+                        <th:block th:text="${series.overview}"/>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="back-to-top" style="display: inline;">
+    <a style="pointer-events: none">
+        <img th:src="@{/img/scroll-up-button.png}">
+    </a>
+</div>
+
+<footer th:insert="embeded/footer.html"></footer>
+
+<script th:inline="javascript">
+    $(".subsForm").submit(subscribe);
+    $(".unSubsForm").submit(unsubscribe);
+</script>
+</body>
+</html>

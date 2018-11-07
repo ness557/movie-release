@@ -2,7 +2,7 @@ package com.ness.movie_release_web.controller;
 
 import com.ness.movie_release_web.model.User;
 import com.ness.movie_release_web.model.wrapper.tmdb.Language;
-import com.ness.movie_release_web.model.wrapper.tmdb.movie.search.CompanySearchWrapper;
+import com.ness.movie_release_web.model.wrapper.tmdb.company.search.CompanySearchWrapper;
 import com.ness.movie_release_web.service.UserService;
 import com.ness.movie_release_web.service.tmdb.CompanyService;
 import org.springframework.beans.factory.annotation.Autowired;
