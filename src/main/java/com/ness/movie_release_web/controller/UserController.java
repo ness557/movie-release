@@ -139,6 +139,7 @@ public class UserController {
 
         user.setRole("ROLE_USER");
         user.setTelegramId(StringUtils.lowerCase(user.getTelegramId()));
+        user.setMode(Mode.movie);
 
         service.saveWithPassEncryption(user);
 
