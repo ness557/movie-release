@@ -12,7 +12,7 @@
         var form = $(this);
         var tmdbId = form.find('input').val();
 
-        $.post('/movie/unSubscribe', form.serialize());
+        $.post('/series/unSubscribe', form.serialize());
 
         var par = form.parent();
         par.html(
@@ -23,6 +23,24 @@
         );
         var newForm = par.find(".subsForm");
         newForm.on('submit', subscribe);
+        return false;
+    }
+    function subscribe(event) {
+
+        var form = $(this);
+        var tmdbId = form.find('input').val();
+
+        $.post('/series/subscribe', $(this).serialize());
+
+        var par = form.parent();
+        par.html(
+            '<form class="unSubsForm" action="/series/unSubscribe" method="post" class="unSubsForm">' +
+            '    <input type="hidden" name="tmdbId" value="' + tmdbId + '"/>' +
+            '    <input type="submit" value="' + [[#{lang.unsubscribe}]] + '" class="btn btn-danger"/>' +
+            '</form>'
+        );
+        var newForm = par.find(".unSubsForm");
+        newForm.on('submit', unsubscribe);
         return false;
     }
 </script>
@@ -204,25 +222,6 @@
 <footer th:insert="embeded/footer.html"></footer>
 
 <script th:inline="javascript">
-
-    function unsubscribe(event) {
-
-        var form = $(this);
-        var tmdbId = form.find('input').val();
-
-        $.post('/movie/unSubscribe', form.serialize());
-
-        var par = form.parent();
-        par.html(
-            '<form class="subsForm" action="/series/subscribe" method="post" class="subsForm">' +
-            '    <input type="hidden" name="tmdbId" value="' + tmdbId + '"/>' +
-            '    <input type="submit" value="' + [[#{lang.subscribe}]] + '" class="btn btn-warning"/>' +
-            '</form>'
-        );
-        var newForm = par.find(".subsForm");
-        newForm.on('submit', subscribe);
-        return false;
-    }
 
     $(".unSubsForm").submit(unsubscribe);
 </script>

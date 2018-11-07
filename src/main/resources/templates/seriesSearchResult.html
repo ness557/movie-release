@@ -11,7 +11,7 @@
         var form = $(this);
         var tmdbId = form.find('input').val();
 
-        $.post('/movie/unSubscribe', form.serialize());
+        $.post('/series/unSubscribe', form.serialize());
 
         var par = form.parent();
         par.html(
@@ -30,7 +30,7 @@
         var form = $(this);
         var tmdbId = form.find('input').val();
 
-        $.post('/movie/subscribe', $(this).serialize());
+        $.post('/series/subscribe', $(this).serialize());
 
         var par = form.parent();
         par.html(
