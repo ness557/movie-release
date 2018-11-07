@@ -32,7 +32,7 @@ public class GenreServiceImpl implements GenreService {
     private String url;
 
     @Override
-    public List<GenreWrapper> getGenres(Language language) {
+    public List<GenreWrapper> getMovieGenres(Language language) {
 
         UriComponentsBuilder movieBuilder = UriComponentsBuilder.fromHttpUrl(url + "genre/movie/list")
                 .queryParam("api_key", apikey)
@@ -52,7 +52,35 @@ public class GenreServiceImpl implements GenreService {
                     logger.error(e1.getMessage());
                 }
                 // and try again
-                return this.getGenres(language);
+                return this.getMovieGenres(language);
+            }
+            return emptyList();
+        }
+
+        return response.getBody().getGenreWrappers();
+    }
+
+    @Override
+    public List<GenreWrapper> getTVGenres(Language language) {
+        UriComponentsBuilder movieBuilder = UriComponentsBuilder.fromHttpUrl(url + "genre/tv/list")
+                .queryParam("api_key", apikey)
+                .queryParam("language", language);
+
+        ResponseEntity<GenreList> response = null;
+        try {
+            response = restTemplate.getForEntity(movieBuilder.toUriString(), GenreList.class);
+        } catch (HttpStatusCodeException e) {
+            logger.error("Could not get genres: {}", e.getStatusCode().value());
+
+            if (e.getStatusCode().value() == 429) {
+                try {
+                    // sleep current thread for 1s
+                    sleep(1000);
+                } catch (InterruptedException e1) {
+                    logger.error(e1.getMessage());
+                }
+                // and try again
+                return this.getTVGenres(language);
             }
             return emptyList();
         }

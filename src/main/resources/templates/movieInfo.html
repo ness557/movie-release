@@ -130,7 +130,7 @@
                         <b th:text="#{lang.genres} + ':'"></b>
                         <th:block th:each="genre: ${film.genreWrappers}">
                             <a class="genre-link" th:text="${#strings.capitalize(genre.name)}"
-                               th:href="${'/discover?genreWrappers=' + genre.id}"></a>
+                               th:href="${'/movie/discover?genreWrappers=' + genre.id}"></a>
                         </th:block>
                     </div>
                 </div>
@@ -142,7 +142,7 @@
                         <b th:text="#{lang.production} + ':'"></b>
                         <th:block th:each="production: ${film.productionCompanies}">
                             <a class="genre-link" th:text="${#strings.capitalize(production.name)}"
-                               th:href="${'/discover?companies=' + production.id}"></a>
+                               th:href="${'/movie/discover?companies=' + production.id}"></a>
                         </th:block>
                     </div>
                 </div>

@@ -217,7 +217,7 @@ public class MovieController {
         criteria.setPage(page);
         criteria.setLanguage(language);
 
-        Optional<MovieSearchWrapper> optionalMovieSearch = discoverService.discover(criteria);
+        Optional<MovieSearchWrapper> optionalMovieSearch = discoverService.discoverMovie(criteria);
 
         if (optionalMovieSearch.isPresent()) {
 
@@ -242,7 +242,7 @@ public class MovieController {
         model.addAttribute("criteria", criteria);
 
         // adding genreWrappers to form
-        model.addAttribute("genres", genreService.getGenres(language));
+        model.addAttribute("genres", genreService.getMovieGenres(language));
 
         return "discoverMovies";
     }

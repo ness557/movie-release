@@ -4,12 +4,13 @@ import com.ness.movie_release_web.model.User;
 import com.ness.movie_release_web.model.UserTVSeries;
 import com.ness.movie_release_web.model.wrapper.tmdb.Language;
 import com.ness.movie_release_web.model.wrapper.tmdb.Mode;
+import com.ness.movie_release_web.model.wrapper.tmdb.movie.discover.DiscoverSearchCriteria;
 import com.ness.movie_release_web.model.wrapper.tmdb.tvSeries.details.TVDetailsWrapper;
 import com.ness.movie_release_web.model.wrapper.tmdb.tvSeries.search.TVSearchWrapper;
 import com.ness.movie_release_web.model.wrapper.tmdb.tvSeries.search.TVWrapper;
 import com.ness.movie_release_web.service.TVSeriesService;
 import com.ness.movie_release_web.service.UserService;
-import com.ness.movie_release_web.service.tmdb.TmdbTVSeriesService;
+import com.ness.movie_release_web.service.tmdb.*;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -43,6 +44,15 @@ public class TVSeriesController {
 
     @Autowired
     private TmdbTVSeriesService tmdbSeriesService;
+
+    @Autowired
+    private DiscoverService discoverService;
+
+    @Autowired
+    private CompanyService companyService;
+
+    @Autowired
+    private GenreService genreService;
 
     @GetMapping("/getSeries")
     public String getFilm(@RequestParam("tmdbId") Integer tmdbId,
@@ -175,48 +185,50 @@ public class TVSeriesController {
         return "seriesSubscriptions";
     }
 
-//    @GetMapping("/discover")
-//    public String discover(@ModelAttribute("criteria") DiscoverSearchCriteria criteria,
-//                           @RequestParam(value = "page", required = false) Integer page,
-//                           Principal principal,
-//                           Model model) {
-//
-//        User user = userService.findByLogin(principal.getName());
-//        Language language = user.getLanguage();
-//
-//        if (page == null)
-//            page = 1;
-//
-//        // assigning values for service
-//        criteria.setPage(page);
-//        criteria.setLanguage(language);
-//
-//        Optional<MovieSearchWrapper> optionalMovieSearch = discoverService.discover(criteria);
-//
-//        if (optionalMovieSearch.isPresent()) {
-//
-//            MovieSearchWrapper movieSearchWrapper = optionalMovieSearch.get();
-//
-//            Map<MovieWrapper, Boolean> filmsWithSubFlags = movieSearchWrapper.getResults().stream()
-//                    .collect(toMap(f -> f,
-//                            f -> filmService.isExistsByTmdbIdAndUserId(f.getId(), user.getId()),
-//                            (f1, f2) -> f1,
-//                            LinkedHashMap::new));
-//            model.addAttribute("films", filmsWithSubFlags);
-//
-//            model.addAttribute("pageCount", movieSearchWrapper.getTotalPages());
-//            model.addAttribute("page", page);
-//        }
-//
-//        model.addAttribute("language", language);
-//
-//        // adding all attributes to form
-//        model.addAttribute("companies", companyService.getCompanies(criteria.getCompanies(), language));
-//        model.addAttribute("criteria", criteria);
-//
-//        // adding genreWrappers to form
-//        model.addAttribute("genres", genreService.getGenres(language));
-//
-//        return "discoverSeries";
-//    }
+    @GetMapping("/discover")
+    public String discover(@ModelAttribute("criteria") DiscoverSearchCriteria criteria,
+                           @RequestParam(value = "page", required = false) Integer page,
+                           Principal principal,
+                           Model model) {
+
+        User user = userService.findByLogin(principal.getName());
+        Language language = user.getLanguage();
+        Mode mode = user.getMode();
+
+        if (page == null)
+            page = 1;
+
+        // assigning values for service
+        criteria.setPage(page);
+        criteria.setLanguage(language);
+
+        Optional<TVSearchWrapper> optionalMovieSearch = discoverService.discoverSeries(criteria);
+
+        if (optionalMovieSearch.isPresent()) {
+
+            TVSearchWrapper movieSearchWrapper = optionalMovieSearch.get();
+
+            Map<TVWrapper, Boolean> filmsWithSubFlags = movieSearchWrapper.getResults().stream()
+                    .collect(toMap(f -> f,
+                            f -> dbSeriesService.isExistsByTmdbIdAndUserId(f.getId(), user.getId()),
+                            (f1, f2) -> f1,
+                            LinkedHashMap::new));
+            model.addAttribute("series", filmsWithSubFlags);
+
+            model.addAttribute("pageCount", movieSearchWrapper.getTotalPages());
+            model.addAttribute("page", page);
+        }
+
+        model.addAttribute("language", language);
+        model.addAttribute("mode", mode);
+
+        // adding all attributes to form
+        model.addAttribute("companies", companyService.getCompanies(criteria.getCompanies(), language));
+        model.addAttribute("criteria", criteria);
+
+        // adding genreWrappers to form
+        model.addAttribute("genres", genreService.getTVGenres(language));
+
+        return "discoverSeries";
+    }
 }
