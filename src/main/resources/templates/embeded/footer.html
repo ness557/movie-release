@@ -81,7 +81,7 @@
                 var modVal = $(this).find(".modVal").val();
                 $.post("/setMode", {"mode": modVal}, function () {
                     setTimeout(20);
-                    location.reload();
+                    window.location = ("http://" + location.host + "/" + modVal + "/subscriptions");
                 });
             $("#modeDropdown").text($(this).text());
             }
