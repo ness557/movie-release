@@ -132,7 +132,8 @@
                     <div class="filmPropSpaces">
                         <b th:text="#{lang.networks} + ':'"></b>
                         <th:block th:each="production: ${series.networks}">
-                            <span th:text="${#strings.capitalize(production.name)}"></span>
+                            <a class="genre-link" th:text="${#strings.capitalize(production.name)}"
+                               th:href="${'/series/discover?networks=' + production.id}"></a>
                         </th:block>
                     </div>
                 </div>

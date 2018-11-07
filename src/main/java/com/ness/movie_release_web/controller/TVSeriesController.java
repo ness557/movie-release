@@ -54,6 +54,9 @@ public class TVSeriesController {
     @Autowired
     private GenreService genreService;
 
+    @Autowired
+    private NetworkService networkService;
+
     @GetMapping("/getSeries")
     public String getFilm(@RequestParam("tmdbId") Integer tmdbId,
                           Principal principal,
@@ -224,6 +227,7 @@ public class TVSeriesController {
 
         // adding all attributes to form
         model.addAttribute("companies", companyService.getCompanies(criteria.getCompanies(), language));
+        model.addAttribute("networks", networkService.getNetworks(criteria.getNetworks()));
         model.addAttribute("criteria", criteria);
 
         // adding genreWrappers to form

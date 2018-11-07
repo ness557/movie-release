@@ -6,5 +6,6 @@ import java.util.List;
 
 public interface NetworkService {
     List<ProductionCompanyWrapper> getNetworks();
+    List<ProductionCompanyWrapper> getNetworks(List<Integer> ids);
     List<ProductionCompanyWrapper> search(String query);
 }

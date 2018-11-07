@@ -106,6 +106,10 @@ public class DiscoverServiceImpl implements DiscoverService {
             movieBuilder.queryParam("with_genres",
                     StringUtils.join(criteria.getGenres(), criteria.getGenresAnd() ? "," : "|"));
 
+        if (!criteria.getNetworks().isEmpty())
+            movieBuilder.queryParam("with_networks",
+                    StringUtils.join(criteria.getNetworks(), criteria.getNetworksAnd() ? "," : "|"));
+
         if (!criteria.getCompanies().isEmpty())
             movieBuilder.queryParam("with_companies",
                     StringUtils.join(criteria.getCompanies(), criteria.getCompaniesAnd() ? "," : "|"));

@@ -64,6 +64,11 @@ public class NetworkServiceImpl implements NetworkService {
     }
 
     @Override
+    public List<ProductionCompanyWrapper> getNetworks(List<Integer> ids) {
+        return networks.stream().filter(n -> ids.contains(n.getId())).collect(toList());
+    }
+
+    @Override
     public List<ProductionCompanyWrapper> search(String query) {
         return networks.stream().filter(Objects::nonNull).filter(n -> n.getName().toLowerCase().contains(query.toLowerCase())).collect(toList());
     }

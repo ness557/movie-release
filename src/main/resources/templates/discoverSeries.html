@@ -58,6 +58,45 @@
 
                         <div class="row">
                             <div class="col-8 col-sm-8 col-md-8 col-lg-8 col-xl-8">
+                                <label th:text="#{lang.networks} + ':'"></label>
+                                <select class="form-control selectpicker" id="networkselectpicker"
+                                        th:field="*{networks}"
+                                        multiple
+                                        data-actoins-box="true" data-select-all-headers="true"
+                                        data-live-search="true">
+                                    <option th:each="network : ${networks}"
+                                            th:value="${network.id}"
+                                            th:text="${network.name}" selected>
+                                    </option>
+                                </select>
+                            </div>
+
+                            <div class="col-4 col-sm-4 col-md-4 col-lg-4 col-xl-4">
+                                <label th:text="#{lang.networks_mode} + ':'"></label>
+                                <div class="row">
+                                    <div class="col-1 col-sm-1 col-md-1 col-lg-1 col-xl-1">
+                                        <input type="radio" class="option-input radio" th:field="*{networksAnd}"
+                                               th:value="${false}">
+                                    </div>
+                                    <div class="col-4 col-sm-4 col-md-4 col-lg-4 col-xl-4">
+                                        <span th:text="#{lang.or}"></span>
+                                    </div>
+
+                                    <div class="col-1 col-sm-1 col-md-1 col-lg-1 col-xl-1">
+
+                                        <input type="radio" class="option-input radio" th:field="*{networksAnd}"
+                                               th:value="${true}">
+                                    </div>
+                                    <div class="col-4 col-sm-4 col-md-4 col-lg-4 col-xl-4">
+                                        <span th:text="#{lang.and}"></span>
+                                    </div>
+
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-8 col-sm-8 col-md-8 col-lg-8 col-xl-8">
                                 <label th:text="#{lang.companies} + ':'"></label>
                                 <select class="form-control selectpicker" id="companyselectpicker"
                                         th:field="*{companies}"
@@ -423,8 +462,53 @@
             }
         });
 
-        $('#companyselectpicker').trigger('change').data('AjaxBootstrapSelect').list.cache = {}
-    })
+        $('#companyselectpicker').trigger('change').data('AjaxBootstrapSelect').list.cache = {};
+
+        $('#networkselectpicker').selectpicker().ajaxSelectPicker({
+
+            ajax: {
+                url: '/network/search',
+                type: 'GET',
+                dataType: 'json',
+
+                // Use "{{{q}}}" as a placeholder and Ajax Bootstrap Select will
+                // automatically replace it with the value of the search query.
+                data: {
+                    query: '{{{q}}}'
+                }
+            },
+
+            locale: {
+                currentlySelected: [[#{lang.ajax.currently_selected}]],
+                emptyTitle: [[#{lang.ajax.empty_title}]],
+                errorText: [[#{lang.ajax.error_text}]],
+                searchPlaceholder: [[#{lang.ajax.search_placeholder}]],
+                statusInitialized: [[#{lang.ajax.status_initialized}]],
+                statusNoResults: [[#{lang.ajax.status_no_results}]],
+                statusSearching: [[#{lang.ajax.status_searching}]],
+                statusTooShort: [[#{lang.ajax.status_too_short}]]
+            },
+
+            // function to preprocess JSON data
+            preprocessData: function (data) {
+                var dataList = data;
+                var i, l = dataList.length, array = [];
+                if (l) {
+                    for (i = 0; i < l; i++) {
+                        array.push($.extend(true, dataList[i], {
+                            text: dataList[i].name,
+                            value: dataList[i].id
+                        }));
+                    }
+                }
+                // You must always return a valid array when processing data. The
+                // data argument passed is a clone and cannot be modified directly.
+                return array;
+            }
+        });
+
+        $('#networkselectpicker').trigger('change').data('AjaxBootstrapSelect').list.cache = {};
+    });
 
     function unsubscribe(event) {
 

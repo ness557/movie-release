@@ -33,7 +33,7 @@ public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
                 .addFilterAfter(tokenAuthFilter, BasicAuthenticationFilter.class)
                 .authorizeRequests()
                 .antMatchers("/", "/home", "/register", "/login", "/register").permitAll()
-                .antMatchers("/movie/**", "/company/**", "/series/**", "/userInfo", "/setLanguage", "/setMode").hasAnyRole("USER")
+                .antMatchers("/movie/**", "/company/**", "/network/**", "/series/**", "/userInfo", "/setLanguage", "/setMode").hasAnyRole("USER")
                 .antMatchers("/admin/update_db").hasAnyRole("ADMIN")
                 .anyRequest().anonymous()
                 .and()
