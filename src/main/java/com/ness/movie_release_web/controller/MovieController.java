@@ -3,6 +3,7 @@ package com.ness.movie_release_web.controller;
 import com.ness.movie_release_web.model.Film;
 import com.ness.movie_release_web.model.User;
 import com.ness.movie_release_web.model.wrapper.tmdb.Language;
+import com.ness.movie_release_web.model.wrapper.tmdb.Mode;
 import com.ness.movie_release_web.model.wrapper.tmdb.movie.details.MovieDetailsWrapper;
 import com.ness.movie_release_web.model.wrapper.tmdb.movie.discover.DiscoverSearchCriteria;
 import com.ness.movie_release_web.model.wrapper.tmdb.movie.search.MovieSearchWrapper;
@@ -33,8 +34,8 @@ import static java.util.stream.Collectors.toMap;
 
 @Controller
 @RequestMapping("/movie")
-@SessionAttributes(names = {"query", "year", "language" },
-        types = {String.class, Integer.class, Language.class})
+@SessionAttributes(names = {"query", "year", "language", "mode"},
+        types = {String.class, Integer.class, Language.class, Mode.class})
 public class MovieController {
 
     @Autowired
@@ -65,7 +66,9 @@ public class MovieController {
 
         User user = userService.findByLogin(principal.getName());
         Language language = user.getLanguage();
+        Mode mode = user.getMode();
         model.addAttribute("language", language);
+        model.addAttribute("mode", mode);
 
         if (filmService.isExistsByTmdbIdAndUserId(tmdbId, user.getId())) {
             model.addAttribute("subscribed", true);
@@ -77,7 +80,7 @@ public class MovieController {
 
         model.addAttribute("film", movieDetails.get());
         model.addAttribute("releases", tmdbDatesService.getReleaseDates(tmdbId));
-        return "filmInfo";
+        return "movieInfo";
     }
 
     @PostMapping("/subscribe")
@@ -132,6 +135,7 @@ public class MovieController {
 
         User user = userService.findByLogin(principal.getName());
         Language language = user.getLanguage();
+        Mode mode = user.getMode();
 
         // trim space at start
         query = StringUtils.trim(query);
@@ -140,6 +144,7 @@ public class MovieController {
         model.addAttribute("query", query);
         model.addAttribute("year", year);
         model.addAttribute("language", language);
+        model.addAttribute("mode", mode);
 
         Optional<MovieSearchWrapper> optionalMovieSearch = movieService.searchForMovies(query, page, year, language);
 
@@ -171,9 +176,11 @@ public class MovieController {
 
         User user = userService.findByLogin(principal.getName());
         Language language = user.getLanguage();
+        Mode mode = user.getMode();
 
         //save in session
         model.addAttribute("language", language);
+        model.addAttribute("mode", mode);
 
         Page<Film> filmPage = filmService.getAllByUserWithPages(page, 10, user);
         List<Film> films = filmPage.getContent();
@@ -201,6 +208,7 @@ public class MovieController {
 
         User user = userService.findByLogin(principal.getName());
         Language language = user.getLanguage();
+        Mode mode = user.getMode();
 
         if (page == null)
             page = 1;
@@ -227,6 +235,7 @@ public class MovieController {
         }
 
         model.addAttribute("language", language);
+        model.addAttribute("mode", mode);
 
         // adding all attributes to form
         model.addAttribute("companies", companyService.getCompanies(criteria.getCompanies(), language));

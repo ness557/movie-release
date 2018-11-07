@@ -3,6 +3,7 @@ package com.ness.movie_release_web.controller;
 import com.ness.movie_release_web.model.User;
 import com.ness.movie_release_web.model.UserTVSeries;
 import com.ness.movie_release_web.model.wrapper.tmdb.Language;
+import com.ness.movie_release_web.model.wrapper.tmdb.Mode;
 import com.ness.movie_release_web.model.wrapper.tmdb.tvSeries.details.TVDetailsWrapper;
 import com.ness.movie_release_web.model.wrapper.tmdb.tvSeries.search.TVSearchWrapper;
 import com.ness.movie_release_web.model.wrapper.tmdb.tvSeries.search.TVWrapper;
@@ -30,8 +31,8 @@ import static java.util.stream.Collectors.toMap;
 
 @Controller
 @RequestMapping("/series")
-@SessionAttributes(names = {"query", "year", "language"},
-        types = {String.class, Integer.class, Language.class})
+@SessionAttributes(names = {"query", "year", "language", "mode"},
+        types = {String.class, Integer.class, Language.class, Mode.class})
 public class TVSeriesController {
 
     @Autowired
@@ -50,7 +51,9 @@ public class TVSeriesController {
 
         User user = userService.findByLogin(principal.getName());
         Language language = user.getLanguage();
+        Mode mode = user.getMode();
         model.addAttribute("language", language);
+        model.addAttribute("mode", mode);
 
         if (dbSeriesService.isExistsByTmdbIdAndUserId(tmdbId, user.getId())) {
             model.addAttribute("subscribed", true);
@@ -103,6 +106,7 @@ public class TVSeriesController {
 
         User user = userService.findByLogin(principal.getName());
         Language language = user.getLanguage();
+        Mode mode = user.getMode();
 
         // trim space at start
         query = StringUtils.trim(query);
@@ -111,6 +115,7 @@ public class TVSeriesController {
         model.addAttribute("query", query);
         model.addAttribute("year", year);
         model.addAttribute("language", language);
+        model.addAttribute("mode", mode);
 
         Optional<TVSearchWrapper> optionalSearchResult = tmdbSeriesService.search(query, page, year, language);
 
@@ -145,13 +150,14 @@ public class TVSeriesController {
 
         User user = userService.findByLogin(principal.getName());
         Language language = user.getLanguage();
+        Mode mode = user.getMode();
 
         //save in session
         model.addAttribute("language", language);
+        model.addAttribute("mode", mode);
 
         Page<UserTVSeries> userTVSeries = dbSeriesService.getAllByUserWithPages(page, 10, user);
         List<UserTVSeries> series = userTVSeries.getContent();
-
 
 
         List<TVDetailsWrapper> subscriptions = series.stream()
@@ -166,7 +172,6 @@ public class TVSeriesController {
                 .addAttribute("page", page)
                 .addAttribute("pageCount", userTVSeries.getTotalPages());
 
-        //        TODO create view
         return "seriesSubscriptions";
     }
 

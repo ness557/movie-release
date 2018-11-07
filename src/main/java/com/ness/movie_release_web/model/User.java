@@ -1,6 +1,7 @@
 package com.ness.movie_release_web.model;
 
 import com.ness.movie_release_web.model.wrapper.tmdb.Language;
+import com.ness.movie_release_web.model.wrapper.tmdb.Mode;
 import lombok.*;
 import org.springframework.lang.Nullable;
 
@@ -52,4 +53,8 @@ public class User {
     @Enumerated
     @Column(name = "language")
     private Language language;
+
+    @Enumerated
+    @Column(name = "mode")
+    private Mode mode;
 }
