@@ -59,8 +59,8 @@ public class MovieController {
     @Autowired
     private CompanyService companyService;
 
-    @GetMapping("/getMovie")
-    public String getFilm(@RequestParam("tmdbId") Integer tmdbId,
+    @GetMapping("/{tmdbId}")
+    public String getFilm(@PathVariable("tmdbId") Integer tmdbId,
                           Principal principal,
                           Model model) {
 

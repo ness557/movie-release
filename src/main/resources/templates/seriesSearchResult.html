@@ -62,7 +62,7 @@
                      style="text-align: center; font-weight: bold; padding-bottom: 40px; padding-top: 40px;">
                     <div class="row" style="padding-bottom: 6px; height: 320px">
                         <div class="col-xl-12">
-                            <a th:href="'/series/getSeries?tmdbId=' + ${serie.key.id}">
+                            <a th:href="'/series/' + ${serie.key.id}">
                                 <img class="rounded"
                                      th:onerror="'this.src=\'' + @{/img/no-image.png} + '\'; this.onerror=null'"
                                      th:src="${serie.key.posterPath}" style="height: 300px; max-width: 230px">
@@ -71,7 +71,7 @@
                     </div>
                     <div class="row" style="min-height: 70px; padding-bottom: 12px">
                         <div class="col-xl-12">
-                            <a th:href="'/series/getSeries?tmdbId=' + ${serie.key.id}"
+                            <a th:href="'/series/' + ${serie.key.id}"
                                style="color: #555555; text-decoration: none;">
                                 <span th:text="${serie.key.name} + ' (' + ${serie.key.firstAirDate.getYear()} + ')'"></span>
                             </a>

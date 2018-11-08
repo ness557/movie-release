@@ -57,8 +57,10 @@ public class TVSeriesController {
     @Autowired
     private NetworkService networkService;
 
-    @GetMapping("/getSeries")
-    public String getFilm(@RequestParam("tmdbId") Integer tmdbId,
+
+//    todo create eidpoinst like /series/tmdbId /series/tmdbId/season/seasonNum /series/tmdbId/season/seasonNum/episode/episodeNum
+    @GetMapping("/{tmdbId}")
+    public String getFilm(@PathVariable("tmdbId") Integer tmdbId,
                           Principal principal,
                           Model model) {
 
