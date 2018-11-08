@@ -88,7 +88,7 @@ public class UserController {
         String token = tokenService.getToken(userDetails);
         response.addCookie(new Cookie("authorization", "bearer:" + token));
 
-        return ResponseEntity.ok("/movie/subscriptions");
+        return ResponseEntity.ok("/home");
     }
 
     @PostMapping("/register")
