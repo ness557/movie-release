@@ -101,8 +101,9 @@ public class UserController {
                            HttpServletRequest request,
                            Principal principal) {
 
+        User fromDB = null;
         if (principal != null) {
-            User fromDB = service.findByLogin(principal.getName());
+            fromDB = service.findByLogin(principal.getName());
             model.addAttribute("language", fromDB.getLanguage());
             model.addAttribute("mode", fromDB.getMode());
             user.setTelegramId(fromDB.getTelegramId());
@@ -138,7 +139,7 @@ public class UserController {
         if (bindingResult.hasErrors())
             return "register";
 
-        user.setRole("ROLE_USER");
+        user.setRole(fromDB != null && !fromDB.getRole().isEmpty() ? fromDB.getRole() : "ROLE_USER");
         user.setTelegramId(StringUtils.lowerCase(user.getTelegramId()));
         user.setMode(user.getMode() != null ? user.getMode() : Mode.movie);
 
