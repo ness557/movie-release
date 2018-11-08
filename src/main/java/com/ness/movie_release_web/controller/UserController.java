@@ -104,6 +104,7 @@ public class UserController {
         if (principal != null) {
             User fromDB = service.findByLogin(principal.getName());
             model.addAttribute("language", fromDB.getLanguage());
+            model.addAttribute("mode", fromDB.getMode());
             user.setTelegramId(fromDB.getTelegramId());
         }
 
@@ -153,6 +154,7 @@ public class UserController {
 
         User user = service.findByLogin(principal.getName());
         model.addAttribute("language", user.getLanguage());
+        model.addAttribute("mode", user.getMode());
         model.addAttribute(user);
         return "register";
 }
