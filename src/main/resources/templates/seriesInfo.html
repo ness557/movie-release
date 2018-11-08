@@ -182,6 +182,29 @@
                     </div>
                 </div>
             </div>
+
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="filmPropSpaces">
+                        <b th:text="#{lang.overview} + ':'"></b>
+
+                        <div class="slide">
+
+
+                            <!--<button type="button" class="btn btn-primary slick-prev">Previous</button>-->
+
+                            <div th:each="season : ${series.seasons}">
+                                <div th:text="${season.name}"></div>
+                                <img th:src="${season.posterPath}" height="400">
+                            </div>
+
+                            <!--<button type="button" class="slick-next">Next</button>-->
+
+                        </div>
+
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 </div>
@@ -197,6 +220,16 @@
 <script th:inline="javascript">
     $(".subsForm").submit(subscribe);
     $(".unSubsForm").submit(unsubscribe);
+
+
+    $(function () {
+        $('.slide').slick({
+            slidesToShow: 3,
+            slidesToScroll: 1,
+            autoplay: false,
+            autoplaySpeed: 2000,
+        });
+    });
 </script>
 </body>
 </html>
