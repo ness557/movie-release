@@ -146,7 +146,7 @@ public class UserController {
 
         postLogin(user.getLogin(), user.getMatchPassword(), recaptchaResponse, response, request);
 
-        return "redirect:/movie/subscriptions";
+        return "redirect:/home";
     }
 
     @GetMapping("/userInfo")
