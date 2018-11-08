@@ -37,7 +37,7 @@ public class TokenAuthFilter extends GenericFilterBean {
         final HttpServletRequest httpRequest = (HttpServletRequest) request;
 
         Cookie[] cookies = httpRequest.getCookies();
-        if(cookies == null)
+        if (cookies == null)
             cookies = new Cookie[0];
 
         Optional<Cookie> authOpt = Arrays.stream(cookies).filter(e -> "authorization".equals(e.getName())).findFirst();
@@ -65,8 +65,12 @@ public class TokenAuthFilter extends GenericFilterBean {
 
             if (!userOpt.isPresent()) {
                 logger.info("User from token not found");
-                ((HttpServletResponse) response).sendError(HttpServletResponse.SC_UNAUTHORIZED,
-                        "User from token not found");
+
+                // removing invalid cookie
+                auth.setValue(null);
+                auth.setMaxAge(0);
+                ((HttpServletResponse) response).addCookie(auth);
+                ((HttpServletResponse) response).sendRedirect("/home");
                 return;
             }
 
