@@ -64,7 +64,7 @@
     </div>
 
     <div class="container-fluid">
-        <form action="/series/subscriptions" method="get">
+        <form th:unless="${series.isEmpty()}" action="/series/subscriptions" method="get">
             <label th:text="#{lang.status} + ':'"></label>
 
             <div class="row">
