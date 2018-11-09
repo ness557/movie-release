@@ -188,19 +188,18 @@
                     <div class="filmPropSpaces">
                         <b th:text="#{lang.overview} + ':'"></b>
 
-                        <div class="slide">
-
-
-                            <!--<button type="button" class="btn btn-primary slick-prev">Previous</button>-->
+                        <div class="owl-carousel">
 
                             <div th:each="season : ${series.seasons}">
                                 <div th:text="${season.name}"></div>
-                                <img th:src="${season.posterPath}" height="400">
+                                <img th:src="${season.posterPath}" style="height: 400px; width: auto">
                             </div>
 
-                            <!--<button type="button" class="slick-next">Next</button>-->
-
                         </div>
+
+                        <button type="button" class="btn btn-primary owl-next">Next</button>
+                        <button type="button" class="btn btn-primary owl-prev">Previous</button>
+
 
                     </div>
                 </div>
@@ -222,14 +221,32 @@
     $(".unSubsForm").submit(unsubscribe);
 
 
-    $(function () {
-        $('.slide').slick({
-            slidesToShow: 3,
-            slidesToScroll: 1,
-            autoplay: false,
-            autoplaySpeed: 2000,
-        });
+    $(".owl-next").click(function () {
+        $('.owl-carousel').trigger('next.owl.carousel');
     });
+
+    $(".owl-prev").click(function () {
+        $('.owl-carousel').trigger('prev.owl.carousel');
+    });
+
+
+    $('.owl-carousel').owlCarousel({
+        loop:true,
+        margin:10,
+        // pixels to item count
+        responsive:{
+            0:{
+                items:1
+            },
+            600:{
+                items:3
+            },
+            1000:{
+                items:5
+            }
+        },
+    })
+
 </script>
 </body>
 </html>
