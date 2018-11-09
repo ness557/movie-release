@@ -234,7 +234,7 @@
     owl.on('mousewheel', '.owl-stage', function (e) {
         if (e.originalEvent.deltaY>0) {
             owl.trigger('next.owl');
-        } else {
+        } else if (e.originalEvent.deltaY<0) {
             owl.trigger('prev.owl');
         }
         e.preventDefault();
