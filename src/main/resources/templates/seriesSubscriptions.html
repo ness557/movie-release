@@ -68,8 +68,7 @@
             <label th:text="#{lang.status} + ':'"></label>
 
             <div class="row">
-                <div class="col-8 col-sm-7 col-md-6 col-lg-5 col-xl-4"
-                     th:with="urlBuilder=${T(org.springframework.web.servlet.support.ServletUriComponentsBuilder)}">
+                <div class="col-8 col-sm-7 col-md-6 col-lg-5 col-xl-4">
                     <select name="statuses" class="form-control selectpicker" multiple="multiple">
                         <option th:each="status : ${T(com.ness.movie_release_web.model.wrapper.tmdb.tvSeries.details.Status).values()}"
                                 th:value="${status}"
