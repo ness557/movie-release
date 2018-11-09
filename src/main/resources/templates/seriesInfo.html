@@ -198,15 +198,11 @@
             </div>
 
             <div class="row">
-                <div class="col-1">
-                    <button type="button" class="btn btn-primary owl-next">Next</button>
-                </div>
-
-                <div class="col-10">
+                <div class="col-12">
                     <div class="filmPropSpaces">
                         <b th:text="#{lang.overview} + ':'"></b>
 
-                        <div class="owl-carousel">
+                        <div class="owl-carousel owl-theme">
 
                             <div th:each="season : ${series.seasons}">
                                 <div th:text="${season.name}"></div>
@@ -216,11 +212,6 @@
                         </div>
                     </div>
                 </div>
-
-                <div class="col-1">
-                    <button type="button" class="btn btn-primary owl-prev">Previous</button>
-                </div>
-
             </div>
         </div>
     </div>
@@ -238,19 +229,23 @@
     $(".subsForm").submit(subscribe);
     $(".unSubsForm").submit(unsubscribe);
 
+    owl = $('.owl-carousel');
 
-    $(".owl-next").click(function () {
-        $('.owl-carousel').trigger('next.owl.carousel');
+    owl.on('mousewheel', '.owl-stage', function (e) {
+        if (e.originalEvent.deltaY>0) {
+            owl.trigger('next.owl');
+        } else {
+            owl.trigger('prev.owl');
+        }
+        e.preventDefault();
     });
 
-    $(".owl-prev").click(function () {
-        $('.owl-carousel').trigger('prev.owl.carousel');
-    });
-
-
-    $('.owl-carousel').owlCarousel({
+    owl.owlCarousel({
         margin: 10,
         loop: false,
+        dots: true,
+        nav: true,
+        dotsEach: 4,
         // pixels to item count
         responsive: {
             0: {
