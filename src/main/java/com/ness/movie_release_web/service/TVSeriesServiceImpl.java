@@ -56,8 +56,8 @@ public class TVSeriesServiceImpl implements TVSeriesService {
         UserTVSeries userTVSeries = new UserTVSeries();
         userTVSeries.setTvSeries(one.orElse(new TVSeries(tmdbId.longValue())));
         userTVSeries.setUser(user);
-        userTVSeries.setCurrentSeason(1);
-        userTVSeries.setCurrentEpisode(1);
+        userTVSeries.setCurrentSeason(0);
+        userTVSeries.setCurrentEpisode(0);
 
         userTVSeriesRepository.save(userTVSeries);
     }
