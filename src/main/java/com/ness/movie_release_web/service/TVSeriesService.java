@@ -9,13 +9,16 @@ import java.util.Optional;
 public interface TVSeriesService {
 
     Boolean isExistsByTmdbIdAndUserId(Integer tmdbId, Long userId);
+
     Optional<UserTVSeries> getByTmdbIdAndUserId(Integer tmdbId, Long userId);
 
     void subscribeUser(Integer tmdbId, User user);
+
     void unSubscribeUser(Integer tmdbId, User user);
 
     Page<UserTVSeries> getAllByUserWithPages(Integer page, Integer size, User user);
-//    TODO
+
+    //    TODO
 //    (u) current season and episode (u) episode watched or not
-//    (u) total time spent to tv series
+    Long spentTotalMinutesToSeries(Integer tmdbId, User user);
 }

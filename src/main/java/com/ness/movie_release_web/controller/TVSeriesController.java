@@ -29,6 +29,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.concurrent.TimeUnit;
 
 import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toMap;
@@ -78,6 +79,14 @@ public class TVSeriesController {
             model.addAttribute("subscribed", true);
             model.addAttribute("currentSeason", userTVSeries.getCurrentSeason());
             model.addAttribute("currentEpisode", userTVSeries.getCurrentEpisode());
+
+            Long minutes = dbSeriesService.spentTotalMinutesToSeries(tmdbId, user);
+            if(minutes > 60){
+                model.addAttribute("hours", TimeUnit.MINUTES.toHours(minutes));
+                minutes = minutes % 60;
+            }
+
+            model.addAttribute("minutes", minutes);
         }
 
         Optional<TVDetailsWrapper> tvDetails = tmdbSeriesService.getTVDetails(tmdbId, language);

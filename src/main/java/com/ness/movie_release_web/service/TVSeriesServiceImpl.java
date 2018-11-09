@@ -5,6 +5,7 @@ import com.ness.movie_release_web.model.User;
 import com.ness.movie_release_web.model.UserTVSeries;
 import com.ness.movie_release_web.model.UserTVSeriesPK;
 import com.ness.movie_release_web.model.wrapper.tmdb.Language;
+import com.ness.movie_release_web.model.wrapper.tmdb.tvSeries.details.SeasonWrapper;
 import com.ness.movie_release_web.model.wrapper.tmdb.tvSeries.details.TVDetailsWrapper;
 import com.ness.movie_release_web.repository.TVSeriesRepository;
 import com.ness.movie_release_web.repository.UserTVSeriesRepository;
@@ -82,5 +83,46 @@ public class TVSeriesServiceImpl implements TVSeriesService {
     @Override
     public Page<UserTVSeries> getAllByUserWithPages(Integer page, Integer size, User user) {
         return userTVSeriesRepository.findAllByUserOrderByTvSeriesIdDesc(user, PageRequest.of(page, size));
+    }
+
+    @Override
+    public Long spentTotalMinutesToSeries(Integer tmdbId, User user) {
+        Optional<UserTVSeries> byId = userTVSeriesRepository.findById(UserTVSeriesPK.wrap(user.getId(), tmdbId.longValue()));
+        if (!byId.isPresent())
+            return 0L;
+
+
+        UserTVSeries userTVSeries = byId.get();
+        Integer currentSeason = userTVSeries.getCurrentSeason();
+        Integer currentEpisode = userTVSeries.getCurrentEpisode();
+
+        Optional<TVDetailsWrapper> tvDetailsOptional = tvSeriesService.getTVDetails(tmdbId, user.getLanguage());
+        if (!tvDetailsOptional.isPresent())
+            return 0L;
+
+        TVDetailsWrapper tvDetails = tvDetailsOptional.get();
+        Double average = tvDetails.getEpisodeRunTime().stream().mapToDouble(Integer::doubleValue).average().orElse(0d);
+        Double result = 0d;
+
+
+        for(int i = 1; i < currentSeason; i++){
+            Optional<SeasonWrapper> seasonDetailsOpt = tvSeriesService.getSeasonDetails(tmdbId, i, user.getLanguage());
+            if (!seasonDetailsOpt.isPresent())
+                continue;
+
+            SeasonWrapper seasonWrapper = seasonDetailsOpt.get();
+            result += seasonWrapper.getEpisodes().size() * average;
+        }
+
+        Optional<SeasonWrapper> seasonDetails = tvSeriesService.getSeasonDetails(tmdbId, currentSeason, user.getLanguage());
+
+        if (!seasonDetails.isPresent()) {
+            return result.longValue();
+        }
+        SeasonWrapper seasonWrapper = seasonDetails.get();
+
+        result += seasonWrapper.getEpisodes().stream().filter(e -> e.getEpisodeNumber() <= currentEpisode).count() * average;
+
+        return result.longValue();
     }
 }
