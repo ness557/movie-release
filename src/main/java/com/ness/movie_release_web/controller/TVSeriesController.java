@@ -5,6 +5,8 @@ import com.ness.movie_release_web.model.UserTVSeries;
 import com.ness.movie_release_web.model.wrapper.tmdb.Language;
 import com.ness.movie_release_web.model.wrapper.tmdb.Mode;
 import com.ness.movie_release_web.model.wrapper.tmdb.movie.discover.DiscoverSearchCriteria;
+import com.ness.movie_release_web.model.wrapper.tmdb.tvSeries.details.EpisodeWrapper;
+import com.ness.movie_release_web.model.wrapper.tmdb.tvSeries.details.SeasonWrapper;
 import com.ness.movie_release_web.model.wrapper.tmdb.tvSeries.details.Status;
 import com.ness.movie_release_web.model.wrapper.tmdb.tvSeries.details.TVDetailsWrapper;
 import com.ness.movie_release_web.model.wrapper.tmdb.tvSeries.search.TVSearchWrapper;
@@ -59,7 +61,6 @@ public class TVSeriesController {
     private NetworkService networkService;
 
 
-//    todo create eidpoinst like /series/tmdbId /series/tmdbId/season/seasonNum /series/tmdbId/season/seasonNum/episode/episodeNum
     @GetMapping("/{tmdbId}")
     public String getFilm(@PathVariable("tmdbId") Integer tmdbId,
                           Principal principal,
@@ -71,8 +72,12 @@ public class TVSeriesController {
         model.addAttribute("language", language);
         model.addAttribute("mode", mode);
 
-        if (dbSeriesService.isExistsByTmdbIdAndUserId(tmdbId, user.getId())) {
+        Optional<UserTVSeries> userTVSeriesOptional = dbSeriesService.getByTmdbIdAndUserId(tmdbId, user.getId());
+        if (userTVSeriesOptional.isPresent()) {
+            UserTVSeries userTVSeries = userTVSeriesOptional.get();
             model.addAttribute("subscribed", true);
+            model.addAttribute("currentSeason", userTVSeries.getCurrentSeason());
+            model.addAttribute("currentEpisode", userTVSeries.getCurrentEpisode());
         }
 
         Optional<TVDetailsWrapper> tvDetails = tmdbSeriesService.getTVDetails(tmdbId, language);
@@ -82,6 +87,66 @@ public class TVSeriesController {
         model.addAttribute("series", tvDetails.get());
 
         return "seriesInfo";
+    }
+
+    @GetMapping("/{tmdbId}/season/{seasonNumber}")
+    public String getSeason(@PathVariable("tmdbId") Integer tmdbId,
+                            @PathVariable("seasonNumber") Integer seasonNumber,
+                            Principal principal,
+                            Model model) {
+
+        User user = userService.findByLogin(principal.getName());
+        Language language = user.getLanguage();
+        Mode mode = user.getMode();
+        model.addAttribute("language", language);
+        model.addAttribute("mode", mode);
+
+        Optional<UserTVSeries> userTVSeriesOptional = dbSeriesService.getByTmdbIdAndUserId(tmdbId, user.getId());
+        if (userTVSeriesOptional.isPresent()) {
+            UserTVSeries userTVSeries = userTVSeriesOptional.get();
+            model.addAttribute("subscribed", true);
+            model.addAttribute("currentSeason", userTVSeries.getCurrentSeason());
+            model.addAttribute("currentEpisode", userTVSeries.getCurrentEpisode());
+        }
+
+        Optional<SeasonWrapper> tvDetails = tmdbSeriesService.getSeasonDetails(tmdbId, seasonNumber, language);
+        if (!tvDetails.isPresent())
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND);
+
+        model.addAttribute("series", tvDetails.get());
+//        TODO create view
+        return "seasonInfo";
+    }
+
+    @GetMapping("/{tmdbId}/season/{seasonNumber}/episode/{episodeNumber}")
+    public String getSeason(@PathVariable("tmdbId") Integer tmdbId,
+                            @PathVariable("seasonNumber") Integer seasonNumber,
+                            @PathVariable("episodeNumber") Integer episodeNumber,
+                            Principal principal,
+                            Model model) {
+
+        User user = userService.findByLogin(principal.getName());
+        Language language = user.getLanguage();
+        Mode mode = user.getMode();
+        model.addAttribute("language", language);
+        model.addAttribute("mode", mode);
+
+        Optional<UserTVSeries> userTVSeriesOptional = dbSeriesService.getByTmdbIdAndUserId(tmdbId, user.getId());
+
+        if (userTVSeriesOptional.isPresent()) {
+            UserTVSeries userTVSeries = userTVSeriesOptional.get();
+            model.addAttribute("subscribed", true);
+            model.addAttribute("currentSeason", userTVSeries.getCurrentSeason());
+            model.addAttribute("currentEpisode", userTVSeries.getCurrentEpisode());
+        }
+
+        Optional<EpisodeWrapper> tvDetails = tmdbSeriesService.getEpisodeDetails(tmdbId, seasonNumber, episodeNumber, language);
+        if (!tvDetails.isPresent())
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND);
+
+        model.addAttribute("series", tvDetails.get());
+//        TODO create view
+        return "episodeInfo";
     }
 
     @PostMapping("/subscribe")
@@ -183,7 +248,7 @@ public class TVSeriesController {
                 .map(Optional::get)
                 .collect(toList());
 
-        if(statuses != null && !statuses.isEmpty()){
+        if (statuses != null && !statuses.isEmpty()) {
             subscriptions = subscriptions.stream().filter(s -> statuses.contains(s.getStatus())).collect(toList());
             model.addAttribute("statuses", statuses);
         }

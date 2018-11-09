@@ -39,6 +39,11 @@ public class TVSeriesServiceImpl implements TVSeriesService {
     }
 
     @Override
+    public Optional<UserTVSeries> getByTmdbIdAndUserId(Integer tmdbId, Long userId) {
+        return userTVSeriesRepository.findById(UserTVSeriesPK.wrap(userId, tmdbId.longValue()));
+    }
+
+    @Override
     public void subscribeUser(Integer tmdbId, User user) {
 
 
