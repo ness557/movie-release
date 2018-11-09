@@ -93,7 +93,7 @@
             <div class="row" style="font-size: 12px; height: 32px; vertical-align: center; padding-top: 4px">
                 <div class="col-auto col-sm-auto col-md-auto col-lg-auto col-xl-auto">
                     <div class="plate">
-                        <span class="plate-text" th:text="${#strings.capitalize(series.status)}"/>
+                        <span class="plate-text" th:text="#{'lang.status.' + ${series.status}}"/>
                     </div>
                 </div>
 
@@ -199,7 +199,6 @@
 
                         <button type="button" class="btn btn-primary owl-next">Next</button>
                         <button type="button" class="btn btn-primary owl-prev">Previous</button>
-
 
                     </div>
                 </div>

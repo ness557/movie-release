@@ -25,6 +25,7 @@
         newForm.on('submit', subscribe);
         return false;
     }
+
     function subscribe(event) {
 
         var form = $(this);
@@ -63,6 +64,29 @@
     </div>
 
     <div class="container-fluid">
+        <form action="/series/subscriptions" method="get">
+            <label th:text="#{lang.status} + ':'"></label>
+
+            <div class="row">
+                <div class="col-8 col-sm-7 col-md-6 col-lg-5 col-xl-4"
+                     th:with="urlBuilder=${T(org.springframework.web.servlet.support.ServletUriComponentsBuilder)}">
+                    <select name="statuses" class="form-control selectpicker" multiple="multiple">
+                        <option th:each="status : ${T(com.ness.movie_release_web.model.wrapper.tmdb.tvSeries.details.Status).values()}"
+                                th:value="${status}"
+                                th:text="#{'lang.status.' + ${status}}"
+                                th:selected="${statuses != null && statuses.contains(status)}">
+                        </option>
+                    </select>
+                </div>
+
+                <div class="col-1 col-sm-1 col-md-1 col-lg-1 col-xl-1">
+                    <input type="submit" class="btn btn-warning">
+                </div>
+
+            </div>
+        </form>
+
+
         <div class="row">
             <th:block th:each="serie, iStat : ${series}">
 
@@ -225,6 +249,12 @@
 <script th:inline="javascript">
 
     $(".unSubsForm").submit(unsubscribe);
+
+    $('.selectpicker').selectpicker({
+        noneSelectedText: [[#{lang.none_selected_text}]],
+        noneResultsText: [[#{lang.none_results_text}]],
+        selectAllText: [[#{lang.select_all}]]
+    });
 </script>
 </body>
 </html>

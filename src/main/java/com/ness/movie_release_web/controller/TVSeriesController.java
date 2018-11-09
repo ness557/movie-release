@@ -5,6 +5,7 @@ import com.ness.movie_release_web.model.UserTVSeries;
 import com.ness.movie_release_web.model.wrapper.tmdb.Language;
 import com.ness.movie_release_web.model.wrapper.tmdb.Mode;
 import com.ness.movie_release_web.model.wrapper.tmdb.movie.discover.DiscoverSearchCriteria;
+import com.ness.movie_release_web.model.wrapper.tmdb.tvSeries.details.Status;
 import com.ness.movie_release_web.model.wrapper.tmdb.tvSeries.details.TVDetailsWrapper;
 import com.ness.movie_release_web.model.wrapper.tmdb.tvSeries.search.TVSearchWrapper;
 import com.ness.movie_release_web.model.wrapper.tmdb.tvSeries.search.TVWrapper;
@@ -157,6 +158,7 @@ public class TVSeriesController {
 
     @GetMapping("/subscriptions")
     public String getSubs(@RequestParam(value = "page", required = false) Integer page,
+                          @RequestParam(value = "statuses", required = false) List<Status> statuses,
                           Principal principal,
                           Model model) {
 
@@ -180,6 +182,11 @@ public class TVSeriesController {
                 .filter(Optional::isPresent)
                 .map(Optional::get)
                 .collect(toList());
+
+        if(statuses != null && !statuses.isEmpty()){
+            subscriptions = subscriptions.stream().filter(s -> statuses.contains(s.getStatus())).collect(toList());
+            model.addAttribute("statuses", statuses);
+        }
 
         model.addAttribute("botInitialized", !user.isTelegramNotify() || user.getTelegramChatId() != null);
 

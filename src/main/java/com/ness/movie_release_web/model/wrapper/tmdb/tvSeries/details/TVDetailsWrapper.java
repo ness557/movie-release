@@ -94,7 +94,7 @@ public class TVDetailsWrapper {
     private List<SeasonWrapper> seasons = new ArrayList<>();
 
     @JsonProperty("status")
-    private String status;
+    private Status status;
 
     @JsonProperty("type")
     private String type;
