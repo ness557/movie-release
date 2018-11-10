@@ -6,6 +6,10 @@ html, body {
     height: 100%
 }
 
+body {
+    overflow-x: hidden;
+}
+
 .bg-light-my {
     background-color: #F3F3F3;
 }
