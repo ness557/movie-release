@@ -5,6 +5,7 @@ import com.ness.movie_release_web.model.UserTVSeries;
 import com.ness.movie_release_web.model.wrapper.tmdb.Language;
 import com.ness.movie_release_web.model.wrapper.tmdb.Mode;
 import com.ness.movie_release_web.model.wrapper.tmdb.movie.discover.DiscoverSearchCriteria;
+import com.ness.movie_release_web.model.wrapper.tmdb.tvSeries.WatchStatus;
 import com.ness.movie_release_web.model.wrapper.tmdb.tvSeries.details.EpisodeWrapper;
 import com.ness.movie_release_web.model.wrapper.tmdb.tvSeries.details.SeasonWrapper;
 import com.ness.movie_release_web.model.wrapper.tmdb.tvSeries.details.Status;
@@ -25,10 +26,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.security.Principal;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 import java.util.concurrent.TimeUnit;
 
 import static java.util.stream.Collectors.toList;
@@ -81,7 +79,7 @@ public class TVSeriesController {
             model.addAttribute("currentEpisode", userTVSeries.getCurrentEpisode());
 
             Long minutes = dbSeriesService.spentTotalMinutesToSeries(tmdbId, user);
-            if(minutes > 60){
+            if (minutes > 60) {
                 model.addAttribute("hours", TimeUnit.MINUTES.toHours(minutes));
                 minutes = minutes % 60;
             }
@@ -233,6 +231,7 @@ public class TVSeriesController {
     @GetMapping("/subscriptions")
     public String getSubs(@RequestParam(value = "page", required = false) Integer page,
                           @RequestParam(value = "statuses", required = false) List<Status> statuses,
+                          @RequestParam(value = "watch_status", required = false) List<WatchStatus> watchStatuses,
                           Principal principal,
                           Model model) {
 
@@ -257,9 +256,57 @@ public class TVSeriesController {
                 .map(Optional::get)
                 .collect(toList());
 
+//        filter by statuses
         if (statuses != null && !statuses.isEmpty()) {
             subscriptions = subscriptions.stream().filter(s -> statuses.contains(s.getStatus())).collect(toList());
             model.addAttribute("statuses", statuses);
+        }
+
+//        filter by user watch statuses
+        if (watchStatuses != null && !watchStatuses.isEmpty()) {
+
+            List<TVDetailsWrapper> filteredSubscriptions = new ArrayList<>();
+
+//            for not started
+            if (watchStatuses.contains(WatchStatus.NOT_STARTED))
+                subscriptions.stream().filter(s -> {
+                    UserTVSeries fromDB = dbSeriesService.getByTmdbIdAndUserId(s.getId(), user.getId()).get();
+                    Integer currentSeason = fromDB.getCurrentSeason();
+                    Integer currentEpisode = fromDB.getCurrentEpisode();
+                    return currentSeason == 0 && currentEpisode == 0;
+
+                }).forEach(filteredSubscriptions::add);
+
+//            for in progress
+            if (watchStatuses.contains(WatchStatus.IN_PROGRESS))
+                subscriptions.stream().filter(s -> {
+                    UserTVSeries fromDB = dbSeriesService.getByTmdbIdAndUserId(s.getId(), user.getId()).get();
+                    Integer currentSeason = fromDB.getCurrentSeason();
+                    Integer currentEpisode = fromDB.getCurrentEpisode();
+
+                    int totalSeasons = s.getLastEpisodeToAir().getSeasonNumber();
+                    int totalEpisodesAtLastSeason = s.getLastEpisodeToAir().getEpisodeNumber();
+
+                    return (currentSeason > 0 && currentSeason < totalSeasons) || (currentEpisode > 0 && currentEpisode < totalEpisodesAtLastSeason);
+
+                }).forEach(filteredSubscriptions::add);
+
+//            for watched
+            if (watchStatuses.contains(WatchStatus.WATCHED))
+                subscriptions.stream().filter(s -> {
+                    UserTVSeries fromDB = dbSeriesService.getByTmdbIdAndUserId(s.getId(), user.getId()).get();
+                    Integer currentSeason = fromDB.getCurrentSeason();
+                    Integer currentEpisode = fromDB.getCurrentEpisode();
+
+                    int totalSeasons = s.getLastEpisodeToAir().getSeasonNumber();
+                    int totalEpisodesAtLastSeason = s.getLastEpisodeToAir().getEpisodeNumber();
+
+                    return currentSeason == totalSeasons && currentEpisode == totalEpisodesAtLastSeason;
+
+                }).forEach(filteredSubscriptions::add);
+
+            subscriptions = filteredSubscriptions;
+            model.addAttribute("watch_statuses", watchStatuses);
         }
 
         model.addAttribute("botInitialized", !user.isTelegramNotify() || user.getTelegramChatId() != null);

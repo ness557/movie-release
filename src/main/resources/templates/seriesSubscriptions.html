@@ -63,7 +63,7 @@
         </button>
     </div>
 
-    <div id="collapse-form" th:unless="${series.isEmpty()}">
+    <div id="collapse-form">
         <div id="search-bar" style="background-color: #F9F9F9;">
             <form action="/series/subscriptions" method="get">
                 <div class="container" style="padding: 0">
@@ -91,6 +91,31 @@
                                 <div class="col-11"
                                      style="font-weight: lighter;font-family: 'Roboto', sans-serif;font-size: 18px;">
                                     <label th:text="#{'lang.status.' + ${status}}"></label>
+                                </div>
+                            </div>
+                        </th:block>
+
+                    </div>
+
+
+                    <div class="row"
+                         style="background-color: #EFEFEF;font-weight: normal;font-family: 'Roboto', sans-serif;font-size: 18px;padding: 15px 20px 5px 20px">
+                        <div class="col"><label th:text="#{lang.status} + '2:'"></label></div>
+                    </div>
+
+                    <div id="collapseFilter2" style="padding: 15px 20px; background-color: #F5F5F5">
+
+                        <th:block
+                                th:each="status : ${T(com.ness.movie_release_web.model.wrapper.tmdb.tvSeries.WatchStatus).values()}">
+                            <div class="row">
+                                <div class="col-1">
+                                    <input type="checkbox" class="option-input" name="watch_status" th:value="${status}"
+                                           th:checked="${watch_statuses != null && watch_statuses.contains(status)}">
+                                </div>
+
+                                <div class="col-11"
+                                     style="font-weight: lighter;font-family: 'Roboto', sans-serif;font-size: 18px;">
+                                    <label th:text="#{'lang.watchstatus.' + ${status}}"></label>
                                 </div>
                             </div>
                         </th:block>
