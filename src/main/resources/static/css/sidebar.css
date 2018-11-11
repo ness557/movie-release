@@ -1,0 +1,49 @@
+/*sidebar search*/
+#search-bar {
+    position: fixed;
+    left: 0;
+    overflow-y: hidden;
+    height: 100%;
+
+    width: 0;
+    z-index: 10;
+    -webkit-transition: all 0.5s ease;
+    -moz-transition: all 0.5s ease;
+    -o-transition: all 0.5s ease;
+    transition: all 0.5s ease;
+}
+#search-bar.toggled {
+    width: 400px
+}
+
+#sidebar-button > a {
+    color: #676767;
+}
+#sidebar-button > a:hover {
+    text-decoration: none;
+}
+#sidebar-button{
+    position: fixed;
+    height: 100%;
+    top: 0;
+    left: 0;
+    z-index: 10;
+    -webkit-transition: all 0.5s ease;
+    -moz-transition: all 0.5s ease;
+    -o-transition: all 0.5s ease;
+    transition: all 0.5s ease;
+
+    color: #676767;
+    font-weight: bold;
+    font-family: 'Roboto', sans-serif;
+    background-color: #F9F9F9;
+    writing-mode: tb-rl;
+    text-align: center;
+
+}
+#sidebar-button.toggled{
+    left: 400px;
+}
+
+.discover-form-control{
+}
