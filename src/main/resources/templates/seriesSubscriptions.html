@@ -63,29 +63,56 @@
         </button>
     </div>
 
-    <div class="container-fluid">
-        <form th:unless="${series.isEmpty()}" action="/series/subscriptions" method="get">
-            <label th:text="#{lang.status} + ':'"></label>
+    <div id="collapse-form" th:unless="${series.isEmpty()}">
+        <div id="search-bar" style="background-color: #F9F9F9;">
+            <form action="/series/subscriptions" method="get">
+                <div class="container" style="padding: 0">
 
-            <div class="row">
-                <div class="col-8 col-sm-7 col-md-6 col-lg-5 col-xl-4">
-                    <select name="statuses" class="form-control selectpicker" multiple="multiple">
-                        <option th:each="status : ${T(com.ness.movie_release_web.model.wrapper.tmdb.tvSeries.details.Status).values()}"
-                                th:value="${status}"
-                                th:text="#{'lang.status.' + ${status}}"
-                                th:selected="${statuses != null && statuses.contains(status)}">
-                        </option>
-                    </select>
-                </div>
+                    <div class="row"
+                         style="font-weight: bold;font-family: 'Roboto', sans-serif;font-size: 18px;padding: 15px 20px">
+                        <div class="col">Фильтры</div>
+                    </div>
 
-                <div class="col-1 col-sm-1 col-md-1 col-lg-1 col-xl-1">
+                    <div class="row"
+                         style="background-color: #EFEFEF;font-weight: normal;font-family: 'Roboto', sans-serif;font-size: 18px;padding: 15px 20px 5px 20px">
+                        <div class="col"><label th:text="#{lang.status} + ':'"></label></div>
+                    </div>
+
+                    <div id="collapseFilter" style="padding: 15px 20px; background-color: #F5F5F5">
+
+                        <th:block
+                                th:each="status : ${T(com.ness.movie_release_web.model.wrapper.tmdb.tvSeries.details.Status).values()}">
+                            <div class="row">
+                                <div class="col-1">
+                                    <input type="checkbox" class="option-input" name="statuses" th:value="${status}"
+                                           th:checked="${statuses != null && statuses.contains(status)}">
+                                </div>
+
+                                <div class="col-11"
+                                     style="font-weight: lighter;font-family: 'Roboto', sans-serif;font-size: 18px;">
+                                    <label th:text="#{'lang.status.' + ${status}}"></label>
+                                </div>
+                            </div>
+                        </th:block>
+
+                    </div>
                     <input type="submit" class="btn btn-warning">
+
                 </div>
+            </form>
+        </div>
 
-            </div>
-        </form>
+        <div id="sidebar-button">
+            <a href="#" id="collapse-button" class="rotated">
+                <i class="fas fa-lg fa-angle-right" id="collapse-button-icon"
+                   style="color: #676767; padding-right: 15px"></i>
+                <span id="collapse-button-text" th:text="#{lang.search_criteria_button_show}"></span>
+            </a>
+        </div>
+    </div>
 
 
+    <div class="container-fluid" id="content">
         <div class="row">
             <th:block th:each="serie, iStat : ${series}">
 
@@ -246,6 +273,19 @@
 <footer th:insert="embeded/footer.html"></footer>
 
 <script th:inline="javascript">
+
+    var my_switch = true;
+    $('#collapse-button').click(function (e) {
+        e.preventDefault();
+        $('#search-bar').toggleClass('toggled');
+        $('#sidebar-button').toggleClass('toggled');
+        $('#collapse-button-icon').toggleClass('fa-angle-right fa-angle-left');
+        if (my_switch)
+            $('#collapse-button-text').text([[#{lang.search_criteria_button_hide}]]);
+        else
+            $('#collapse-button-text').text([[#{lang.search_criteria_button_show}]]);
+        my_switch = !my_switch;
+    });
 
     $(".unSubsForm").submit(unsubscribe);
 
