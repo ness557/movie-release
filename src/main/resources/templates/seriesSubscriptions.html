@@ -48,7 +48,7 @@
 
 <div class="container-fluid">
     <div class="alert alert-warning alert-dismissible fade show" role="alert" th:if="${not botInitialized}"
-         style="background-color: #F6EAC3;">
+         style="background-color: #F6EAC3; z-index: 999999;margin-bottom: 0">
         <p style="font-size: 18px; font-weight: normal; margin-bottom: 0; color: #A77C43;">
             Please send any message to
             <strong>
@@ -65,20 +65,20 @@
 
     <div id="collapse-form">
         <div id="search-bar" style="background-color: #F9F9F9;">
-            <form action="/series/subscriptions" method="get">
-                <div class="container" style="padding: 0">
+            <form action="/series/subscriptions" method="get" style="height: 100%;">
 
-                    <div class="row"
-                         style="font-weight: bold;font-family: 'Roboto', sans-serif;font-size: 18px;padding: 15px 20px">
-                        <div class="col" th:text="#{lang.filter}"></div>
-                    </div>
+                <div class="row"
+                     style="font-weight: bold;font-family: 'Roboto', sans-serif;font-size: 18px;padding: 10px 20px;">
+                    <div class="col" th:text="#{lang.filter}"></div>
+                </div>
 
+                <div class="container" style="padding: 0; background-color: #F2F2F2; min-height: 100%">
                     <div class="row"
                          style="background-color: #EFEFEF;font-weight: normal;font-family: 'Roboto', sans-serif;font-size: 18px;padding: 15px 20px 5px 20px">
                         <div class="col"><label th:text="#{lang.status} + ':'"></label></div>
                     </div>
 
-                    <div id="collapseFilter" style="padding: 15px 20px; background-color: #F5F5F5">
+                    <div id="collapseFilter" style="padding: 15px 20px;">
 
                         <th:block
                                 th:each="status : ${T(com.ness.movie_release_web.model.wrapper.tmdb.tvSeries.details.Status).values()}">
@@ -102,7 +102,7 @@
                         <div class="col"><label th:text="#{lang.status} + '2:'"></label></div>
                     </div>
 
-                    <div id="collapseFilter2" style="padding: 15px 20px; background-color: #F5F5F5">
+                    <div id="collapseFilter2" style="padding: 15px 20px;">
 
                         <th:block
                                 th:each="status : ${T(com.ness.movie_release_web.model.wrapper.tmdb.tvSeries.WatchStatus).values()}">
