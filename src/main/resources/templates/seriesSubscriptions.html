@@ -70,7 +70,7 @@
 
                     <div class="row"
                          style="font-weight: bold;font-family: 'Roboto', sans-serif;font-size: 18px;padding: 15px 20px">
-                        <div class="col">Фильтры</div>
+                        <div class="col" th:text="#{lang.filter}"></div>
                     </div>
 
                     <div class="row"
@@ -94,7 +94,6 @@
                                 </div>
                             </div>
                         </th:block>
-
                     </div>
 
 
@@ -121,8 +120,12 @@
                         </th:block>
 
                     </div>
-                    <input type="submit" class="btn btn-warning">
 
+                    <div class="row" style="padding: 12px 0">
+                        <div class="col-centered">
+                            <input type="submit" class="btn btn-warning" th:value="#{lang.apply}">
+                        </div>
+                    </div>
                 </div>
             </form>
         </div>

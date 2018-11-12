@@ -2707,12 +2707,12 @@ a.btn.disabled, fieldset:disabled a.btn {
 
 .btn-link {
     font-weight: 400;
-    color: #007bff;
+    color: #707070;
     background-color: transparent
 }
 
 .btn-link:hover {
-    color: #0056b3;
+    color: #343a40;
     text-decoration: underline;
     background-color: transparent;
     border-color: transparent
