@@ -64,5 +64,18 @@
                 })
                 .fadeOut(0);
         });
+
+        var prevScrollpos = window.pageYOffset;
+        window.onscroll = function() {
+            var currentScrollPos = window.pageYOffset;
+            if (prevScrollpos > currentScrollPos) {
+                document.getElementById("navbar").style.top = "0";
+                document.getElementById("search-bar").style.top = "66px";
+            } else {
+                document.getElementById("navbar").style.top = "-66px";
+                document.getElementById("search-bar").style.top = "0px";
+            }
+            prevScrollpos = currentScrollPos;
+        }
     </script>
 </head>
