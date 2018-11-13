@@ -46,5 +46,16 @@
     left: 400px;
 }
 
+#content, .info, .offset{
+    -webkit-transition: all 0.5s ease;
+    -moz-transition: all 0.5s ease;
+    -o-transition: all 0.5s ease;
+    transition: all 0.5s ease;
+}
+
+#content.toggled{
+    padding-left: 400px;
+}
+
 .discover-form-control{
 }

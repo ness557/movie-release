@@ -145,13 +145,13 @@
             <th:block th:each="serie, iStat : ${series}">
 
                 <th:block th:if="${iStat.index % 5 == 0}">
-                    <div class="offset-xl-1"></div>
+                    <div class="offset-xl-1 offset"></div>
                 </th:block>
                 <th:block th:if="${iStat.index > 0 && iStat.index % 5 == 0}">
-                    <div class="offset-xl-1"></div>
+                    <div class="offset-xl-1 offset"></div>
                 </th:block>
 
-                <div class="col-xs-6 col-sm-5 col-md-4 col-lg-3 col-xl-2"
+                <div class="col-xs-6 col-sm-5 col-md-4 col-lg-3 col-xl-2 info"
                      style="text-align: center; font-weight: bold; padding-bottom: 40px; padding-top: 40px;">
                     <div class="row" style="padding-bottom: 6px; height: 320px">
                         <div class="col-xl-12">
@@ -305,8 +305,17 @@
     var my_switch = true;
     $('#collapse-button').click(function (e) {
         e.preventDefault();
+        //move search bar
         $('#search-bar').toggleClass('toggled');
+        //resize content
+        $('#content').toggleClass('toggled');
+        //change bootstrap grid sizes
+        $(".info").toggleClass("col-xs-6 col-sm-5 col-md-4 col-lg-3 col-xl-2");
+        $(".info").toggleClass("col-xs-7 col-sm-6 col-md-5 col-lg-4 col-xl-3");
+        $(".offset").toggleClass("offset-xl-1");
+        //move sidebar button
         $('#sidebar-button').toggleClass('toggled');
+        //change sidebar button text
         $('#collapse-button-icon').toggleClass('fa-angle-right fa-angle-left');
         if (my_switch)
             $('#collapse-button-text').text([[#{lang.search_criteria_button_hide}]]);
