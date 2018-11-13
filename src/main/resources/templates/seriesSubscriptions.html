@@ -74,7 +74,7 @@
 
                 <div class="container" style="padding: 0; background-color: #F2F2F2; min-height: 100%">
                     <div class="row"
-                         style="background-color: #EFEFEF;font-weight: normal;font-family: 'Roboto', sans-serif;font-size: 18px;padding: 15px 20px 5px 20px">
+                         style="font-weight: normal;font-family: 'Roboto', sans-serif;font-size: 16px;padding: 15px 20px 5px 20px">
                         <div class="col"><label th:text="#{lang.status} + ':'"></label></div>
                     </div>
 
@@ -84,13 +84,14 @@
                                 th:each="status : ${T(com.ness.movie_release_web.model.wrapper.tmdb.tvSeries.details.Status).values()}">
                             <div class="row">
                                 <div class="col-1">
-                                    <input type="checkbox" class="option-input" name="statuses" th:value="${status}"
+                                    <input type="checkbox" class="option-input" th:id="${status.name()}"
+                                           name="statuses" th:value="${status}"
                                            th:checked="${statuses != null && statuses.contains(status)}">
                                 </div>
 
                                 <div class="col-11"
-                                     style="font-weight: lighter;font-family: 'Roboto', sans-serif;font-size: 18px;">
-                                    <label th:text="#{'lang.status.' + ${status}}"></label>
+                                     style="font-family: 'Roboto', sans-serif;font-size: 16px;">
+                                    <label th:for="${status.name()}" th:text="#{'lang.status.' + ${status}}"></label>
                                 </div>
                             </div>
                         </th:block>
@@ -98,7 +99,7 @@
 
 
                     <div class="row"
-                         style="background-color: #EFEFEF;font-weight: normal;font-family: 'Roboto', sans-serif;font-size: 18px;padding: 15px 20px 5px 20px">
+                         style="font-weight: normal;font-family: 'Roboto', sans-serif;font-size: 16px;padding: 15px 20px 5px 20px">
                         <div class="col"><label th:text="#{lang.status} + '2:'"></label></div>
                     </div>
 
@@ -108,13 +109,13 @@
                                 th:each="status : ${T(com.ness.movie_release_web.model.wrapper.tmdb.tvSeries.WatchStatus).values()}">
                             <div class="row">
                                 <div class="col-1">
-                                    <input type="checkbox" class="option-input" name="watch_status" th:value="${status}"
+                                    <input type="checkbox" class="option-input" name="watch_status" th:value="${status}" th:id="${status.name()}"
                                            th:checked="${watch_statuses != null && watch_statuses.contains(status)}">
                                 </div>
 
                                 <div class="col-11"
-                                     style="font-weight: lighter;font-family: 'Roboto', sans-serif;font-size: 18px;">
-                                    <label th:text="#{'lang.watchstatus.' + ${status}}"></label>
+                                     style="font-family: 'Roboto', sans-serif;font-size: 16px;">
+                                    <label th:for="${status.name()}" th:text="#{'lang.watchstatus.' + ${status}}"></label>
                                 </div>
                             </div>
                         </th:block>
@@ -130,7 +131,7 @@
             </form>
         </div>
 
-        <div id="sidebar-button" style="height: 150%;">
+        <div id="sidebar-button" style="height: 100%;">
             <a href="#" id="collapse-button" class="rotated">
                 <i class="fas fa-lg fa-angle-right" id="collapse-button-icon"
                    style="color: #676767; padding-right: 15px;"></i>
