@@ -69,6 +69,7 @@ public class TVSeriesController {
         Mode mode = user.getMode();
         model.addAttribute("language", language);
         model.addAttribute("mode", mode);
+        model.addAttribute("subscribed", false);
 
         Optional<TVDetailsWrapper> tvDetails = tmdbSeriesService.getTVDetails(tmdbId, language);
         if (!tvDetails.isPresent())
