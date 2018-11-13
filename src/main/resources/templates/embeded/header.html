@@ -18,7 +18,8 @@
     <link href="../static/css/pagination.css" th:href="@{/css/pagination.css}" rel="stylesheet"/>
     <link href="../static/css/radio-buttons.css" th:href="@{/css/radio-buttons.css}" rel="stylesheet"/>
     <link href="../static/css/bootstrap-select.css" th:href="@{/css/bootstrap-select.css}" rel="stylesheet"/>
-    <link href="../static/css/ajax-bootstrap-select.min.css" th:href="@{/css/ajax-bootstrap-select.min.css}" rel="stylesheet"/>
+    <link href="../static/css/ajax-bootstrap-select.min.css" th:href="@{/css/ajax-bootstrap-select.min.css}"
+          rel="stylesheet"/>
     <link href="../static/css/daterangepicker.css" th:href="@{/css/daterangepicker.css}" rel="stylesheet"/>
     <link rel="stylesheet" href="../static/css/owl.carousel.min.css" th:href="@{/css/owl.carousel.min.css}">
     <link rel="stylesheet" href="../static/css/owl.theme.default.min.css" th:href="@{/css/owl.theme.default.min.css}">
@@ -68,14 +69,20 @@
         });
 
         var prevScrollpos = window.pageYOffset;
-        window.onscroll = function() {
+        window.onscroll = function () {
             var currentScrollPos = window.pageYOffset;
+            var searchBar = document.getElementById("search-bar");
+
             if (prevScrollpos > currentScrollPos) {
                 document.getElementById("navbar").style.top = "0";
-                document.getElementById("search-bar").style.top = "66px";
+
+                if (searchBar)
+                    document.getElementById("search-bar").style.top = "66px";
+
             } else {
                 document.getElementById("navbar").style.top = "-66px";
-                document.getElementById("search-bar").style.top = "0px";
+                if (searchBar)
+                    document.getElementById("search-bar").style.top = "0px";
             }
             prevScrollpos = currentScrollPos;
         }
