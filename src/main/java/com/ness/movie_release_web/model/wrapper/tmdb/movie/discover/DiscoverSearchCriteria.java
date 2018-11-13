@@ -55,6 +55,20 @@ public class DiscoverSearchCriteria {
         releaseDateMax = dates.get(1);
     }
 
+    public void setVoteAverageStr(String str){
+        String[] split = str.split(",");
+        voteAverageMin = Double.valueOf(split[0]);
+        voteAverageMax = Double.valueOf(split[1]);
+    }
+
+    public String getVoteAverageStr(){
+        return String.join(",", voteAverageMin.toString(), voteAverageMax.toString());
+    }
+
+    public Double[] getVoteAverageArray(){
+        return new Double[]{voteAverageMin, voteAverageMax};
+    }
+
     public String getDateRange() {
         if (releaseDateMin != null && releaseDateMax != null)
             return releaseDateMin.format(ofPattern("dd.MM.yyyy")) + " - " + releaseDateMax.format(ofPattern("dd.MM.yyyy"));

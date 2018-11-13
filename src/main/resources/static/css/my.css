@@ -90,3 +90,6 @@ body {
     -o-transition: all 0.5s ease;
     transition: all 0.5s ease;
 }
+
+.slider.slider-horizontal .tooltip.tooltip-main.in,
+.slider.slider-vertical .tooltip.tooltip-main.in { opacity: 1 !important; }
