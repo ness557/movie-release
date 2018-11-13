@@ -204,7 +204,7 @@
 
                         <div class="owl-carousel owl-theme">
                             <div th:each="season : ${series.seasons}" class="season"
-                                 th:style="${currentSeason != null && season.seasonNumber < currentSeason ? 'filter: grayscale(70%); opacity: 0.7;' : ''}">
+                                 th:style="${subscribed && (fullyWatcher || season.seasonNumber < currentSeason) ? 'filter: grayscale(70%); opacity: 0.7;' : ''}">
                                                                                                         <!-- TODO add filter -->
                                 <div class="seasonImage"
                                      th:style="${'background-image: url(' + season.posterPath + '); height:250px;'}">
