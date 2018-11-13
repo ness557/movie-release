@@ -6,7 +6,6 @@ import com.ness.movie_release_web.model.wrapper.tmdb.Language;
 import com.ness.movie_release_web.model.wrapper.tmdb.Mode;
 import com.ness.movie_release_web.model.wrapper.tmdb.movie.discover.DiscoverSearchCriteria;
 import com.ness.movie_release_web.model.wrapper.tmdb.tvSeries.WatchStatus;
-import com.ness.movie_release_web.model.wrapper.tmdb.tvSeries.details.EpisodeWrapper;
 import com.ness.movie_release_web.model.wrapper.tmdb.tvSeries.details.SeasonWrapper;
 import com.ness.movie_release_web.model.wrapper.tmdb.tvSeries.details.Status;
 import com.ness.movie_release_web.model.wrapper.tmdb.tvSeries.details.TVDetailsWrapper;
@@ -123,37 +122,6 @@ public class TVSeriesController {
         model.addAttribute("series", tvDetails.get());
 //        TODO create view
         return "seasonInfo";
-    }
-
-    @GetMapping("/{tmdbId}/season/{seasonNumber}/episode/{episodeNumber}")
-    public String getSeason(@PathVariable("tmdbId") Integer tmdbId,
-                            @PathVariable("seasonNumber") Integer seasonNumber,
-                            @PathVariable("episodeNumber") Integer episodeNumber,
-                            Principal principal,
-                            Model model) {
-
-        User user = userService.findByLogin(principal.getName());
-        Language language = user.getLanguage();
-        Mode mode = user.getMode();
-        model.addAttribute("language", language);
-        model.addAttribute("mode", mode);
-
-        Optional<UserTVSeries> userTVSeriesOptional = dbSeriesService.getByTmdbIdAndUserId(tmdbId, user.getId());
-
-        if (userTVSeriesOptional.isPresent()) {
-            UserTVSeries userTVSeries = userTVSeriesOptional.get();
-            model.addAttribute("subscribed", true);
-            model.addAttribute("currentSeason", userTVSeries.getCurrentSeason());
-            model.addAttribute("currentEpisode", userTVSeries.getCurrentEpisode());
-        }
-
-        Optional<EpisodeWrapper> tvDetails = tmdbSeriesService.getEpisodeDetails(tmdbId, seasonNumber, episodeNumber, language);
-        if (!tvDetails.isPresent())
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND);
-
-        model.addAttribute("series", tvDetails.get());
-//        TODO create view
-        return "episodeInfo";
     }
 
     @PostMapping("/subscribe")
