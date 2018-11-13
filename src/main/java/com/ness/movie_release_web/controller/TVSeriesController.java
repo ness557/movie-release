@@ -222,6 +222,7 @@ public class TVSeriesController {
                 .map(f -> tmdbSeriesService.getTVDetails(f.getId().getTvSeriesId().intValue(), language))
                 .filter(Optional::isPresent)
                 .map(Optional::get)
+                .sorted(Comparator.comparing(TVDetailsWrapper::getName))
                 .collect(toList());
 
 //        filter by statuses
