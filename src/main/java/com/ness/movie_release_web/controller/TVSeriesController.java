@@ -84,7 +84,7 @@ public class TVSeriesController {
             UserTVSeries userTVSeries = userTVSeriesOptional.get();
             model.addAttribute("subscribed", true);
 
-            model.addAttribute("fullyWatcher",
+            model.addAttribute("fullyWatched",
                     tvDetailsWrapper.getLastEpisodeToAir().getSeasonNumber().equals(userTVSeries.getCurrentSeason()) &&
                     tvDetailsWrapper.getLastEpisodeToAir().getEpisodeNumber().equals(userTVSeries.getCurrentEpisode()));
 
