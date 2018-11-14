@@ -250,9 +250,9 @@
     owl = $('.owl-carousel');
 
     owl.on('mousewheel', '.owl-stage', function (e) {
-        if (e.originalEvent.deltaY > 0) {
+        if (e.originalEvent.deltaY > 50) {
             owl.trigger('next.owl');
-        } else if (e.originalEvent.deltaY < 0) {
+        } else if (e.originalEvent.deltaY < -50) {
             owl.trigger('prev.owl');
         }
         e.preventDefault();
