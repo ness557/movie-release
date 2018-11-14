@@ -104,12 +104,14 @@
                     </div>
                 </div>
 
-                <div class="col-auto col-sm-auto col-md-auto col-lg-auto col-xl-auto"
-                     style="text-align: center; max-width: 100px">
+                <div th:unless="${film.runtime == null || film.runtime <= 0}"
+                        class="col-auto col-sm-auto col-md-auto col-lg-auto col-xl-auto"
+                        style="text-align: center; max-width: 100px">
                     <img style="width: 16px; margin-right: 3px" th:src="@{/img/clock.png}"/>
                     <span class="plate-text" th:text="${film.runtime} + ' ' + #{lang.minutes}"/>
                 </div>
-                <div class="col-auto col-sm-auto col-md-auto col-lg-auto col-xl-auto" style="padding: 0">
+                <div th:unless="${film.homepage == null || film.homepage.equals('')}"
+                     class="col-auto col-sm-auto col-md-auto col-lg-auto col-xl-auto" style="padding: 0">
                     <a class="plate-text site" style="color: #337ab7;" th:href="${film.homepage}"
                        th:text="#{lang.website}"> </a>
                 </div>

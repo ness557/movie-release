@@ -103,13 +103,14 @@
                     </div>
                 </div>
 
-                <div class="col-auto col-sm-auto col-md-auto col-lg-auto col-xl-auto"
-                     th:each="runtime: ${series.episodeRunTime}"
-                     style="text-align: center; max-width: 100px">
+                <div th:unless="${series.episodeRunTime == null || series.episodeRunTime.isEmpty()}"
+                        class="col-auto col-sm-auto col-md-auto col-lg-auto col-xl-auto" style="text-align: center; max-width: 200px">
                     <img style="width: 16px; margin-right: 3px" th:src="@{/img/clock.png}"/>
-                    <span class="plate-text" th:text="${runtime} + ' ' + #{lang.minutes}"/>
+
+                    <span class="plate-text" th:text="${#strings.listJoin(series.episodeRunTime, ', ')} + ' ' + #{lang.minutes}"></span>
                 </div>
-                <div class="col-auto col-sm-auto col-md-auto col-lg-auto col-xl-auto" style="padding: 0">
+                <div th:unless="${series.homepage == null || series.homepage.equals('')}"
+                        class="col-auto col-sm-auto col-md-auto col-lg-auto col-xl-auto" style="padding: 0">
                     <a class="plate-text site" style="color: #337ab7;" th:href="${series.homepage}"
                        th:text="#{lang.website}"> </a>
                 </div>
