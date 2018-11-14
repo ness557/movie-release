@@ -52,8 +52,10 @@
     <div class="row">
         <div class="col-10 col-sm-6 col-md-5 col-lg-4 col-xl-3" style="text-align: right">
             <div style="text-align: center; display: inline-block;">
-                <img th:src="${season.posterPath}" style="height: 400px; max-width: 300px" class="rounded"
-                     th:onerror="'this.src=\'' + @{/img/no-image.png} + '\'; this.onerror=null'">
+                <a th:href="'/series/' + ${series.id}">
+                    <img th:src="${season.posterPath}" style="height: 400px; max-width: 300px" class="rounded"
+                         th:onerror="'this.src=\'' + @{/img/no-image.png} + '\'; this.onerror=null'">
+                </a>
 
                 <p style="margin-bottom: 12px; margin-top: 16px;"><span th:text="#{lang.score}"></span>
                     <b th:if="${series.voteAverage > 6}"
