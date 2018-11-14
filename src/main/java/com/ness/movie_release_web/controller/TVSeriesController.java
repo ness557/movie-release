@@ -114,6 +114,8 @@ public class TVSeriesController {
         Mode mode = user.getMode();
         model.addAttribute("language", language);
         model.addAttribute("mode", mode);
+
+//        default values
         model.addAttribute("subscribed", false);
         model.addAttribute("episodeToOpen", episodeToOpen != null ? episodeToOpen : 0);
 
@@ -142,7 +144,7 @@ public class TVSeriesController {
                             seriesWrapper.getLastEpisodeToAir().getEpisodeNumber().equals(userTVSeries.getCurrentEpisode()));
 
             model.addAttribute("currentSeason", userTVSeries.getCurrentSeason());
-            model.addAttribute("currentEpisode", userTVSeries.getCurrentSeason());
+            model.addAttribute("currentEpisode", userTVSeries.getCurrentEpisode());
 
             Long minutes = dbSeriesService.spentTotalMinutesToSeriesSeason(tmdbId, seasonNumber, user, userTVSeries.getCurrentSeason(), userTVSeries.getCurrentEpisode());
             if (minutes > 60) {
@@ -153,7 +155,6 @@ public class TVSeriesController {
             model.addAttribute("minutes", minutes);
         }
 
-//        TODO create view
         return "seasonInfo";
     }
 
@@ -366,5 +367,18 @@ public class TVSeriesController {
         model.addAttribute("genres", genreService.getTVGenres(language));
 
         return "discoverSeries";
+    }
+
+    @PostMapping("/setSeasonAndEpisode")
+    public ResponseEntity setCurrentSeasonAndEpisode(@RequestParam(value = "tmdbId") Integer tmdbId,
+                                                     @RequestParam(value = "season") Integer season,
+                                                     @RequestParam(value = "episode") Integer episode,
+                                                     Principal principal){
+
+        User user = userService.findByLogin(principal.getName());
+
+        dbSeriesService.setSeasonAndEpisode(tmdbId, user, season, episode);
+
+        return ResponseEntity.ok().build();
     }
 }

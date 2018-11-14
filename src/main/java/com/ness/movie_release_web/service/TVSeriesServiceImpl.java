@@ -69,6 +69,27 @@ public class TVSeriesServiceImpl implements TVSeriesService {
     }
 
     @Override
+    public void setSeasonAndEpisode(Integer tmdbId, User user, Integer seasonNum, Integer episodeNum){
+
+        Optional<TVDetailsWrapper> tvDetailsOptional = tvSeriesService.getTVDetails(tmdbId, Language.en);
+        if (!tvDetailsOptional.isPresent())
+            throw new ResponseStatusException(HttpStatus.CONFLICT);
+
+        Optional<TVSeries> one = tvSeriesRepository.findById(tmdbId.longValue());
+
+        Optional<UserTVSeries> userTVSeriesOptional = userTVSeriesRepository.findById(UserTVSeriesPK.wrap(user.getId(), tmdbId.longValue()));
+        UserTVSeries userTVSeries = userTVSeriesOptional.orElse(new UserTVSeries(
+                new UserTVSeriesPK(),
+                user,
+                one.orElse(new TVSeries(tmdbId.longValue())),
+                seasonNum,
+                episodeNum));
+        userTVSeries.setCurrentSeason(seasonNum);
+        userTVSeries.setCurrentEpisode(episodeNum);
+        userTVSeriesRepository.save(userTVSeries);
+    }
+
+    @Override
     public void unSubscribeUser(Integer tmdbId, User user) {
 
         Optional<UserTVSeries> userTVSeries = userTVSeriesRepository.findById(UserTVSeriesPK.wrap(user.getId(), tmdbId.longValue()));

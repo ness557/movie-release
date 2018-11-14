@@ -17,9 +17,8 @@ public interface TVSeriesService {
     void unSubscribeUser(Integer tmdbId, User user);
 
     Page<UserTVSeries> getAllByUserWithPages(Integer page, Integer size, User user);
+    void setSeasonAndEpisode(Integer tmdbId, User user, Integer seasonNum, Integer episodeNum);
 
-    //    TODO
-//    (u) current season and episode (u) episode watched or not
     Long spentTotalMinutesToSeries(Integer tmdbId, User user, Integer currentSeason, Integer currentEpisode);
     Long spentTotalMinutesToSeriesSeason(Integer tmdbId, Integer season, User user, Integer currentSeason, Integer currentEpisode);
 }
