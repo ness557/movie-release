@@ -188,10 +188,10 @@
 
                                 <div class="col-2">
                                     <input type="checkbox" class="option-input episodeCheckbox" style="margin-top: 10%"
-                                           th:id="'episodeCheckbox' + ${episode.episodeNumber}"
+                                           th:id="'episodeCheckbox' + ${episode.episodeNumber < 10 ? '0' + episode.episodeNumber : episode.episodeNumber}"
                                            th:value="${episode.episodeNumber}"
-                                           th:checked="${subscribed && (fullyWatched
-                                           || season.getSeasonNumber() < currentSeason
+                                           th:checked="${subscribed &&
+                                           (season.getSeasonNumber() < currentSeason
                                            || (season.getSeasonNumber() == currentSeason && episode.getEpisodeNumber() <= currentEpisode))}">
                                 </div>
                             </div>

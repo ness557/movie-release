@@ -207,7 +207,7 @@
                         <div class="owl-carousel owl-theme">
                             <div th:each="season : ${series.seasons}"
                                  class="season shadow p-2 mb-3 mr-2 ml-2 rounded"
-                                 th:style="${subscribed && (fullyWatched || season.seasonNumber < currentSeason) ?
+                                 th:style="${subscribed && (season.seasonNumber < currentSeason || (season.seasonNumber == currentSeason && seasonWatched)) ?
                                  'filter: grayscale(70%); opacity: 0.7;' : ''} + 'display: inline-block;'">
                                 <!-- TODO add filter -->
 
@@ -223,7 +223,7 @@
                             </div>
 
                             <div class="season shadow p-2 mb-3 mr-2 ml-2 rounded text-dark"
-                                 th:style="${subscribed && fullyWatched ? 'filter: grayscale(70%); opacity: 0.7;' : ''} + 'display: inline-block;'">
+                                 th:style="${subscribed && lastEpisodeWatched ? 'filter: grayscale(70%); opacity: 0.7;' : ''} + 'display: inline-block;'">
 
                                 <a class="text-dark"
                                    style="text-decoration: none" th:href="'/series/' + ${series.id} + '/season/' + ${series.lastEpisodeToAir.seasonNumber}">

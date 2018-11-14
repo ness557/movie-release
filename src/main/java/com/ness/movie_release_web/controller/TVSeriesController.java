@@ -6,6 +6,7 @@ import com.ness.movie_release_web.model.wrapper.tmdb.Language;
 import com.ness.movie_release_web.model.wrapper.tmdb.Mode;
 import com.ness.movie_release_web.model.wrapper.tmdb.movie.discover.DiscoverSearchCriteria;
 import com.ness.movie_release_web.model.wrapper.tmdb.tvSeries.WatchStatus;
+import com.ness.movie_release_web.model.wrapper.tmdb.tvSeries.details.EpisodeWrapper;
 import com.ness.movie_release_web.model.wrapper.tmdb.tvSeries.details.SeasonWrapper;
 import com.ness.movie_release_web.model.wrapper.tmdb.tvSeries.details.Status;
 import com.ness.movie_release_web.model.wrapper.tmdb.tvSeries.details.TVDetailsWrapper;
@@ -84,11 +85,23 @@ public class TVSeriesController {
             UserTVSeries userTVSeries = userTVSeriesOptional.get();
             model.addAttribute("subscribed", true);
 
-            model.addAttribute("fullyWatched",
-                    tvDetailsWrapper.getLastEpisodeToAir().getSeasonNumber().equals(userTVSeries.getCurrentSeason()) &&
-                            tvDetailsWrapper.getLastEpisodeToAir().getEpisodeNumber().equals(userTVSeries.getCurrentEpisode()));
+            Integer currentSeasonNum = userTVSeries.getCurrentSeason();
+            Integer currentEpisodeNum = userTVSeries.getCurrentEpisode();
+            EpisodeWrapper lastEpisodeToAir = tvDetailsWrapper.getLastEpisodeToAir();
 
-            model.addAttribute("currentSeason", userTVSeries.getCurrentSeason());
+            Optional<SeasonWrapper> seasonDetailsOpt = tmdbSeriesService.getSeasonDetails(tmdbId, currentSeasonNum, user.getLanguage());
+            if (!seasonDetailsOpt.isPresent())
+                throw new ResponseStatusException(HttpStatus.NOT_FOUND);
+
+
+            SeasonWrapper seasonWrapper = seasonDetailsOpt.get();
+
+            model.addAttribute("currentSeason", currentSeasonNum);
+            model.addAttribute("seasonWatched", seasonWrapper.getEpisodes().stream().noneMatch(e -> e.getEpisodeNumber() > currentEpisodeNum));
+
+            model.addAttribute("lastEpisodeWatched", lastEpisodeToAir.getSeasonNumber() < currentSeasonNum ||
+                    (lastEpisodeToAir.getSeasonNumber().equals(currentSeasonNum) && lastEpisodeToAir.getEpisodeNumber() <= currentEpisodeNum));
+
 
             Long minutes = dbSeriesService.spentTotalMinutesToSeries(tmdbId, user, userTVSeries.getCurrentSeason(), userTVSeries.getCurrentEpisode());
             if (minutes > 60) {
@@ -139,9 +152,6 @@ public class TVSeriesController {
             UserTVSeries userTVSeries = userTVSeriesOptional.get();
             model.addAttribute("subscribed", true);
 
-            model.addAttribute("fullyWatched",
-                    seriesWrapper.getLastEpisodeToAir().getSeasonNumber().equals(userTVSeries.getCurrentSeason()) &&
-                            seriesWrapper.getLastEpisodeToAir().getEpisodeNumber().equals(userTVSeries.getCurrentEpisode()));
 
             model.addAttribute("currentSeason", userTVSeries.getCurrentSeason());
             model.addAttribute("currentEpisode", userTVSeries.getCurrentEpisode());
