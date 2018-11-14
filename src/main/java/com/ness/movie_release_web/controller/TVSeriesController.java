@@ -69,13 +69,26 @@ public class TVSeriesController {
         Mode mode = user.getMode();
         model.addAttribute("language", language);
         model.addAttribute("mode", mode);
+        model.addAttribute("subscribed", false);
+
+        Optional<TVDetailsWrapper> tvDetails = tmdbSeriesService.getTVDetails(tmdbId, language);
+        if (!tvDetails.isPresent())
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND);
+
+        TVDetailsWrapper tvDetailsWrapper = tvDetails.get();
+
+        model.addAttribute("series", tvDetailsWrapper);
 
         Optional<UserTVSeries> userTVSeriesOptional = dbSeriesService.getByTmdbIdAndUserId(tmdbId, user.getId());
         if (userTVSeriesOptional.isPresent()) {
             UserTVSeries userTVSeries = userTVSeriesOptional.get();
             model.addAttribute("subscribed", true);
+
+            model.addAttribute("fullyWatcher",
+                    tvDetailsWrapper.getLastEpisodeToAir().getSeasonNumber().equals(userTVSeries.getCurrentSeason()) &&
+                    tvDetailsWrapper.getLastEpisodeToAir().getEpisodeNumber().equals(userTVSeries.getCurrentEpisode()));
+
             model.addAttribute("currentSeason", userTVSeries.getCurrentSeason());
-            model.addAttribute("currentEpisode", userTVSeries.getCurrentEpisode());
 
             Long minutes = dbSeriesService.spentTotalMinutesToSeries(tmdbId, user);
             if (minutes > 60) {
@@ -85,12 +98,6 @@ public class TVSeriesController {
 
             model.addAttribute("minutes", minutes);
         }
-
-        Optional<TVDetailsWrapper> tvDetails = tmdbSeriesService.getTVDetails(tmdbId, language);
-        if (!tvDetails.isPresent())
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND);
-
-        model.addAttribute("series", tvDetails.get());
 
         return "seriesInfo";
     }
@@ -222,6 +229,7 @@ public class TVSeriesController {
                 .map(f -> tmdbSeriesService.getTVDetails(f.getId().getTvSeriesId().intValue(), language))
                 .filter(Optional::isPresent)
                 .map(Optional::get)
+                .sorted(Comparator.comparing(TVDetailsWrapper::getName))
                 .collect(toList());
 
 //        filter by statuses

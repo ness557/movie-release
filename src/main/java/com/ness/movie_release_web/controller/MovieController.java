@@ -24,10 +24,7 @@ import org.springframework.web.server.ResponseStatusException;
 import javax.servlet.http.HttpServletRequest;
 import java.security.Principal;
 import java.time.LocalDateTime;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 
 import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toMap;
@@ -190,6 +187,7 @@ public class MovieController {
                         .map(f -> movieService.getMovieDetails(f.getTmdbId(), language))
                         .filter(Optional::isPresent)
                         .map(Optional::get)
+                        .sorted(Comparator.comparing(MovieDetailsWrapper::getTitle))
                         .collect(toList());
 
         model.addAttribute("botInitialized", !user.isTelegramNotify() || user.getTelegramChatId() != null);
