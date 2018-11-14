@@ -144,8 +144,8 @@
                                             <div class="row"
                                                  data-toggle="collapse"
                                                  th:data-target="'#collapse' + ${episode.episodeNumber}"
-                                                 aria-expanded="true" th:aria-controls='collapse' +
-                                                 ${episode.episodeNumber}>
+                                                 aria-expanded="true"
+                                                 th:aria-controls='collapse' + ${episode.episodeNumber}>
                                                 <div class="col-10">
                                                     <span th:text="${episode.episodeNumber} + '. ' + ${episode.name}"></span>
                                                 </div>
@@ -157,7 +157,7 @@
                                             </div>
                                         </a>
 
-                                        <div class="row collapse" data-parent="#episodeAccordion"
+                                        <div th:class="'row collapse' + ${episode.episodeNumber.equals(episodeToOpen) ? 'show' : ''}" data-parent="#episodeAccordion"
                                              th:id="'collapse' + ${episode.episodeNumber}">
 
                                             <div class="col-4">

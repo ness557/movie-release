@@ -226,7 +226,7 @@
                                  th:style="${subscribed && lastEpisodeWatched ? 'filter: grayscale(70%); opacity: 0.7;' : ''} + 'display: inline-block;'">
 
                                 <a class="text-dark"
-                                   style="text-decoration: none" th:href="'/series/' + ${series.id} + '/season/' + ${series.lastEpisodeToAir.seasonNumber}">
+                                   style="text-decoration: none" th:href="'/series/' + ${series.id} + '/season/' + ${series.lastEpisodeToAir.seasonNumber} + '?episodeToOpen=' + ${series.lastEpisodeToAir.episodeNumber}">
 
                                     <img th:src="${series.lastEpisodeToAir.stillPath}"
                                          style="height:250px;  width:175px; object-fit: cover"
