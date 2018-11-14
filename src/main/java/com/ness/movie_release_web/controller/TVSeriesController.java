@@ -86,11 +86,11 @@ public class TVSeriesController {
 
             model.addAttribute("fullyWatched",
                     tvDetailsWrapper.getLastEpisodeToAir().getSeasonNumber().equals(userTVSeries.getCurrentSeason()) &&
-                    tvDetailsWrapper.getLastEpisodeToAir().getEpisodeNumber().equals(userTVSeries.getCurrentEpisode()));
+                            tvDetailsWrapper.getLastEpisodeToAir().getEpisodeNumber().equals(userTVSeries.getCurrentEpisode()));
 
             model.addAttribute("currentSeason", userTVSeries.getCurrentSeason());
 
-            Long minutes = dbSeriesService.spentTotalMinutesToSeries(tmdbId, user);
+            Long minutes = dbSeriesService.spentTotalMinutesToSeries(tmdbId, user, userTVSeries.getCurrentSeason(), userTVSeries.getCurrentEpisode());
             if (minutes > 60) {
                 model.addAttribute("hours", TimeUnit.MINUTES.toHours(minutes));
                 minutes = minutes % 60;
@@ -105,6 +105,7 @@ public class TVSeriesController {
     @GetMapping("/{tmdbId}/season/{seasonNumber}")
     public String getSeason(@PathVariable("tmdbId") Integer tmdbId,
                             @PathVariable("seasonNumber") Integer seasonNumber,
+                            @RequestParam(value = "episodeToOpen", required = false) Integer episodeToOpen,
                             Principal principal,
                             Model model) {
 
@@ -113,20 +114,45 @@ public class TVSeriesController {
         Mode mode = user.getMode();
         model.addAttribute("language", language);
         model.addAttribute("mode", mode);
+        model.addAttribute("subscribed", false);
+        model.addAttribute("episodeToOpen", episodeToOpen != null ? episodeToOpen : 0);
+
+
+        Optional<TVDetailsWrapper> series = tmdbSeriesService.getTVDetails(tmdbId, language);
+        if (!series.isPresent())
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND);
+
+        Optional<SeasonWrapper> season = tmdbSeriesService.getSeasonDetails(tmdbId, seasonNumber, language);
+        if (!season.isPresent())
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND);
+
+        TVDetailsWrapper seriesWrapper = series.get();
+        SeasonWrapper seasonWrapper = season.get();
+
+        model.addAttribute("series", seriesWrapper);
+        model.addAttribute("season", seasonWrapper);
 
         Optional<UserTVSeries> userTVSeriesOptional = dbSeriesService.getByTmdbIdAndUserId(tmdbId, user.getId());
         if (userTVSeriesOptional.isPresent()) {
             UserTVSeries userTVSeries = userTVSeriesOptional.get();
             model.addAttribute("subscribed", true);
+
+            model.addAttribute("fullyWatched",
+                    seriesWrapper.getLastEpisodeToAir().getSeasonNumber().equals(userTVSeries.getCurrentSeason()) &&
+                            seriesWrapper.getLastEpisodeToAir().getEpisodeNumber().equals(userTVSeries.getCurrentEpisode()));
+
             model.addAttribute("currentSeason", userTVSeries.getCurrentSeason());
-            model.addAttribute("currentEpisode", userTVSeries.getCurrentEpisode());
+            model.addAttribute("currentEpisode", userTVSeries.getCurrentSeason());
+
+            Long minutes = dbSeriesService.spentTotalMinutesToSeriesSeason(tmdbId, seasonNumber, user, userTVSeries.getCurrentSeason(), userTVSeries.getCurrentEpisode());
+            if (minutes > 60) {
+                model.addAttribute("hours", TimeUnit.MINUTES.toHours(minutes));
+                minutes = minutes % 60;
+            }
+
+            model.addAttribute("minutes", minutes);
         }
 
-        Optional<SeasonWrapper> tvDetails = tmdbSeriesService.getSeasonDetails(tmdbId, seasonNumber, language);
-        if (!tvDetails.isPresent())
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND);
-
-        model.addAttribute("series", tvDetails.get());
 //        TODO create view
         return "seasonInfo";
     }

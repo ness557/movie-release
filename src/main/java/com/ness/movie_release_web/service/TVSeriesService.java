@@ -20,5 +20,6 @@ public interface TVSeriesService {
 
     //    TODO
 //    (u) current season and episode (u) episode watched or not
-    Long spentTotalMinutesToSeries(Integer tmdbId, User user);
+    Long spentTotalMinutesToSeries(Integer tmdbId, User user, Integer currentSeason, Integer currentEpisode);
+    Long spentTotalMinutesToSeriesSeason(Integer tmdbId, Integer season, User user, Integer currentSeason, Integer currentEpisode);
 }

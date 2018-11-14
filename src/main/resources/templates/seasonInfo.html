@@ -1,0 +1,222 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:insert="embeded/header.html"></head>
+<body>
+<nav th:insert="embeded/navbar.html"></nav>
+
+<script th:inline="javascript">
+    function unsubscribe(event) {
+
+        var form = $(this);
+        var tmdbId = form.find('input').val();
+
+        $.post('/series/unSubscribe', form.serialize());
+
+        var par = form.parent();
+        par.html(
+            '<form class="subsForm" action="/series/subscribe" method="post" class="subsForm">' +
+            '    <input type="hidden" name="tmdbId" value="' + tmdbId + '"/>' +
+            '    <input type="submit" value="' + [[#{lang.subscribe}]] + '" class="btn btn-warning"/>' +
+            '</form>'
+        );
+        var newForm = par.find(".subsForm");
+        newForm.on('submit', subscribe);
+        return false;
+    }
+
+    function subscribe(event) {
+
+        var form = $(this);
+        var tmdbId = form.find('input').val();
+
+        $.post('/series/subscribe', $(this).serialize());
+
+        var par = form.parent();
+        par.html(
+            '<form class="unSubsForm" action="/series/unSubscribe" method="post" class="unSubsForm">' +
+            '    <input type="hidden" name="tmdbId" value="' + tmdbId + '"/>' +
+            '    <input type="submit" value="' + [[#{lang.unsubscribe}]] + '" class="btn btn-danger"/>' +
+            '</form>'
+        );
+        var newForm = par.find(".unSubsForm");
+        newForm.on('submit', unsubscribe);
+        return false;
+    }
+</script>
+
+<div class="container-fluid mytext" style="padding-top: 30px">
+    <div class="row">
+        <div class="col-10 col-sm-6 col-md-5 col-lg-4 col-xl-3" style="text-align: right">
+            <div style="text-align: center; display: inline-block;">
+                <img th:src="${season.posterPath}" style="height: 400px; max-width: 300px" class="rounded"
+                     th:onerror="'this.src=\'' + @{/img/no-image.png} + '\'; this.onerror=null'">
+
+                <p style="margin-bottom: 12px; margin-top: 16px;"><span th:text="#{lang.score}"></span>
+                    <b th:if="${series.voteAverage > 6}"
+                       style="color: #33CC00"
+                       th:text="${series.voteAverage}"/>
+
+                    <b th:if="${series.voteAverage < 4}"
+                       style="color: #FD0100"
+                       th:text="${series.voteAverage}"/>
+
+
+                    <b th:if="${series.voteAverage >= 4 and series.voteAverage <= 6}"
+                       style="color: #E1AC00"
+                       th:text="${series.voteAverage}"/>
+                </p>
+
+                <div>
+                    <form th:if="${subscribed}" action="/series/unSubscribe" method="post" class="unSubsForm">
+                        <input type="hidden" name="tmdbId" th:value="${series.id}"/>
+                        <input type="submit" th:value="#{lang.unsubscribe}" class="btn btn-danger"/>
+                    </form>
+                </div>
+
+                <div>
+                    <form th:unless="${subscribed}" action="/series/subscribe" method="post" class="subsForm">
+                        <input type="hidden" name="tmdbId" th:value="${series.id}"/>
+                        <input type="submit" th:value="#{lang.subscribe}" class="btn btn-warning"/>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-12 col-sm-6 col-md-6 col-lg-8 col-xl-7">
+            <div class="row">
+                <div class="col-md-8">
+                    <div style="font-size: 27px;">
+                        <b th:text="${series.name} + ' (' + ${season.name} + ')'"/>
+                    </div>
+                </div>
+            </div>
+
+
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="filmPropSpaces">
+                        <b>
+                            <span th:text="#{lang.release_date} + ':'"></span>
+                        </b>
+                        <th:block th:text='${#temporals.format(season.airDate, "dd MMMM yyyy")}'/>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row" th:if="${subscribed}">
+                <div class="col-md-12">
+                    <div class="filmPropSpaces">
+                        <b>
+                            <span th:text="#{lang.time_spent} + ':'"></span>
+                        </b>
+
+                        <span th:if="${hours != null}" th:text="${hours} +' ' + #{lang.hours}"></span>
+                        <span th:text="${minutes} + ' ' + #{lang.minutes}"></span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row" th:unless="${season.overview == null || season.overview.equals('')}">
+                <div class="col-md-12">
+                    <div class="filmPropSpaces">
+                        <b th:text="#{lang.overview} + ':'"></b>
+                        <th:block th:text="${season.overview}"/>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-12">
+                    <div class="filmPropSpaces">
+                        <div class="accordion" id="episodeAccordion">
+
+                            <div th:each="episode: ${season.episodes}" class="row">
+
+                                <div class="col-10">
+                                    <div class="season shadow-sm p-2 rounded">
+
+                                        <a href="#" class="text-dark episodeAccordionPlate" style="text-decoration: none"><div class="row"
+                                             data-toggle="collapse"
+                                             th:data-target="'#collapse' + ${episode.episodeNumber}"
+                                             aria-expanded="true" th:aria-controls='collapse' + ${episode.episodeNumber}>
+                                            <div class="col-10">
+                                                <span th:text="${episode.episodeNumber} + '. ' + ${episode.name}"></span>
+                                            </div>
+                                            <div class="col-2" style="text-align: right">
+                                                <i class="fas fa-lg fa-angle-down"
+                                                   th:id="'button' + ${episode.episodeNumber}"
+                                                   style="color: #676767; padding-right: 15px;"></i>
+                                            </div>
+                                        </div></a>
+
+                                        <div class="row collapse" data-parent="#episodeAccordion"
+                                             th:id="'collapse' + ${episode.episodeNumber}">
+
+                                            <div class="col-4">
+                                                <img th:src="${episode.stillPath}" width="100%">
+                                            </div>
+                                            <div class="col-8">
+                                                <div class="row">
+                                                    <div class="col">
+                                                        <b th:text="#{lang.score} + ':'"></b>
+                                                        <th:block th:text="${episode.voteAverage}"/>
+                                                    </div>
+                                                </div>
+                                                <div class="row">
+                                                    <div class="col">
+                                                        <b th:text="#{lang.sort.release_date} + ':'"></b>
+                                                        <th:block th:text="${episode.airDate}"/>
+                                                    </div>
+                                                </div>
+                                                <div class="row">
+                                                    <div class="col">
+                                                        <b th:text="#{lang.overview} + ':'"></b>
+                                                        <th:block th:text="${episode.overview}"/>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col-2">
+
+                                <!--TODO checkbox-->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</div>
+
+<div class="back-to-top" style="display: inline;">
+    <a style="pointer-events: none">
+        <img th:src="@{/img/scroll-up-button.png}">
+    </a>
+</div>
+
+<footer th:insert="embeded/footer.html"></footer>
+
+<script th:inline="javascript">
+    $(".subsForm").submit(subscribe);
+    $(".unSubsForm").submit(unsubscribe);
+
+    $(".season").hover(function () {
+        $(this).find(".seasonImage").hide();
+        $(this).find(".seasonHidden").show();
+    }, function () {
+        $(this).find(".seasonHidden").hide();
+        $(this).find(".seasonImage").show();
+    });
+
+    $(".episodeAccordionPlate").click(function () {
+        $(this).find(".fa-lg").toggleClass('fa-angle-down fa-angle-up')
+    })
+
+</script>
+</body>
+</html>
