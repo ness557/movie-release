@@ -6,7 +6,7 @@
         <th:block sec:authorize="isAuthenticated()">
             <ul class="navbar-nav mr-auto">
                 <li class="nav-item mr-auto dropup">
-                    <a class="nav-link dropdown-toggle" href="#" id="languageDropdown" role="button"
+                    <a class="nav-link dropdown-toggle" href="javascript:void(0);" id="languageDropdown" role="button"
                        data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                         <img style="width: 20px;" th:src="@{/img/language-dark.png}"/>
                         <th:block th:text="#{'lang.' + ${language.value}}"/>
@@ -14,7 +14,7 @@
                     <div class="dropdown-menu"
                          aria-labelledby="languageDropdown">
 
-                        <a href="#" class="dropdown-item languageSelect"
+                        <a href="javascript:void(0);" class="dropdown-item languageSelect"
                            th:each="lang : ${T(com.ness.movie_release_web.model.wrapper.tmdb.Language).values()}">
                             <option class="langVal"
                                     th:value="${lang}"
@@ -26,14 +26,14 @@
                 </li>
 
                 <li class="nav-item mr-auto dropup">
-                    <a class="nav-link dropdown-toggle" href="#" id="modeDropdown" role="button"
+                    <a class="nav-link dropdown-toggle" href="javascript:void(0);" id="modeDropdown" role="button"
                        data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                         <th:block th:text="#{'lang.mode.' + ${mode.name()}}"/>
                     </a>
                     <div class="dropdown-menu"
                          aria-labelledby="modeDropdown">
 
-                        <a href="#" class="dropdown-item modeSelect"
+                        <a href="javascript:void(0);" class="dropdown-item modeSelect"
                            th:each="modd : ${T(com.ness.movie_release_web.model.wrapper.tmdb.Mode).values()}">
                             <option class="modVal"
                                     th:value="${modd}"
