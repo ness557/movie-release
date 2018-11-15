@@ -12,6 +12,7 @@ import com.ness.movie_release_web.model.wrapper.tmdb.tvSeries.details.Status;
 import com.ness.movie_release_web.model.wrapper.tmdb.tvSeries.details.TVDetailsWrapper;
 import com.ness.movie_release_web.model.wrapper.tmdb.tvSeries.search.TVSearchWrapper;
 import com.ness.movie_release_web.model.wrapper.tmdb.tvSeries.search.TVWrapper;
+import com.ness.movie_release_web.repository.TVSeriesSortBy;
 import com.ness.movie_release_web.service.TVSeriesService;
 import com.ness.movie_release_web.service.UserService;
 import com.ness.movie_release_web.service.tmdb.*;
@@ -29,6 +30,8 @@ import java.security.Principal;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
 
+import static com.ness.movie_release_web.model.wrapper.tmdb.Language.*;
+import static java.util.Collections.emptyList;
 import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toMap;
 
@@ -175,7 +178,7 @@ public class TVSeriesController {
         String login = principal.getName();
         User user = userService.findByLogin(login);
 
-        Optional<TVDetailsWrapper> optionalTvDetails = tmdbSeriesService.getTVDetails(tmdbId, Language.en);
+        Optional<TVDetailsWrapper> optionalTvDetails = tmdbSeriesService.getTVDetails(tmdbId, en);
 
         if (!optionalTvDetails.isPresent())
             throw new ResponseStatusException(HttpStatus.CONFLICT);
@@ -242,7 +245,8 @@ public class TVSeriesController {
 
     @GetMapping("/subscriptions")
     public String getSubs(@RequestParam(value = "page", required = false) Integer page,
-                          @RequestParam(value = "statuses", required = false) List<Status> statuses,
+                          @RequestParam(value = "statuses", required = false) List<Status> tvStatuses,
+                          @RequestParam(value = "sortBy", required = false) TVSeriesSortBy sortBy,
                           @RequestParam(value = "watch_status", required = false) List<WatchStatus> watchStatuses,
                           Principal principal,
                           Model model) {
@@ -250,77 +254,45 @@ public class TVSeriesController {
         if (page == null)
             page = 0;
 
+        if (tvStatuses == null) {
+            tvStatuses = emptyList();
+        }
+
+        if (watchStatuses == null) {
+            watchStatuses = emptyList();
+        }
+
         User user = userService.findByLogin(principal.getName());
         Language language = user.getLanguage();
         Mode mode = user.getMode();
+
+        if(sortBy == null){
+            switch (language) {
+                case en:
+                    sortBy = TVSeriesSortBy.NameEn_asc;
+                    break;
+                case ru:
+                    sortBy = TVSeriesSortBy.NameRu_asc;
+                    break;
+            }
+        }
 
         //save in session
         model.addAttribute("language", language);
         model.addAttribute("mode", mode);
 
-        Page<UserTVSeries> userTVSeries = dbSeriesService.getAllByUserWithPages(page, 10, user);
+        Page<UserTVSeries> userTVSeries = dbSeriesService.getByUserAndTVStatusesAndWatchStatusesWithOrderAndPages(tvStatuses, watchStatuses, sortBy, user, page, 10);
         List<UserTVSeries> series = userTVSeries.getContent();
-
 
         List<TVDetailsWrapper> subscriptions = series.stream()
                 .map(f -> tmdbSeriesService.getTVDetails(f.getId().getTvSeriesId().intValue(), language))
                 .filter(Optional::isPresent)
                 .map(Optional::get)
-                .sorted(Comparator.comparing(TVDetailsWrapper::getName))
                 .collect(toList());
 
-//        filter by statuses
-        if (statuses != null && !statuses.isEmpty()) {
-            subscriptions = subscriptions.stream().filter(s -> statuses.contains(s.getStatus())).collect(toList());
-            model.addAttribute("statuses", statuses);
-        }
-
-//        filter by user watch statuses
-        if (watchStatuses != null && !watchStatuses.isEmpty()) {
-
-            List<TVDetailsWrapper> filteredSubscriptions = new ArrayList<>();
-
-//            for not started
-            if (watchStatuses.contains(WatchStatus.NOT_STARTED))
-                subscriptions.stream().filter(s -> {
-                    UserTVSeries fromDB = dbSeriesService.getByTmdbIdAndUserId(s.getId(), user.getId()).get();
-                    Integer currentSeason = fromDB.getCurrentSeason();
-                    Integer currentEpisode = fromDB.getCurrentEpisode();
-                    return currentSeason == 0 && currentEpisode == 0;
-
-                }).forEach(filteredSubscriptions::add);
-
-//            for in progress
-            if (watchStatuses.contains(WatchStatus.IN_PROGRESS))
-                subscriptions.stream().filter(s -> {
-                    UserTVSeries fromDB = dbSeriesService.getByTmdbIdAndUserId(s.getId(), user.getId()).get();
-                    Integer currentSeason = fromDB.getCurrentSeason();
-                    Integer currentEpisode = fromDB.getCurrentEpisode();
-
-                    int totalSeasons = s.getLastEpisodeToAir().getSeasonNumber();
-                    int totalEpisodesAtLastSeason = s.getLastEpisodeToAir().getEpisodeNumber();
-
-                    return (currentSeason > 0 && currentSeason < totalSeasons) || (currentEpisode > 0 && currentEpisode < totalEpisodesAtLastSeason);
-
-                }).forEach(filteredSubscriptions::add);
-
-//            for watched
-            if (watchStatuses.contains(WatchStatus.WATCHED))
-                subscriptions.stream().filter(s -> {
-                    UserTVSeries fromDB = dbSeriesService.getByTmdbIdAndUserId(s.getId(), user.getId()).get();
-                    Integer currentSeason = fromDB.getCurrentSeason();
-                    Integer currentEpisode = fromDB.getCurrentEpisode();
-
-                    int totalSeasons = s.getLastEpisodeToAir().getSeasonNumber();
-                    int totalEpisodesAtLastSeason = s.getLastEpisodeToAir().getEpisodeNumber();
-
-                    return currentSeason == totalSeasons && currentEpisode == totalEpisodesAtLastSeason;
-
-                }).forEach(filteredSubscriptions::add);
-
-            subscriptions = filteredSubscriptions;
-            model.addAttribute("watch_statuses", watchStatuses);
-        }
+        model.addAttribute("statuses", tvStatuses);
+        model.addAttribute("watch_statuses", watchStatuses);
+        model.addAttribute("sortBy", sortBy);
 
         model.addAttribute("botInitialized", !user.isTelegramNotify() || user.getTelegramChatId() != null);
 
@@ -383,7 +355,7 @@ public class TVSeriesController {
     public ResponseEntity setCurrentSeasonAndEpisode(@RequestParam(value = "tmdbId") Integer tmdbId,
                                                      @RequestParam(value = "season") Integer season,
                                                      @RequestParam(value = "episode") Integer episode,
-                                                     Principal principal){
+                                                     Principal principal) {
 
         User user = userService.findByLogin(principal.getName());
 

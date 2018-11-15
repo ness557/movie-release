@@ -7,6 +7,7 @@ import com.ness.movie_release_web.model.wrapper.tmdb.tvSeries.details.Status;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.stereotype.Repository;
 
 import javax.transaction.Transactional;
@@ -14,7 +15,7 @@ import java.util.List;
 
 @Repository
 @Transactional
-public interface UserTVSeriesRepository extends JpaRepository<UserTVSeries, UserTVSeriesPK> {
+public interface UserTVSeriesRepository extends JpaRepository<UserTVSeries, UserTVSeriesPK>, JpaSpecificationExecutor<UserTVSeries> {
 
     Page<UserTVSeries> findAllByUserOrderByTvSeriesIdDesc(User user, Pageable pageable);
 

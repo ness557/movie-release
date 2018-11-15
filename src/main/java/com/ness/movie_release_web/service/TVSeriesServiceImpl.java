@@ -5,9 +5,12 @@ import com.ness.movie_release_web.model.User;
 import com.ness.movie_release_web.model.UserTVSeries;
 import com.ness.movie_release_web.model.UserTVSeriesPK;
 import com.ness.movie_release_web.model.wrapper.tmdb.Language;
+import com.ness.movie_release_web.model.wrapper.tmdb.tvSeries.WatchStatus;
 import com.ness.movie_release_web.model.wrapper.tmdb.tvSeries.details.SeasonWrapper;
+import com.ness.movie_release_web.model.wrapper.tmdb.tvSeries.details.Status;
 import com.ness.movie_release_web.model.wrapper.tmdb.tvSeries.details.TVDetailsWrapper;
 import com.ness.movie_release_web.repository.TVSeriesRepository;
+import com.ness.movie_release_web.repository.TVSeriesSortBy;
 import com.ness.movie_release_web.repository.UserTVSeriesRepository;
 import com.ness.movie_release_web.service.tmdb.TmdbTVSeriesService;
 import lombok.extern.slf4j.Slf4j;
@@ -18,7 +21,10 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.util.List;
 import java.util.Optional;
+
+import static com.ness.movie_release_web.repository.UserTVSeriesSpecifications.byUserAndTVStatusesAndWatchStatusesWithOrderby;
 
 @Slf4j
 @Service
@@ -104,6 +110,20 @@ public class TVSeriesServiceImpl implements TVSeriesService {
     @Override
     public Page<UserTVSeries> getAllByUserWithPages(Integer page, Integer size, User user) {
         return userTVSeriesRepository.findAllByUserOrderByTvSeriesIdDesc(user, PageRequest.of(page, size));
+    }
+
+    @Override
+    public Page<UserTVSeries> getByUserAndTVStatusesAndWatchStatusesWithOrderAndPages(
+            List<Status> tvStatuses,
+            List<WatchStatus> watchStatuses,
+            TVSeriesSortBy sortBy,
+            User user,
+            Integer page,
+            Integer size) {
+
+        return userTVSeriesRepository.findAll(byUserAndTVStatusesAndWatchStatusesWithOrderby(
+                tvStatuses, watchStatuses, sortBy, user),
+                PageRequest.of(page, size));
     }
 
     @Override
