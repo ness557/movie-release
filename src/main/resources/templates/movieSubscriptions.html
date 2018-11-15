@@ -63,157 +63,234 @@
         </button>
     </div>
 
-    <div class="container-fluid">
-        <div class="row">
-            <th:block th:each="film, iStat : ${films}">
 
-                <th:block th:if="${iStat.index % 5 == 0}">
-                    <div class="offset-xl-1"></div>
-                </th:block>
-                <th:block th:if="${iStat.index > 0 && iStat.index % 5 == 0}">
-                    <div class="offset-xl-1"></div>
-                </th:block>
+    <div id="collapse-form">
+        <div id="search-bar" style="background-color: #F9F9F9; height: 150%;">
+            <form action="/movie/subscriptions" method="get" style="height: 100%;">
 
-                <div class="col-xs-6 col-sm-5 col-md-4 col-lg-3 col-xl-2"
-                     style="text-align: center; font-weight: bold; padding-bottom: 40px; padding-top: 40px;">
-                    <div class="row" style="padding-bottom: 6px; height: 320px">
-                        <div class="col-xl-12">
-                            <a th:href="'/movie/' + ${film.id}">
-                                <img class="rounded" th:src="${film.posterPath}"
-                                     style="height: 300px; max-width: 260px">
-                            </a>
-                        </div>
+                <div class="row"
+                     style="font-weight: bold;font-family: 'Roboto', sans-serif;font-size: 18px;padding: 10px 20px;">
+                    <div class="col" th:text="#{lang.filter}"></div>
+                </div>
+
+                <div class="container" style="padding: 0; background-color: #F2F2F2; min-height: 100%">
+                    <div class="row"
+                         style="font-weight: normal;font-family: 'Roboto', sans-serif;font-size: 16px;padding: 15px 20px 5px 20px">
+                        <div class="col"><label th:text="#{lang.status} + ':'"></label></div>
                     </div>
-                    <div class="row" style="min-height: 70px;padding-bottom: 12px">
-                        <div class="col-xl-12">
-                            <a th:href="'/movie/' + ${film.id}"
-                               style="color: #555555; text-decoration: none;">
-                                <span th:text="${film.title} + ' (' + ${film.releaseDate.getYear()} + ')'"/>
-                            </a>
-                        </div>
+
+                    <div id="collapseFilter" style="padding: 15px 20px;">
+
+                        <th:block
+                                th:each="status : ${T(com.ness.movie_release_web.model.wrapper.tmdb.movie.details.Status).values()}"
+                                th:if="${status.ordinal() != 0}">
+                            <div class="row">
+                                <div class="col-1">
+                                    <input type="checkbox" class="option-input" th:id="${status.name()}"
+                                           name="statuses" th:value="${status}"
+                                           th:checked="${statuses != null && statuses.contains(status)}">
+                                </div>
+
+                                <div class="col-11"
+                                     style="font-family: 'Roboto', sans-serif;font-size: 16px;">
+                                    <label th:for="${status.name()}" th:text="#{'lang.status.' + ${status}}"></label>
+                                </div>
+                            </div>
+                        </th:block>
                     </div>
+
+                    <div class="row"
+                         style="font-weight: normal;font-family: 'Roboto', sans-serif;font-size: 16px;padding: 15px 20px 5px 20px">
+                        <div class="col"><label th:text="#{lang.sort_by} + ':'"></label></div>
+                    </div>
+
                     <div class="row">
-                        <div class="col-xl-12">
+                        <div class="col col-centered">
+                            <div id="selectSort" style="padding: 15px 20px;">
+                                <select th:name="sortBy" class="form-control selectpicker">
+                                    <option th:each="sort : ${T(com.ness.movie_release_web.repository.TVSeriesSortBy).values()}"
+                                            th:value="${sort}"
+                                            th:text="#{'lang.sort.' + ${sort.name()}}"
+                                            th:selected="${sort.equals(sortBy)}">
+                                    </option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
 
-                            <form action="/movie/unSubscribe" method="post" class="unSubsForm">
-                                <input type="hidden" name="tmdbId" th:value="${film.id}"/>
-                                <input type="submit" th:value="#{lang.unsubscribe}" class="btn btn-danger"/>
-                            </form>
+
+                    <div class="row" style="padding: 12px 0">
+                        <div class="col-centered">
+                            <input type="submit" class="btn btn-warning" th:value="#{lang.apply}">
                         </div>
                     </div>
                 </div>
-            </th:block>
+
+            </form>
         </div>
     </div>
 
-    <div class="container" th:if="${films.isEmpty()}" style="height: 35%; color: #C9C9C9; font-size: 20px">
-        <div class="row" style="height: 100%;">
-            <div class="col-xl-12" style="text-align: center; position: relative">
+    <div id="sidebar-button" style="height: 100%;">
+        <a href="javascript:void(0);" id="collapse-button" class="rotated">
+            <i class="fas fa-lg fa-angle-right" id="collapse-button-icon"
+               style="color: #676767; padding-right: 15px;"></i>
+            <span id="collapse-button-text" th:text="#{lang.search_criteria_button_show}"></span>
+        </a>
+    </div>
+
+</div>
+
+<div class="container-fluid" id="content">
+    <div class="row">
+        <th:block th:each="film, iStat : ${films}">
+
+            <th:block th:if="${iStat.index % 5 == 0}">
+                <div class="offset-xl-1"></div>
+            </th:block>
+            <th:block th:if="${iStat.index > 0 && iStat.index % 5 == 0}">
+                <div class="offset-xl-1"></div>
+            </th:block>
+
+            <div class="col-xs-6 col-sm-5 col-md-4 col-lg-3 col-xl-2"
+                 style="text-align: center; font-weight: bold; padding-bottom: 40px; padding-top: 40px;">
+                <div class="row" style="padding-bottom: 6px; height: 320px">
+                    <div class="col-xl-12">
+                        <a th:href="'/movie/' + ${film.id}">
+                            <img class="rounded" th:src="${film.posterPath}"
+                                 style="height: 300px; max-width: 260px">
+                        </a>
+                    </div>
+                </div>
+                <div class="row" style="min-height: 70px;padding-bottom: 12px">
+                    <div class="col-xl-12">
+                        <a th:href="'/movie/' + ${film.id}"
+                           style="color: #555555; text-decoration: none;">
+                            <span th:text="${film.title} + ' (' + ${film.releaseDate.getYear()} + ')'"/>
+                        </a>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-xl-12">
+
+                        <form action="/movie/unSubscribe" method="post" class="unSubsForm">
+                            <input type="hidden" name="tmdbId" th:value="${film.id}"/>
+                            <input type="submit" th:value="#{lang.unsubscribe}" class="btn btn-danger"/>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </th:block>
+    </div>
+</div>
+
+<div class="container" th:if="${films.isEmpty()}" style="height: 35%; color: #C9C9C9; font-size: 20px">
+    <div class="row" style="height: 100%;">
+        <div class="col-xl-12" style="text-align: center; position: relative">
             <span style="bottom: 0; left: 0; right: 0">You have no subscriptions yet.
             <br>
             To add a subscription search for movie and hit the subscribe button :)</span>
-            </div>
         </div>
     </div>
+</div>
 
-    <th:block th:if="${pageCount > 0}">
-        <!-- PAGINATION -->
-        <div class="container-fluid" style="padding-bottom: 60px"
-             th:with="urlBuilder=${T(org.springframework.web.servlet.support.ServletUriComponentsBuilder)}, page = ${page == null ? 0 : page}">
+<th:block th:if="${pageCount > 0}">
+    <!-- PAGINATION -->
+    <div class="container-fluid" style="padding-bottom: 60px"
+         th:with="urlBuilder=${T(org.springframework.web.servlet.support.ServletUriComponentsBuilder)}, page = ${page == null ? 0 : page}">
 
-            <div class="row" style="padding-bottom: 30px">
-                <div class="col-12 col-sm-10 col-md-9 col-lg-8 col-xl-6 col-centered">
-                    <div class="row">
+        <div class="row" style="padding-bottom: 30px">
+            <div class="col-12 col-sm-10 col-md-9 col-lg-8 col-xl-6 col-centered">
+                <div class="row">
 
-                        <div class="col-1 col-sm-1 col-md-1 col-lg-1 col-xl-1 col-centered"></div>
+                    <div class="col-1 col-sm-1 col-md-1 col-lg-1 col-xl-1 col-centered"></div>
 
-                        <!-- ARROW BACK -->
-                        <div class="col col-fixed-arrow my-page-link">
-                            <!-- active link -->
-                            <th:block th:if="${page > 0}">
-                                <a th:href="${urlBuilder.fromCurrentRequest().replaceQueryParam('page', page - 1).toUriString()}">
-                                    <img class="page-arrow" th:src="@{/img/pagination/page-back.png}">
-                                </a>
-                            </th:block>
-
-                            <!-- inactive link-->
-                            <th:block th:unless="${page > 0}">
-                                <a style="pointer-events: none">
-                                    <img class="page-arrow" th:src="@{/img/pagination/page-back-inactive.png}">
-                                </a>
-                            </th:block>
-                        </div>
-
-                        <!--separate link to first page -->
-                        <th:block th:if="${page > 1}">
-                            <div class="col col-fixed-page my-page-link my-page-number">
-                                <a class="text-secondary"
-                                   th:href="${urlBuilder.fromCurrentRequest().replaceQueryParam('page', 0).toUriString()}"
-                                   th:text="${1}"></a>
-                            </div>
-
-                            <div class="col my-page-splitter col-fixed-splitter">
-                                <span>...</span>
-                            </div>
+                    <!-- ARROW BACK -->
+                    <div class="col col-fixed-arrow my-page-link">
+                        <!-- active link -->
+                        <th:block th:if="${page > 0}">
+                            <a th:href="${urlBuilder.fromCurrentRequest().replaceQueryParam('page', page - 1).toUriString()}">
+                                <img class="page-arrow" th:src="@{/img/pagination/page-back.png}">
+                            </a>
                         </th:block>
 
-                        <!-- pages loop -->
-                        <th:block th:each="i : ${#numbers.sequence(page - 1, page + 1)}">
-                            <!-- skip first-1  and last+1 pages-->
-                            <th:block th:if="${i >= 0 and i <= pageCount - 1}">
-
-                                <!-- CURRENT PAGE -->
-                                <!-- my-page-current -->
-                                <div class="col col-fixed-page my-page-link  my-page-current " th:if="${page == i}">
-                                    <a class="text-secondary" th:href="'#'" th:text="${i + 1}"></a>
-                                </div>
-
-                                <!-- Link To Page -->
-                                <div class="col col-fixed-page my-page-link my-page-number" th:unless="${page == i}">
-                                    <a class="text-secondary my-page-number"
-                                       th:href="${urlBuilder.fromCurrentRequest().replaceQueryParam('page', i).toUriString()}"
-                                       th:text="${i + 1}"></a>
-                                </div>
-                            </th:block>
+                        <!-- inactive link-->
+                        <th:block th:unless="${page > 0}">
+                            <a style="pointer-events: none">
+                                <img class="page-arrow" th:src="@{/img/pagination/page-back-inactive.png}">
+                            </a>
                         </th:block>
-
-                        <!--separate link to last page -->
-                        <th:block th:if="${page < pageCount - 2}">
-                            <div class="col my-page-splitter col-fixed-splitter">
-                                <span>...</span>
-                            </div>
-
-                            <div class="col col-fixed-page my-page-link my-page-number">
-                                <a class="text-secondary"
-                                   th:href="${urlBuilder.fromCurrentRequest().replaceQueryParam('page', pageCount - 1).toUriString()}"
-                                   th:text="${pageCount}"></a>
-                            </div>
-                        </th:block>
-
-                        <!-- ARROW FORWARD-->
-                        <div class="col col-fixed-arrow my-page-link">
-                            <!-- active link -->
-                            <th:block th:if="${page < pageCount - 1}">
-                                <a th:href="${urlBuilder.fromCurrentRequest().replaceQueryParam('page', page + 1).toUriString()}">
-                                    <img class="page-arrow" th:src="@{/img/pagination/page-next.png}">
-                                </a>
-                            </th:block>
-
-                            <!-- inactive link-->
-                            <th:block th:unless="${page < pageCount - 1}">
-                                <a style="pointer-events: none">
-                                    <img class="page-arrow" th:src="@{/img/pagination/page-next-inactive.png}">
-                                </a>
-                            </th:block>
-                        </div>
-
-                        <div class="col-1 col-sm-1 col-md-1 col-lg-1 col-xl-1 col-centered"></div>
                     </div>
+
+                    <!--separate link to first page -->
+                    <th:block th:if="${page > 1}">
+                        <div class="col col-fixed-page my-page-link my-page-number">
+                            <a class="text-secondary"
+                               th:href="${urlBuilder.fromCurrentRequest().replaceQueryParam('page', 0).toUriString()}"
+                               th:text="${1}"></a>
+                        </div>
+
+                        <div class="col my-page-splitter col-fixed-splitter">
+                            <span>...</span>
+                        </div>
+                    </th:block>
+
+                    <!-- pages loop -->
+                    <th:block th:each="i : ${#numbers.sequence(page - 1, page + 1)}">
+                        <!-- skip first-1  and last+1 pages-->
+                        <th:block th:if="${i >= 0 and i <= pageCount - 1}">
+
+                            <!-- CURRENT PAGE -->
+                            <!-- my-page-current -->
+                            <div class="col col-fixed-page my-page-link  my-page-current " th:if="${page == i}">
+                                <a class="text-secondary" th:href="'#'" th:text="${i + 1}"></a>
+                            </div>
+
+                            <!-- Link To Page -->
+                            <div class="col col-fixed-page my-page-link my-page-number" th:unless="${page == i}">
+                                <a class="text-secondary my-page-number"
+                                   th:href="${urlBuilder.fromCurrentRequest().replaceQueryParam('page', i).toUriString()}"
+                                   th:text="${i + 1}"></a>
+                            </div>
+                        </th:block>
+                    </th:block>
+
+                    <!--separate link to last page -->
+                    <th:block th:if="${page < pageCount - 2}">
+                        <div class="col my-page-splitter col-fixed-splitter">
+                            <span>...</span>
+                        </div>
+
+                        <div class="col col-fixed-page my-page-link my-page-number">
+                            <a class="text-secondary"
+                               th:href="${urlBuilder.fromCurrentRequest().replaceQueryParam('page', pageCount - 1).toUriString()}"
+                               th:text="${pageCount}"></a>
+                        </div>
+                    </th:block>
+
+                    <!-- ARROW FORWARD-->
+                    <div class="col col-fixed-arrow my-page-link">
+                        <!-- active link -->
+                        <th:block th:if="${page < pageCount - 1}">
+                            <a th:href="${urlBuilder.fromCurrentRequest().replaceQueryParam('page', page + 1).toUriString()}">
+                                <img class="page-arrow" th:src="@{/img/pagination/page-next.png}">
+                            </a>
+                        </th:block>
+
+                        <!-- inactive link-->
+                        <th:block th:unless="${page < pageCount - 1}">
+                            <a style="pointer-events: none">
+                                <img class="page-arrow" th:src="@{/img/pagination/page-next-inactive.png}">
+                            </a>
+                        </th:block>
+                    </div>
+
+                    <div class="col-1 col-sm-1 col-md-1 col-lg-1 col-xl-1 col-centered"></div>
                 </div>
             </div>
         </div>
-    </th:block>
-</div>
+    </div>
+</th:block>
+
 
 <div class="back-to-top" style="display: inline;">
     <a style="pointer-events: none">
@@ -225,43 +302,33 @@
 
 <script th:inline="javascript">
 
-    function unsubscribe(event) {
+    var my_switch = true;
+    $('#collapse-button').click(function (e) {
+        e.preventDefault();
+        //move search bar
+        $('#search-bar').toggleClass('toggled');
+        //resize content
+        $('#content').toggleClass('toggled');
+        //change bootstrap grid sizes
+        $(".info").toggleClass("col-xs-6 col-sm-5 col-md-4 col-lg-3 col-xl-2");
+        $(".info").toggleClass("col-xs-7 col-sm-6 col-md-5 col-lg-4 col-xl-3");
+        $(".offset").toggleClass("offset-xl-1");
+        //move sidebar button
+        $('#sidebar-button').toggleClass('toggled');
+        //change sidebar button text
+        $('#collapse-button-icon').toggleClass('fa-angle-right fa-angle-left');
+        if (my_switch)
+            $('#collapse-button-text').text([[#{lang.search_criteria_button_hide}]]);
+        else
+            $('#collapse-button-text').text([[#{lang.search_criteria_button_show}]]);
+        my_switch = !my_switch;
+    });
 
-        var form = $(this);
-        var tmdbId = form.find('input').val();
-
-        $.post('/movie/unSubscribe', form.serialize());
-
-        var par = form.parent();
-        par.html(
-            '<form class="subsForm" action="/movie/subscribe" method="post" class="subsForm">' +
-            '    <input type="hidden" name="tmdbId" value="' + tmdbId + '"/>' +
-            '    <input type="submit" value="' + [[#{lang.subscribe}]] + '" class="btn btn-warning"/>' +
-            '</form>'
-        );
-        var newForm = par.find(".subsForm");
-        newForm.on('submit', subscribe);
-        return false;
-    }
-
-    function subscribe(event) {
-
-        var form = $(this);
-        var tmdbId = form.find('input').val();
-
-        $.post('/movie/subscribe', $(this).serialize());
-
-        var par = form.parent();
-        par.html(
-            '<form class="unSubsForm" action="/movie/unSubscribe" method="post" class="unSubsForm">' +
-            '    <input type="hidden" name="tmdbId" value="' + tmdbId + '"/>' +
-            '    <input type="submit" value="' + [[#{lang.unsubscribe}]] + '" class="btn btn-danger"/>' +
-            '</form>'
-        );
-        var newForm = par.find(".unSubsForm");
-        newForm.on('submit', unsubscribe);
-        return false;
-    }
+    $('.selectpicker').selectpicker({
+        noneSelectedText: [[#{lang.none_selected_text}]],
+        noneResultsText: [[#{lang.none_results_text}]],
+        selectAllText: [[#{lang.select_all}]]
+    });
 
     $(".subsForm").submit(subscribe);
     $(".unSubsForm").submit(unsubscribe);

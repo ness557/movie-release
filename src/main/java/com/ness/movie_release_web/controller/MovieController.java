@@ -5,9 +5,11 @@ import com.ness.movie_release_web.model.User;
 import com.ness.movie_release_web.model.wrapper.tmdb.Language;
 import com.ness.movie_release_web.model.wrapper.tmdb.Mode;
 import com.ness.movie_release_web.model.wrapper.tmdb.movie.details.MovieDetailsWrapper;
+import com.ness.movie_release_web.model.wrapper.tmdb.movie.details.Status;
 import com.ness.movie_release_web.model.wrapper.tmdb.movie.discover.DiscoverSearchCriteria;
 import com.ness.movie_release_web.model.wrapper.tmdb.movie.search.MovieSearchWrapper;
 import com.ness.movie_release_web.model.wrapper.tmdb.movie.search.MovieWrapper;
+import com.ness.movie_release_web.repository.MovieSortBy;
 import com.ness.movie_release_web.service.FilmService;
 import com.ness.movie_release_web.service.UserService;
 import com.ness.movie_release_web.service.tmdb.*;
@@ -25,6 +27,7 @@ import javax.servlet.http.HttpServletRequest;
 import java.security.Principal;
 import java.util.*;
 
+import static java.util.Collections.emptyList;
 import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toMap;
 
@@ -178,21 +181,38 @@ public class MovieController {
 
     @GetMapping("/subscriptions")
     public String getSubs(@RequestParam(value = "page", required = false) Integer page,
+                          @RequestParam(value = "statuses", required = false) List<Status> statuses,
+                          @RequestParam(value = "sortBy", required = false) MovieSortBy sortBy,
                           Principal principal,
                           Model model) {
 
         if (page == null)
             page = 0;
 
+        if (statuses == null) {
+            statuses = emptyList();
+        }
+
         User user = userService.findByLogin(principal.getName());
         Language language = user.getLanguage();
         Mode mode = user.getMode();
+
+        if(sortBy == null){
+            switch (language) {
+                case en:
+                    sortBy = MovieSortBy.NameEn_asc;
+                    break;
+                case ru:
+                    sortBy = MovieSortBy.NameRu_asc;
+                    break;
+            }
+        }
 
         //save in session
         model.addAttribute("language", language);
         model.addAttribute("mode", mode);
 
-        Page<Film> filmPage = filmService.getAllByUserWithPages(page, 10, user);
+        Page<Film> filmPage = filmService.getByUserAndStatusWithOrderbyAndPages(statuses, sortBy, user, page, 10);
         List<Film> films = filmPage.getContent();
 
         List<MovieDetailsWrapper> tmdbFilms =
@@ -200,8 +220,10 @@ public class MovieController {
                         .map(f -> movieService.getMovieDetails(f.getTmdbId(), language))
                         .filter(Optional::isPresent)
                         .map(Optional::get)
-                        .sorted(Comparator.comparing(MovieDetailsWrapper::getTitle))
                         .collect(toList());
+
+        model.addAttribute("statuses", statuses);
+        model.addAttribute("sortBy", sortBy);
 
         model.addAttribute("botInitialized", !user.isTelegramNotify() || user.getTelegramChatId() != null);
 
