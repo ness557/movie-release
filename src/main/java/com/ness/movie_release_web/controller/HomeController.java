@@ -32,8 +32,7 @@ public class HomeController {
             return "redirect:/" + user.getMode() + "/subscriptions";
         }
 
-        model.addAttribute("telegram", telegramBot);
-        return "home";
+        return "redirect:/login";
     }
 
 }
