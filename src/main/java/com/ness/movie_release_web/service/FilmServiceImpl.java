@@ -43,11 +43,6 @@ public class FilmServiceImpl implements FilmService {
     }
 
     @Override
-    public void delete(Long id) {
-        repository.deleteById(id);
-    }
-
-    @Override
     public void delete(List<Film> films) {
         repository.deleteAll(films);
     }
@@ -55,11 +50,6 @@ public class FilmServiceImpl implements FilmService {
     @Override
     public List<Film> getAll() {
         return repository.findAll();
-    }
-
-    @Override
-    public Page<Film> getAllByUserWithPages(Integer page, Integer size, User user) {
-        return repository.findAllByUsers(user, PageRequest.of(page, size));
     }
 
     @Override

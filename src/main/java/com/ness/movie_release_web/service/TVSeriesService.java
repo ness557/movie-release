@@ -20,8 +20,6 @@ public interface TVSeriesService {
 
     void unSubscribeUser(Integer tmdbId, User user);
 
-    Page<UserTVSeries> getAllByUserWithPages(Integer page, Integer size, User user);
-
     Page<UserTVSeries> getByUserAndTVStatusesAndWatchStatusesWithOrderAndPages(List<Status> tvStatuses,
                                                                                List<WatchStatus> watchStatuses,
                                                                                TVSeriesSortBy sortBy,

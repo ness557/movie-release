@@ -17,11 +17,9 @@ public interface FilmService {
     Optional<Film> findByTmdbId(Integer tmdbId);
 
     void delete(Film film);
-    void delete(Long id);
     void delete(List<Film> films);
 
     List<Film> getAll();
-    Page<Film> getAllByUserWithPages(Integer page, Integer size, User user);
 
     Optional<Film> getByTmdbIdAndUser(Integer tmdbId, User user);
     boolean isExistsByTmdbIdAndUser(Integer tmdbId, User user);

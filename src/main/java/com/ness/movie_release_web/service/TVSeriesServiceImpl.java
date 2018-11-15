@@ -108,11 +108,6 @@ public class TVSeriesServiceImpl implements TVSeriesService {
     }
 
     @Override
-    public Page<UserTVSeries> getAllByUserWithPages(Integer page, Integer size, User user) {
-        return userTVSeriesRepository.findAllByUserOrderByTvSeriesIdDesc(user, PageRequest.of(page, size));
-    }
-
-    @Override
     public Page<UserTVSeries> getByUserAndTVStatusesAndWatchStatusesWithOrderAndPages(
             List<Status> tvStatuses,
             List<WatchStatus> watchStatuses,
