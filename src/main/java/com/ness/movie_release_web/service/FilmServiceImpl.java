@@ -9,6 +9,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class FilmServiceImpl implements FilmService {
@@ -25,6 +26,11 @@ public class FilmServiceImpl implements FilmService {
     @Override
     public Film get(Long id) {
         return repository.getOne(id);
+    }
+
+    @Override
+    public Optional<Film> findByTmdbId(Integer tmdbId) {
+        return repository.findByTmdbId(tmdbId);
     }
 
     @Override
@@ -49,16 +55,16 @@ public class FilmServiceImpl implements FilmService {
 
     @Override
     public Page<Film> getAllByUserWithPages(Integer page, Integer size, User user) {
-        return repository.findAllByUserOrderBySubscriptionDateDesc(user, PageRequest.of(page, size));
+        return repository.findAllByUsers(user, PageRequest.of(page, size));
     }
 
     @Override
-    public List<Film> getByTmdbIdAndUserId(Integer tmdbId, Long userId) {
-        return repository.findAllByTmdbIdAndUserId(tmdbId, userId);
+    public Optional<Film> getByTmdbIdAndUser(Integer tmdbId, User user) {
+        return repository.findByTmdbIdAndUsers(tmdbId, user);
     }
 
     @Override
-    public boolean isExistsByTmdbIdAndUserId(Integer tmdbId, Long userId) {
-        return repository.existsByTmdbIdAndUserId(tmdbId, userId);
+    public boolean isExistsByTmdbIdAndUser(Integer tmdbId, User user) {
+        return repository.existsByTmdbIdAndUsers(tmdbId, user);
     }
 }

@@ -23,7 +23,6 @@ import org.springframework.web.server.ResponseStatusException;
 
 import javax.servlet.http.HttpServletRequest;
 import java.security.Principal;
-import java.time.LocalDateTime;
 import java.util.*;
 
 import static java.util.stream.Collectors.toList;
@@ -67,7 +66,7 @@ public class MovieController {
         model.addAttribute("language", language);
         model.addAttribute("mode", mode);
 
-        if (filmService.isExistsByTmdbIdAndUserId(tmdbId, user.getId())) {
+        if (filmService.isExistsByTmdbIdAndUser(tmdbId, user)) {
             model.addAttribute("subscribed", true);
         }
 
@@ -89,7 +88,7 @@ public class MovieController {
 
         User user = userService.findByLogin(login);
 
-        if (filmService.isExistsByTmdbIdAndUserId(tmdbId, user.getId()))
+        if (filmService.isExistsByTmdbIdAndUser(tmdbId, user))
             throw new ResponseStatusException(HttpStatus.CONFLICT);
 
         Optional<MovieDetailsWrapper> optionalMovieDetails = movieService.getMovieDetails(tmdbId, Language.en);
@@ -99,10 +98,17 @@ public class MovieController {
 
         MovieDetailsWrapper movieDetailsWrapper = optionalMovieDetails.get();
 
-        Film film = new Film(null,
+        Optional<Film> filmOpt = filmService.findByTmdbId(tmdbId);
+
+        Film film = filmOpt.orElse(new Film(null,
                 movieDetailsWrapper.getId(),
-                LocalDateTime.now(),
-                user);
+                movieDetailsWrapper.getTitle(),
+                "",
+                movieDetailsWrapper.getStatus(),
+                movieDetailsWrapper.getReleaseDate(),
+                movieDetailsWrapper.getVoteAverage().floatValue(),
+                new ArrayList<>()));
+        film.getUsers().add(user);
 
         filmService.save(film);
         return ResponseEntity.ok().build();
@@ -118,7 +124,14 @@ public class MovieController {
 
         User user = userService.findByLogin(login);
 
-        filmService.getByTmdbIdAndUserId(tmdbId, user.getId()).forEach(filmService::delete);
+        Optional<Film> film = filmService.getByTmdbIdAndUser(tmdbId, user);
+        film.ifPresent(f -> {
+            f.getUsers().remove(user);
+            if (f.getUsers().isEmpty())
+                filmService.delete(f);
+            else
+                filmService.save(f);
+        });
 
         return ResponseEntity.ok().build();
     }
@@ -153,7 +166,7 @@ public class MovieController {
 
         Map<MovieWrapper, Boolean> filmsWithSubFlags = movieSearchWrapper.getResults().stream()
                 .collect(toMap(f -> f,
-                        f -> filmService.isExistsByTmdbIdAndUserId(f.getId(), user.getId()),
+                        f -> filmService.isExistsByTmdbIdAndUser(f.getId(), user),
                         (f1, f2) -> f1,
                         LinkedHashMap::new));
         model.addAttribute("films", filmsWithSubFlags);
@@ -223,7 +236,7 @@ public class MovieController {
 
             Map<MovieWrapper, Boolean> filmsWithSubFlags = movieSearchWrapper.getResults().stream()
                     .collect(toMap(f -> f,
-                            f -> filmService.isExistsByTmdbIdAndUserId(f.getId(), user.getId()),
+                            f -> filmService.isExistsByTmdbIdAndUser(f.getId(), user),
                             (f1, f2) -> f1,
                             LinkedHashMap::new));
             model.addAttribute("films", filmsWithSubFlags);

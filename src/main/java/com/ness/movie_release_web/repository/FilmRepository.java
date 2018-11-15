@@ -10,16 +10,19 @@ import org.springframework.stereotype.Repository;
 
 import javax.transaction.Transactional;
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 @Transactional
 public interface FilmRepository extends JpaRepository<Film, Long> {
     List<Film> findAllByTmdbId(Integer tmdbId);
-    List<Film> findAllByTmdbIdAndUserId(Integer tmdbId, Long userId);
-    boolean existsByTmdbIdAndUserId(Integer tmdbId, Long userId);
+    Optional<Film> findByTmdbIdAndUsers(Integer tmdbId, User user);
+    boolean existsByTmdbIdAndUsers(Integer tmdbId, User user);
+
+    Optional<Film> findByTmdbId(Integer tmdbId);
 
     @Query("SELECT DISTINCT f.tmdbId FROM Film f")
     List<String> getUniqueTmdbIds();
 
-    Page<Film> findAllByUserOrderBySubscriptionDateDesc(User user, Pageable pageable);
+    Page<Film> findAllByUsers(User user, Pageable pageable);
 }

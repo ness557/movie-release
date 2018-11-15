@@ -84,7 +84,7 @@ public class MovieDetailsWrapper {
     private List<SpokenLanguageWrapper> spokenLanguageWrappers = new ArrayList<>();
 
     @JsonProperty("status")
-    private String status; //used
+    private Status status; //used
 
     @JsonProperty("tagline")
     private String tagline; //used
