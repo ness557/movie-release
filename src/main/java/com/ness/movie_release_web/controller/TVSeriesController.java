@@ -92,15 +92,19 @@ public class TVSeriesController {
             Integer currentEpisodeNum = userTVSeries.getCurrentEpisode();
             EpisodeWrapper lastEpisodeToAir = tvDetailsWrapper.getLastEpisodeToAir();
 
-            Optional<SeasonWrapper> seasonDetailsOpt = tmdbSeriesService.getSeasonDetails(tmdbId, currentSeasonNum, user.getLanguage());
-            if (!seasonDetailsOpt.isPresent())
-                throw new ResponseStatusException(HttpStatus.NOT_FOUND);
-
-
-            SeasonWrapper seasonWrapper = seasonDetailsOpt.get();
-
             model.addAttribute("currentSeason", currentSeasonNum);
-            model.addAttribute("seasonWatched", seasonWrapper.getEpisodes().stream().noneMatch(e -> e.getEpisodeNumber() > currentEpisodeNum));
+            model.addAttribute("seasonWatched", false);
+
+            if(currentSeasonNum > 0){
+                Optional<SeasonWrapper> seasonDetailsOpt = tmdbSeriesService.getSeasonDetails(tmdbId, currentSeasonNum, user.getLanguage());
+                if (!seasonDetailsOpt.isPresent())
+                    throw new ResponseStatusException(HttpStatus.NOT_FOUND);
+
+
+                SeasonWrapper seasonWrapper = seasonDetailsOpt.get();
+
+                model.addAttribute("seasonWatched", seasonWrapper.getEpisodes().stream().noneMatch(e -> e.getEpisodeNumber() > currentEpisodeNum));
+            }
 
             model.addAttribute("lastEpisodeWatched", lastEpisodeToAir.getSeasonNumber() < currentSeasonNum ||
                     (lastEpisodeToAir.getSeasonNumber().equals(currentSeasonNum) && lastEpisodeToAir.getEpisodeNumber() <= currentEpisodeNum));

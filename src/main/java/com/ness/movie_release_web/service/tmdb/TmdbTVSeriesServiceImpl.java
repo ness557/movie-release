@@ -73,7 +73,7 @@ public class TmdbTVSeriesServiceImpl implements TmdbTVSeriesService {
         try {
             response = restTemplate.getForEntity(UrlBuilder.toUriString(), SeasonWrapper.class);
         } catch (HttpStatusCodeException e) {
-            log.error("Could not get tv details by id: {}, status: {}", tmdbId, e.getStatusCode().value());
+            log.error("Could not get tv season details by id: {}, season: {}, status: {}", tmdbId, season, e.getStatusCode().value());
 
             // if there are too many requests
             if (e.getStatusCode().value() == 429) {
@@ -106,7 +106,7 @@ public class TmdbTVSeriesServiceImpl implements TmdbTVSeriesService {
         try {
             response = restTemplate.getForEntity(UrlBuilder.toUriString(), EpisodeWrapper.class);
         } catch (HttpStatusCodeException e) {
-            log.error("Could not get tv details by id: {}, status: {}", tmdbId, e.getStatusCode().value());
+            log.error("Could not get tv episod details by id: {}, season: {}, episode: {}, status: {}", tmdbId, season, episode, e.getStatusCode().value());
 
             // if there are too many requests
             if (e.getStatusCode().value() == 429) {
