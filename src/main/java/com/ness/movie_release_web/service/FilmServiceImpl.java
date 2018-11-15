@@ -2,7 +2,9 @@ package com.ness.movie_release_web.service;
 
 import com.ness.movie_release_web.model.Film;
 import com.ness.movie_release_web.model.User;
+import com.ness.movie_release_web.model.wrapper.tmdb.movie.details.Status;
 import com.ness.movie_release_web.repository.FilmRepository;
+import com.ness.movie_release_web.repository.MovieSortBy;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -10,6 +12,8 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
+
+import static com.ness.movie_release_web.repository.FilmSpecifications.byUserAndStatusWithOrderby;
 
 @Service
 public class FilmServiceImpl implements FilmService {
@@ -66,5 +70,14 @@ public class FilmServiceImpl implements FilmService {
     @Override
     public boolean isExistsByTmdbIdAndUser(Integer tmdbId, User user) {
         return repository.existsByTmdbIdAndUsers(tmdbId, user);
+    }
+
+    @Override
+    public Page<Film> getByUserAndStatusWithOrderbyAndPages(List<Status> statuses,
+                                                            MovieSortBy sortBy,
+                                                            User user,
+                                                            Integer page,
+                                                            Integer size) {
+        return repository.findAll(byUserAndStatusWithOrderby(statuses, sortBy, user), PageRequest.of(page, size));
     }
 }
