@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 
 <html xmlns:th="http://www.thymeleaf.org">
-<head>
+<head th:fragment="header(title)">
     <meta name="viewport" content="width=device-width, initial-scale=0.7">
     <meta name="description" content="Service that notifies you about new movie and tv series releases">
     <meta property="og:title" content="Movie Notifier Service"/>
@@ -9,7 +9,7 @@
     <meta property="og:image" th:attr="content=@{/img/logo.png}"/>
     <link rel="shortcut icon" th:href="@{/img/favicon.ico}" type="image/x-icon"/>
 
-    <title>Movie Notifier Service</title>
+    <title th:replace="${title}">Movie Notifier Service</title>
     <link href="../static/css/custom-bootstrap.css" th:href="@{/css/custom-bootstrap.css}" rel="stylesheet"/>
     <link href="../static/css/my.css" th:href="@{/css/my.css}" rel="stylesheet"/>
     <link href="../static/css/custom-navbar.css" th:href="@{/css/custom-navbar.css}" rel="stylesheet"/>

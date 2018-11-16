@@ -1,6 +1,8 @@
 <!DOCTYPE HTML>
 <html xmlns:th="http://www.thymeleaf.org" xmlns:sh="http://www.thymeleaf.org">
-<head th:insert="embeded/header.html"></head>
+<head th:replace="embeded/header.html :: header(~{::title})">
+    <title th:text="#{lang.title.subs.movies}"></title>
+</head>
 <body>
 <nav th:insert="embeded/navbar.html"></nav>
 
