@@ -14,9 +14,9 @@ import java.util.List;
 public class UserTVSeriesSpecifications {
 
     public static Specification<UserTVSeries> byUserAndTVStatusesAndWatchStatusesWithOrderby(List<Status> tvStatuses,
-                                                                                            List<WatchStatus> watchStatuses,
-                                                                                            TVSeriesSortBy sortBy,
-                                                                                            User user) {
+                                                                                             List<WatchStatus> watchStatuses,
+                                                                                             TVSeriesSortBy sortBy,
+                                                                                             User user) {
         return (Specification<UserTVSeries>) (root, criteriaQuery, cb) -> {
 
             Join<Object, Object> tvSeriesJoin = root.join("tvSeries");
@@ -26,32 +26,30 @@ public class UserTVSeriesSpecifications {
 
             if (watchStatuses.contains(WatchStatus.NOT_STARTED))
                 watchPredicates.add(
-                	cb.and(
-                		cb.equal(root.get("currentSeason"), 0),
-                        cb.equal(root.get("currentEpisode"), 0)));
+                        cb.and(
+                                cb.equal(root.get("currentSeason"), 0),
+                                cb.equal(root.get("currentEpisode"), 0)));
 
             if (watchStatuses.contains(WatchStatus.IN_PROGRESS)) {
-
                 watchPredicates.add(
-                        cb.or(
-                                cb.and(
-                                	cb.gt(
-                                		root.get("currentSeason"), 0)),
-                                		cb.lt(root.get("currentSeason"), tvSeriesJoin.get("lastSeasonNumber")),
-                                cb.and(
-                                        cb.equal(root.get("currentSeason"), tvSeriesJoin.get("lastSeasonNumber")),
+                        cb.and(
+                                cb.or(
+                                        cb.gt(root.get("currentEpisode"), 0),
+                                        cb.gt(root.get("currentSeason"), 0)
+                                ),
+                                cb.or(
+                                        cb.lt(root.get("currentSeason"), tvSeriesJoin.get("lastSeasonNumber")),
                                         cb.lt(root.get("currentEpisode"), tvSeriesJoin.get("lastEpisodeNumber"))
-
                                 )
-                        ));
+                        )
+                );
             }
 
             if (watchStatuses.contains(WatchStatus.WATCHED)) {
                 watchPredicates.add(
                         cb.and(
                                 cb.equal(root.get("currentSeason"), tvSeriesJoin.get("lastSeasonNumber")),
-                                // FIXME equal
-                                cb.lt(root.get("currentEpisode"), tvSeriesJoin.get("lastEpisodeNumber"))
+                                cb.equal(root.get("currentEpisode"), tvSeriesJoin.get("lastEpisodeNumber"))
                         )
                 );
             }
@@ -69,7 +67,7 @@ public class UserTVSeriesSpecifications {
             }
 
             if (!tvStatuses.isEmpty()) {
-                result = cb.and(result,tvSeriesJoin.get("status").in(tvStatuses));
+                result = cb.and(result, tvSeriesJoin.get("status").in(tvStatuses));
             }
 
             if (!watchPredicates.isEmpty()) {
