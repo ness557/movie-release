@@ -25,17 +25,22 @@ public class UserTVSeriesSpecifications {
             List<Predicate> watchPredicates = new ArrayList<Predicate>();
 
             if (watchStatuses.contains(WatchStatus.NOT_STARTED))
-                watchPredicates.add(cb.and(cb.equal(root.get("currentSeason"), 0),
+                watchPredicates.add(
+                	cb.and(
+                		cb.equal(root.get("currentSeason"), 0),
                         cb.equal(root.get("currentEpisode"), 0)));
 
             if (watchStatuses.contains(WatchStatus.IN_PROGRESS)) {
 
                 watchPredicates.add(
                         cb.or(
-                                cb.and(cb.ge(root.get("currentSeason"), 0)), cb.le(root.get("currentSeason"), tvSeriesJoin.get("lastSeasonNumber")),
+                                cb.and(
+                                	cb.gt(
+                                		root.get("currentSeason"), 0)),
+                                		cb.lt(root.get("currentSeason"), tvSeriesJoin.get("lastSeasonNumber")),
                                 cb.and(
                                         cb.equal(root.get("currentSeason"), tvSeriesJoin.get("lastSeasonNumber")),
-                                        cb.le(root.get("currentEpisode"), tvSeriesJoin.get("lastEpisodeNumber"))
+                                        cb.lt(root.get("currentEpisode"), tvSeriesJoin.get("lastEpisodeNumber"))
 
                                 )
                         ));
@@ -45,7 +50,8 @@ public class UserTVSeriesSpecifications {
                 watchPredicates.add(
                         cb.and(
                                 cb.equal(root.get("currentSeason"), tvSeriesJoin.get("lastSeasonNumber")),
-                                cb.le(root.get("currentEpisode"), tvSeriesJoin.get("lastEpisodeNumber"))
+                                // FIXME equal
+                                cb.lt(root.get("currentEpisode"), tvSeriesJoin.get("lastEpisodeNumber"))
                         )
                 );
             }
