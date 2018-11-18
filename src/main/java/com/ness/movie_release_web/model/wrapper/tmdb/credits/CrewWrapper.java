@@ -1,7 +1,8 @@
-package com.ness.movie_release_web.model.wrapper.tmdb.tvSeries.details;
+package com.ness.movie_release_web.model.wrapper.tmdb.credits;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.ness.movie_release_web.model.wrapper.tmdb.tvSeries.details.Gender;
 import com.ness.movie_release_web.util.tmdb.TmdbPosterPathDeserializer;
 import lombok.*;
 

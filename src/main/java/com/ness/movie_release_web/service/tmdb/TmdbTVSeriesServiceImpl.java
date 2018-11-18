@@ -35,7 +35,7 @@ public class TmdbTVSeriesServiceImpl implements TmdbTVSeriesService {
                 .path(tmdbId.toString())
                 .queryParam("api_key", apikey)
                 .queryParam("language", language.name())
-                .queryParam("append_to_response", "next_episode_to_air");
+                .queryParam("append_to_response", "next_episode_to_air,credits");
 
         ResponseEntity<TVDetailsWrapper> response;
         try {
