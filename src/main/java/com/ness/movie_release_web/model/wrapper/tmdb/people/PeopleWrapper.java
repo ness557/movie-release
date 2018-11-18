@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.ness.movie_release_web.model.wrapper.tmdb.Gender;
 import com.ness.movie_release_web.model.wrapper.tmdb.credits.MovieCreditsWrapper;
+import com.ness.movie_release_web.model.wrapper.tmdb.credits.TVCreditsWrapper;
 import com.ness.movie_release_web.util.tmdb.TmdbMovieReleaseDateDeserializer;
 import com.ness.movie_release_web.util.tmdb.TmdbPosterPathDeserializer;
 import lombok.*;
@@ -58,4 +59,7 @@ public class PeopleWrapper {
 
     @JsonProperty("credits")
     private MovieCreditsWrapper credits = new MovieCreditsWrapper();
+
+    @JsonProperty("tv_credits")
+    private TVCreditsWrapper tvCredits = new TVCreditsWrapper();
 }

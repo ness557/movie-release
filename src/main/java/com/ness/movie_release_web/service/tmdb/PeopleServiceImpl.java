@@ -33,7 +33,7 @@ public class PeopleServiceImpl implements PeopleService {
                 .path(id.toString())
                 .queryParam("api_key", apikey)
                 .queryParam("language", language.name())
-                .queryParam("append_to_response", "credits");
+                .queryParam("append_to_response", "credits,tv_credits");
 
 
         ResponseEntity<PeopleWrapper> response;
