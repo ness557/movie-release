@@ -230,7 +230,7 @@
                         <div class="col col-fixed-arrow my-page-link">
                             <!-- active link -->
                             <th:block th:if="${page > 1}">
-                                <a th:href="${urlBuilder.fromCurrentRequest().replaceQueryParam('page', page - 1).toUriString()}">
+                                <a th:href="${urlBuilder.fromCurrentRequest().replaceQueryParam('page', page - 1).build(false).toUriString()}">
                                     <img class="page-arrow" th:src="@{/img/pagination/page-back.png}">
                                 </a>
                             </th:block>
@@ -247,7 +247,7 @@
                         <th:block th:if="${page > 2}">
                             <div class="col col-fixed-page my-page-link my-page-number">
                                 <a class="text-secondary"
-                                   th:href="${urlBuilder.fromCurrentRequest().replaceQueryParam('page', 1).toUriString()}"
+                                   th:href="${urlBuilder.fromCurrentRequest().replaceQueryParam('page', 1).build(false).toUriString()}"
                                    th:text="${1}"></a>
                             </div>
 
@@ -270,7 +270,7 @@
                                 <!-- Link To Page -->
                                 <div class="col col-fixed-page my-page-link my-page-number" th:unless="${page == i}">
                                     <a class="text-secondary my-page-number"
-                                       th:href="${urlBuilder.fromCurrentRequest().replaceQueryParam('page', i).toUriString()}"
+                                       th:href="${urlBuilder.fromCurrentRequest().replaceQueryParam('page', i).build(false).toUriString()}"
                                        th:text="${i}"></a>
                                 </div>
                             </th:block>
@@ -284,7 +284,7 @@
 
                             <div class="col col-fixed-page my-page-link my-page-number">
                                 <a class="text-secondary"
-                                   th:href="${urlBuilder.fromCurrentRequest().replaceQueryParam('page', pageCount).toUriString()}"
+                                   th:href="${urlBuilder.fromCurrentRequest().replaceQueryParam('page', pageCount).build(false).toUriString()}"
                                    th:text="${pageCount}"></a>
                             </div>
                         </th:block>
@@ -293,7 +293,7 @@
                         <div class="col col-fixed-arrow my-page-link">
                             <!-- active link -->
                             <th:block th:if="${page < pageCount}">
-                                <a th:href="${urlBuilder.fromCurrentRequest().replaceQueryParam('page', page + 1).toUriString()}">
+                                <a th:href="${urlBuilder.fromCurrentRequest().replaceQueryParam('page', page + 1).build(false).toUriString()}">
                                     <img class="page-arrow" th:src="@{/img/pagination/page-next.png}">
                                 </a>
                             </th:block>

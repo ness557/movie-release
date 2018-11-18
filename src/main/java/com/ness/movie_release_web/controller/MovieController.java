@@ -263,7 +263,7 @@ public class MovieController {
                             LinkedHashMap::new));
             model.addAttribute("films", filmsWithSubFlags);
 
-            model.addAttribute("pageCount", movieSearchWrapper.getTotalPages());
+            model.addAttribute("pageCount", movieSearchWrapper.getTotalPages() > 1000 ? 1000 : movieSearchWrapper.getTotalPages());
             model.addAttribute("page", page);
         }
 
