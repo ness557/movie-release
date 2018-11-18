@@ -40,7 +40,7 @@ public class MovieServiceImpl implements MovieService {
         UriComponentsBuilder movieUrlBuilder = UriComponentsBuilder.fromHttpUrl(url + "movie/")
                 .path(tmdbId.toString())
                 .queryParam("api_key", apikey)
-                .queryParam("append_to_response", "credits")
+                .queryParam("append_to_response", "credits,videos")
                 .queryParam("language", language.name());
 
         ResponseEntity<MovieDetailsWrapper> response = null;
