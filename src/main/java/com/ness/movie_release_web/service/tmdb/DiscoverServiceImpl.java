@@ -62,6 +62,10 @@ public class DiscoverServiceImpl implements DiscoverService {
             movieBuilder.queryParam("with_companies",
                     StringUtils.join(criteria.getCompanies(), criteria.getCompaniesAnd() ? "," : "|"));
 
+        if (!criteria.getPeople().isEmpty())
+            movieBuilder.queryParam("with_people",
+                    StringUtils.join(criteria.getPeople(), criteria.getPeopleAnd() ? "," : "|"));
+
         ResponseEntity<MovieSearchWrapper> response = null;
         try {
             response = restTemplate.getForEntity(movieBuilder.build(false).toUriString(), MovieSearchWrapper.class);

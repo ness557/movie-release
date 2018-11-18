@@ -26,6 +26,8 @@ public class DiscoverSearchCriteria {
     private Boolean genresAnd = false;
     private List<Integer> networks = emptyList();
     private Boolean networksAnd = false;
+    private List<Integer> people = emptyList();
+    private Boolean peopleAnd = false;
     private List<Integer> companies = emptyList();
     private Boolean companiesAnd = false;
     private List<ReleaseType> releaseTypes = emptyList();

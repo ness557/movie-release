@@ -58,6 +58,9 @@ public class MovieController {
     @Autowired
     private CompanyService companyService;
 
+    @Autowired
+    private PeopleService peopleService;
+
     @GetMapping("/{tmdbId}")
     public String getFilm(@PathVariable("tmdbId") Integer tmdbId,
                           Principal principal,
@@ -272,6 +275,7 @@ public class MovieController {
 
         // adding all attributes to form
         model.addAttribute("companies", companyService.getCompanies(criteria.getCompanies(), language));
+        model.addAttribute("people", peopleService.getPeopleList(criteria.getPeople(), language));
         model.addAttribute("criteria", criteria);
 
         // adding genreWrappers to form
