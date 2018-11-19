@@ -206,12 +206,11 @@
                 <div class="col-11">
                     <div class="filmPropSpaces">
                         <b th:text="#{lang.season} + ':'"></b>
-                        <div class="owl-carousel owl-theme">
+                        <div class="owl-carousel owl-theme" id="owl-season">
                             <div th:each="season : ${series.seasons}"
                                  class="season shadow p-2 mb-3 mr-2 ml-2 rounded"
                                  th:style="${subscribed && (season.seasonNumber < currentSeason || (season.seasonNumber == currentSeason && seasonWatched)) ?
                                  'filter: grayscale(70%); opacity: 0.7;' : ''} + 'display: inline-block;'">
-                                <!-- TODO add filter -->
 
                                 <a class="text-dark" style="text-decoration: none !important"
                                    th:href="'/series/' + ${series.id} + '/season/' + ${season.seasonNumber}">
@@ -253,6 +252,43 @@
                     </div>
                 </div>
             </div>
+
+
+            <div class="row">
+                <div class="col-11">
+                    <div class="filmPropSpaces">
+                        <b th:text="#{lang.actors} + ':'"></b>
+                        <div class="owl-carousel owl-theme" id="owl-actors">
+                            <div th:each="actor : ${series.credits.casts}"
+                                 class="season shadow p-2 mb-3 mr-2 ml-2 rounded">
+
+                                <a class="text-dark" style="text-decoration: none !important"
+                                   th:href="'#'">
+
+                                    <img th:src="${actor.profilePath}"
+                                         style="height:250px;  width:175px;  object-fit: cover"
+                                         th:onerror="'this.src=\'' + @{/img/no-image.png} + '\'; this.onerror=null'">
+                                    <div th:text="${actor.name}" class="pt-1"
+                                         style="text-align: center; width: 100%"></div>
+                                    <div th:text="${actor.character}" class="pt-1"
+                                         style="text-align: center; width: 100%; font-size: 14px"></div>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-1">
+                    <div style="text-align: right; top: 40%; position: absolute">
+                        <a href="javascript:void(0);" id="actor-prev">
+                            <i class="fas fa-2x fa-angle-left" style="color: #676767; padding-right: 15px;"></i>
+                        </a>
+                        <br>
+                        <a href="javascript:void(0);" id="actor-next">
+                            <i class="fas fa-2x fa-angle-right" style="color: #676767; padding-right: 15px;"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 </div>
@@ -277,29 +313,50 @@
         $(this).find(".seasonImage").show();
     });
 
-    owl = $('.owl-carousel');
+    owlSeason = $('#owl-season');
+    owlActor = $('#owl-actors');
 
-    owl.on('mousewheel', '.owl-stage', function (e) {
+    owlActor.on('mousewheel', '.owl-stage', function (e) {
         if (e.originalEvent.deltaY > 30) {
-            owl.trigger('next.owl');
+            owlActor.trigger('next.owl');
         } else if (e.originalEvent.deltaY < -30) {
-            owl.trigger('prev.owl');
+            owlActor.trigger('prev.owl');
+        }
+        e.preventDefault();
+    });
+    owlSeason.on('mousewheel', '.owl-stage', function (e) {
+        if (e.originalEvent.deltaY > 30) {
+            owlSeason.trigger('next.owl');
+        } else if (e.originalEvent.deltaY < -30) {
+            owlSeason.trigger('prev.owl');
         }
         e.preventDefault();
     });
 
-    owl.owlCarousel({
+    owlSeason.owlCarousel({
+        loop: false,
+        autoWidth: true
+    });
+    owlActor.owlCarousel({
         loop: false,
         autoWidth: true,
-        dots: true
+        dots:false
     });
 
     $('#series-next').click(function () {
-        owl.trigger('next.owl.carousel')
+        owlSeason.trigger('next.owl.carousel')
     });
 
     $('#series-prev').click(function () {
-        owl.trigger('prev.owl.carousel')
+        owlSeason.trigger('prev.owl.carousel')
+    });
+
+    $('#actor-next').click(function () {
+        owlActor.trigger('next.owl.carousel')
+    });
+
+    $('#actor-prev').click(function () {
+        owlActor.trigger('prev.owl.carousel')
     });
 
 </script>

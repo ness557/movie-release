@@ -203,6 +203,42 @@
                     </div>
                 </div>
             </div>
+
+            <div class="row">
+                <div class="col-11">
+                    <div class="filmPropSpaces">
+                        <b th:text="#{lang.actors} + ':'"></b>
+                        <div class="owl-carousel owl-theme" id="owl-actors">
+                            <div th:each="actor : ${film.credits.casts}"
+                                 class="season shadow p-2 mb-3 mr-2 ml-2 rounded">
+
+                                <a class="text-dark" style="text-decoration: none !important"
+                                   th:href="'#'">
+
+                                    <img th:src="${actor.profilePath}"
+                                         style="height:250px;  width:175px;  object-fit: cover"
+                                         th:onerror="'this.src=\'' + @{/img/no-image.png} + '\'; this.onerror=null'">
+                                    <div th:text="${actor.name}" class="pt-1"
+                                         style="text-align: center; width: 100%"></div>
+                                    <div th:text="${actor.character}" class="pt-1"
+                                         style="text-align: center; width: 100%; font-size: 14px"></div>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-1">
+                    <div style="text-align: right; top: 40%; position: absolute">
+                        <a href="javascript:void(0);" id="actor-prev">
+                            <i class="fas fa-2x fa-angle-left" style="color: #676767; padding-right: 15px;"></i>
+                        </a>
+                        <br>
+                        <a href="javascript:void(0);" id="actor-next">
+                            <i class="fas fa-2x fa-angle-right" style="color: #676767; padding-right: 15px;"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 </div>
@@ -216,6 +252,33 @@
 <footer th:insert="embeded/footer.html"></footer>
 
 <script th:inline="javascript">
+
+    owl = $('.owl-carousel');
+    owlActor = $('#owl-actors');
+
+    owl.on('mousewheel', '.owl-stage', function (e) {
+        if (e.originalEvent.deltaY > 30) {
+            owl.trigger('next.owl');
+        } else if (e.originalEvent.deltaY < -30) {
+            owl.trigger('prev.owl');
+        }
+        e.preventDefault();
+    });
+
+    owl.owlCarousel({
+        loop: false,
+        autoWidth: true,
+        dots: false
+    });
+
+    $('#actor-next').click(function () {
+        owlActor.trigger('next.owl.carousel')
+    });
+
+    $('#actor-prev').click(function () {
+        owlActor.trigger('prev.owl.carousel')
+    });
+
     $(".subsForm").submit(subscribe);
     $(".unSubsForm").submit(unsubscribe);
 </script>
