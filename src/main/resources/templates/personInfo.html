@@ -1,0 +1,207 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="embeded/header.html :: header(~{::title})">
+    <title th:text="${person.name}"></title>
+</head>
+<body>
+<nav th:insert="embeded/navbar.html"></nav>
+
+<div class="container-fluid mytext" style="padding-top: 30px">
+    <div class="row">
+        <div class="col-10 col-sm-6 col-md-5 col-lg-4 col-xl-3" style="text-align: right">
+            <div style="text-align: center; display: inline-block;">
+                <img th:src="${person.profilePath}" style="height: 400px; max-width: 300px" class="rounded"
+                     th:onerror="'this.src=\'' + @{/img/no-image.png} + '\'; this.onerror=null'">
+            </div>
+        </div>
+
+        <div class="col-12 col-sm-6 col-md-6 col-lg-8 col-xl-7">
+            <div class="row">
+                <div class="col-md-8">
+                    <div style="font-size: 27px;">
+                        <b th:text="${person.name}"/>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row" th:if="${!person.alsoKnownAs.isEmpty()}">
+                <div class="col-md-12">
+                    <div class="filmPropSpaces">
+                        <b th:text="#{lang.person.also_known_as} + ':'"></b>
+                        <th:block th:text="${#strings.listJoin(person.alsoKnownAs, ', ')}"/>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="filmPropSpaces">
+                        <b th:text="#{lang.person.birthday} + ':'"></b>
+                        <th:block th:text="${#temporals.format(person.birthday, 'dd MMMM yyyy')}"/>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="filmPropSpaces">
+                        <b th:text="#{lang.person.placeofbirth} + ':'"></b>
+                        <th:block th:text="${person.placeOfBirth}"/>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row" th:if="${person.deathday != null}">
+                <div class="col-md-12">
+                    <div class="filmPropSpaces">
+                        <b th:text="#{lang.person.deathday} + ':'"></b>
+                        <th:block th:text="${#temporals.format(person.deathday, 'dd MMMM yyyy')}"/>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="filmPropSpaces">
+                        <b th:text="#{lang.person.biography} + ':'"></b>
+                        <th:block th:text="${person.biography}"/>
+                    </div>
+                </div>
+            </div>
+
+
+            <div class="row">
+                <div class="col-11">
+                    <div class="filmPropSpaces">
+                        <b th:text="#{lang.person.movies} + ':'"></b>
+                        <div class="owl-carousel owl-theme" id="owl-movies">
+                            <div th:each="movieCast : ${person.credits.casts}"
+                                 class="season shadow p-2 mb-3 mr-2 ml-2 rounded">
+
+                                <a class="text-dark" style="text-decoration: none !important"
+                                   th:href="'/movie/' + ${movieCast.id}">
+
+                                    <img th:src="${movieCast.posterPath}"
+                                         style="height:250px;  width:175px;  object-fit: cover"
+                                         th:onerror="'this.src=\'' + @{/img/no-image.png} + '\'; this.onerror=null'">
+                                    <div th:text="${movieCast.title}" class="pt-1"
+                                         style="text-align: center; width: 100%"></div>
+                                    <div th:text="${movieCast.character}" class="pt-1"
+                                         style="text-align: center; width: 100%; font-size: 14px"></div>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-1">
+                    <div style="text-align: right; top: 40%; position: absolute">
+                        <a href="javascript:void(0);" id="movie-prev">
+                            <i class="fas fa-2x fa-angle-left" style="color: #676767; padding-right: 15px;"></i>
+                        </a>
+                        <br>
+                        <a href="javascript:void(0);" id="movie-next">
+                            <i class="fas fa-2x fa-angle-right" style="color: #676767; padding-right: 15px;"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+
+            <div class="row">
+                <div class="col-11">
+                    <div class="filmPropSpaces">
+                        <b th:text="#{lang.person.tv_series} + ':'"></b>
+                        <div class="owl-carousel owl-theme" id="owl-series">
+                            <div th:each="tvCast : ${person.tvCredits.casts}"
+                                 class="season shadow p-2 mb-3 mr-2 ml-2 rounded">
+
+                                <a class="text-dark" style="text-decoration: none !important"
+                                   th:href="'/series/' + ${tvCast.id}">
+
+                                    <img th:src="${tvCast.posterPath}"
+                                         style="height:250px;  width:175px; object-fit: cover"
+                                         th:onerror="'this.src=\'' + @{/img/no-image.png} + '\'; this.onerror=null'">
+                                    <div th:text="${tvCast.name}" class="pt-1"
+                                         style="text-align: center; width: 100%"></div>
+                                    <div th:text="${tvCast.character}" class="pt-1"
+                                         style="text-align: center; width: 100%; font-size: 14px"></div>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-1">
+                    <div style="text-align: right; top: 40%; position: absolute">
+                        <a href="javascript:void(0);" id="series-prev">
+                            <i class="fas fa-2x fa-angle-left" style="color: #676767; padding-right: 15px;"></i>
+                        </a>
+                        <br>
+                        <a href="javascript:void(0);" id="series-next">
+                            <i class="fas fa-2x fa-angle-right" style="color: #676767; padding-right: 15px;"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="back-to-top" style="display: inline;">
+    <a style="pointer-events: none">
+        <img th:src="@{/img/scroll-up-button.png}">
+    </a>
+</div>
+
+<footer th:insert="embeded/footer.html"></footer>
+
+<script th:inline="javascript">
+
+    owlMovie = $('#owl-movies');
+    owlSeries = $('#owl-series');
+
+    owlMovie.on('mousewheel', '.owl-stage', function (e) {
+        if (e.originalEvent.deltaY > 30) {
+            owlMovie.trigger('next.owl');
+        } else if (e.originalEvent.deltaY < -30) {
+            owlMovie.trigger('prev.owl');
+        }
+        e.preventDefault();
+    });
+    owlSeries.on('mousewheel', '.owl-stage', function (e) {
+        if (e.originalEvent.deltaY > 30) {
+            owlSeries.trigger('next.owl');
+        } else if (e.originalEvent.deltaY < -30) {
+            owlSeries.trigger('prev.owl');
+        }
+        e.preventDefault();
+    });
+
+    owlMovie.owlCarousel({
+        loop: false,
+        autoWidth: true,
+        dots: false
+    });
+    owlSeries.owlCarousel({
+        loop: false,
+        autoWidth: true,
+        dots: false
+    });
+
+    $('#movie-next').click(function () {
+        owlMovie.trigger('next.owl.carousel')
+    });
+
+    $('#movie-prev').click(function () {
+        owlMovie.trigger('prev.owl.carousel')
+    });
+    $('#series-next').click(function () {
+        owlSeries.trigger('next.owl.carousel')
+    });
+
+    $('#series-prev').click(function () {
+        owlSeries.trigger('prev.owl.carousel')
+    });
+
+</script>
+</body>
+</html>
