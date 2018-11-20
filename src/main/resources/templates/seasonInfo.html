@@ -159,7 +159,7 @@
                                             </div>
                                         </a>
 
-                                        <div th:class="'row collapse' + ${episode.episodeNumber.equals(episodeToOpen) ? 'show' : ''}" data-parent="#episodeAccordion"
+                                        <div th:class="'row collapse' + ${episode.episodeNumber.equals(episodeToOpen) ? ' show' : ''}" data-parent="#episodeAccordion"
                                              th:id="'collapse' + ${episode.episodeNumber}">
 
                                             <div class="col-4">
