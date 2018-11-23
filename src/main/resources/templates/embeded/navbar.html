@@ -22,7 +22,7 @@
                     <ul class="navbar-nav mr-auto">
                         <li class="nav-item">
                             <form method="get" class="form-inline"
-                                  th:action="${'/' + mode != null ? mode.name() : 'movie' + '/search'}">
+                                  th:action="${'/' + (mode != null ? mode.name() : 'movie' ) + '/search'}">
 
                                 <div class="form-group ml-auto" style="margin-right: 10px; margin-bottom:0">
                                     <div class="icon-addon addon-md">
