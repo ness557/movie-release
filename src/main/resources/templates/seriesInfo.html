@@ -168,7 +168,7 @@
                         <b th:text="#{lang.genres} + ':'"></b>
                         <th:block th:each="genre: ${series.genres}">
                             <a class="genre-link" th:text="${#strings.capitalize(genre.name)}"
-                               th:href="${'/series/discover?genreWrappers=' + genre.id}"></a>
+                               th:href="${'/series/discover?genres=' + genre.id}"></a>
                         </th:block>
                     </div>
                 </div>

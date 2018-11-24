@@ -175,7 +175,7 @@
                         <b th:text="#{lang.genres} + ':'"></b>
                         <th:block th:each="genre: ${film.genreWrappers}">
                             <a class="genre-link" th:text="${#strings.capitalize(genre.name)}"
-                               th:href="${'/movie/discover?genreWrappers=' + genre.id}"></a>
+                               th:href="${'/movie/discover?genres=' + genre.id}"></a>
                         </th:block>
                     </div>
                 </div>
