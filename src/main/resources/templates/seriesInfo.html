@@ -266,6 +266,7 @@
                             </div>
 
                             <div class="season shadow p-2 mb-3 mr-2 ml-2 rounded text-dark"
+                                 th:if="${series.lastEpisodeToAir != null}"
                                  th:style="${subscribed && lastEpisodeWatched ? 'filter: grayscale(70%); opacity: 0.7;' : ''} + 'display: inline-block;'">
 
                                 <a class="text-dark"

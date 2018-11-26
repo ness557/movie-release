@@ -109,9 +109,13 @@ public class TVSeriesController {
                 model.addAttribute("seasonWatched", seasonWrapper.getEpisodes().stream().noneMatch(e -> e.getEpisodeNumber() > currentEpisodeNum));
             }
 
-            model.addAttribute("lastEpisodeWatched", lastEpisodeToAir.getSeasonNumber() < currentSeasonNum ||
-                    (lastEpisodeToAir.getSeasonNumber().equals(currentSeasonNum) && lastEpisodeToAir.getEpisodeNumber() <= currentEpisodeNum));
+            model.addAttribute("lastEpisodeWatched", false);
 
+            if(lastEpisodeToAir != null) {
+                model.addAttribute("lastEpisodeWatched",
+                        lastEpisodeToAir.getSeasonNumber() < currentSeasonNum ||
+                                (lastEpisodeToAir.getSeasonNumber().equals(currentSeasonNum) && lastEpisodeToAir.getEpisodeNumber() <= currentEpisodeNum));
+            }
 
             Long minutes = dbSeriesService.spentTotalMinutesToSeries(tmdbId, user, userTVSeries.getCurrentSeason(), userTVSeries.getCurrentEpisode());
             if (minutes > 60) {
