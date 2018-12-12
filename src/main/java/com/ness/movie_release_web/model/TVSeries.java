@@ -43,8 +43,4 @@ public class TVSeries {
 
     @Enumerated
     private Status status;
-
-    public TVSeries(Long id){
-        this.id = id;
-    }
 }

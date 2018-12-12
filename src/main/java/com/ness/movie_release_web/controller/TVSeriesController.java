@@ -27,10 +27,12 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.security.Principal;
-import java.util.*;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 
-import static com.ness.movie_release_web.model.wrapper.tmdb.Language.*;
 import static java.util.Collections.emptyList;
 import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toMap;
@@ -188,11 +190,6 @@ public class TVSeriesController {
 
         String login = principal.getName();
         User user = userService.findByLogin(login);
-
-        Optional<TVDetailsWrapper> optionalTvDetails = tmdbSeriesService.getTVDetails(tmdbId, en);
-
-        if (!optionalTvDetails.isPresent())
-            throw new ResponseStatusException(HttpStatus.CONFLICT);
 
         dbSeriesService.subscribeUser(tmdbId, user);
 
