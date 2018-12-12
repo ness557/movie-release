@@ -252,6 +252,7 @@ public class TVSeriesController {
                           @RequestParam(value = "statuses", required = false) List<Status> tvStatuses,
                           @RequestParam(value = "sortBy", required = false) TVSeriesSortBy sortBy,
                           @RequestParam(value = "watch_status", required = false) List<WatchStatus> watchStatuses,
+                          @RequestParam(value = "as_list", required = false) Boolean asList,
                           Principal principal,
                           Model model) {
 
@@ -264,6 +265,10 @@ public class TVSeriesController {
 
         if (watchStatuses == null) {
             watchStatuses = emptyList();
+        }
+
+        if(asList == null){
+            asList = false;
         }
 
         User user = userService.findByLogin(principal.getName());
@@ -285,14 +290,24 @@ public class TVSeriesController {
         model.addAttribute("language", language);
         model.addAttribute("mode", mode);
 
-        Page<UserTVSeries> userTVSeries = dbSeriesService.getByUserAndTVStatusesAndWatchStatusesWithOrderAndPages(tvStatuses, watchStatuses, sortBy, user, page, 10);
+        int size = asList ? 30 : 10;
+
+        Page<UserTVSeries> userTVSeries = dbSeriesService.getByUserAndTVStatusesAndWatchStatusesWithOrderAndPages(tvStatuses, watchStatuses, sortBy, user, page, size);
         List<UserTVSeries> series = userTVSeries.getContent();
 
-        List<TVDetailsWrapper> subscriptions = series.stream()
-                .map(f -> tmdbSeriesService.getTVDetails(f.getId().getTvSeriesId().intValue(), language))
-                .filter(Optional::isPresent)
-                .map(Optional::get)
-                .collect(toList());
+        List<TVDetailsWrapper> subscriptions = null;
+
+        if (asList){
+            subscriptions = series.stream()
+                    .map(UserTVSeries::getTvSeries)
+                    .map(s -> TVDetailsWrapper.of(s, language)).collect(toList());
+        } else {
+            subscriptions = series.stream()
+                    .map(f -> tmdbSeriesService.getTVDetails(f.getId().getTvSeriesId().intValue(), language))
+                    .filter(Optional::isPresent)
+                    .map(Optional::get)
+                    .collect(toList());
+        }
 
         model.addAttribute("statuses", tvStatuses);
         model.addAttribute("watch_statuses", watchStatuses);
@@ -303,6 +318,8 @@ public class TVSeriesController {
         model.addAttribute("series", subscriptions)
                 .addAttribute("page", page)
                 .addAttribute("pageCount", userTVSeries.getTotalPages());
+
+        model.addAttribute("asList", asList);
 
         return "seriesSubscriptions";
     }

@@ -2,7 +2,9 @@ package com.ness.movie_release_web.model.wrapper.tmdb.movie.details;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.ness.movie_release_web.model.Film;
 import com.ness.movie_release_web.model.wrapper.tmdb.GenreWrapper;
+import com.ness.movie_release_web.model.wrapper.tmdb.Language;
 import com.ness.movie_release_web.model.wrapper.tmdb.ProductionCompanyWrapper;
 import com.ness.movie_release_web.model.wrapper.tmdb.Videos;
 import com.ness.movie_release_web.model.wrapper.tmdb.credits.PeopleCreditsWrapper;
@@ -110,4 +112,22 @@ public class MovieDetailsWrapper {
     private Videos videos;
 
     private List<ReleaseDateWrapper> releaseDateWrappers = new ArrayList<>(); //used
+
+    public static MovieDetailsWrapper of(Film film, Language language){
+        MovieDetailsWrapper wrapper = new MovieDetailsWrapper();
+        wrapper.setId(film.getId().intValue());
+        switch (language) {
+            case ru:
+                wrapper.setTitle(film.getNameRu());
+                break;
+            case en:
+                wrapper.setTitle(film.getNameRu());
+                break;
+            default:
+                wrapper.setTitle(film.getNameRu());
+                break;
+        }
+        wrapper.setReleaseDate(film.getReleaseDate());
+        return wrapper;
+    }
 }

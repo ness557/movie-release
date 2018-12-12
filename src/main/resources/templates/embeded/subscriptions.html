@@ -81,3 +81,130 @@
     }
 
 </script>
+
+<div class="container-fluid" id="content" th:fragment="series_subscriptions">
+    <div class="row">
+        <th:block th:each="serie, iStat : ${series}">
+
+            <th:block th:if="${iStat.index % 5 == 0}">
+                <div class="offset-xl-1 offset"></div>
+            </th:block>
+            <th:block th:if="${iStat.index > 0 && iStat.index % 5 == 0}">
+                <div class="offset-xl-1 offset"></div>
+            </th:block>
+
+            <div class="col-xs-6 col-sm-5 col-md-4 col-lg-3 col-xl-2 info"
+                 style="text-align: center; font-weight: bold; padding-bottom: 40px; padding-top: 40px;">
+                <div class="row" style="padding-bottom: 6px; height: 320px">
+                    <div class="col-xl-12">
+                        <a th:href="'/series/' + ${serie.id}">
+                            <img class="rounded" th:src="${serie.posterPath}"
+                                 style="height: 300px; max-width: 260px">
+                        </a>
+                    </div>
+                </div>
+                <div class="row" style="min-height: 70px;padding-bottom: 12px">
+                    <div class="col-xl-12">
+                        <a th:href="'/series/' + ${serie.id}"
+                           style="color: #555555; text-decoration: none;">
+                            <span th:text="${serie.name} + ' (' + ${serie.firstAirDate.getYear()} + ')'"/>
+                        </a>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-xl-12">
+
+                        <form action="/series/unSubscribe" method="post" class="unSubsForm">
+                            <input type="hidden" name="tmdbId" th:value="${serie.id}"/>
+                            <input type="submit" th:value="#{lang.unsubscribe}" class="btn btn-danger"/>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </th:block>
+    </div>
+</div>
+
+<div class="container-fluid" id="content" th:fragment="series_subscriptions_list">
+    <th:block th:each="serie, iStat : ${series}">
+        <div class="row">
+
+            <div class="col-12 info"
+                 style="font-weight: bold; padding-left: 100px;">
+
+                <a th:href="'/series/' + ${serie.id}"
+                   style="color: #555555; text-decoration: none;">
+                    <span th:text="${serie.name} + ' (' + ${serie.firstAirDate.getYear()} + ')'"/>
+                </a>
+
+                <form action="/series/unSubscribe" method="post" class="unSubsForm">
+                    <input type="hidden" name="tmdbId" th:value="${serie.id}"/>
+                    <input type="submit" th:value="#{lang.unsubscribe}" class="btn btn-danger"/>
+                </form>
+            </div>
+        </div>
+    </th:block>
+</div>
+
+<div class="container-fluid" id="content" th:fragment="movie_subscriptions">
+    <div class="row">
+        <th:block th:each="film, iStat : ${films}">
+
+            <th:block th:if="${iStat.index % 5 == 0}">
+                <div class="offset-xl-1"></div>
+            </th:block>
+            <th:block th:if="${iStat.index > 0 && iStat.index % 5 == 0}">
+                <div class="offset-xl-1"></div>
+            </th:block>
+
+            <div class="col-xs-6 col-sm-5 col-md-4 col-lg-3 col-xl-2 info"
+                 style="text-align: center; font-weight: bold; padding-bottom: 40px; padding-top: 40px;">
+                <div class="row" style="padding-bottom: 6px; height: 320px">
+                    <div class="col-xl-12">
+                        <a th:href="'/movie/' + ${film.id}">
+                            <img class="rounded" th:src="${film.posterPath}"
+                                 style="height: 300px; max-width: 260px">
+                        </a>
+                    </div>
+                </div>
+                <div class="row" style="min-height: 70px;padding-bottom: 12px">
+                    <div class="col-xl-12">
+                        <a th:href="'/movie/' + ${film.id}"
+                           style="color: #555555; text-decoration: none;">
+                            <span th:text="${film.title} + ' (' + ${film.releaseDate.getYear()} + ')'"/>
+                        </a>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-xl-12">
+
+                        <form action="/movie/unSubscribe" method="post" class="unSubsForm">
+                            <input type="hidden" name="tmdbId" th:value="${film.id}"/>
+                            <input type="submit" th:value="#{lang.unsubscribe}" class="btn btn-danger"/>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </th:block>
+    </div>
+</div>
+
+<div class="container-fluid" id="content" th:fragment="movie_subscriptions_list">
+    <th:block th:each="film, iStat : ${films}">
+        <div class="row">
+
+            <div class="col-12 info"
+                 style="font-weight: bold; padding-left: 100px;">
+                <a th:href="'/movie/' + ${film.id}"
+                   style="color: #555555; text-decoration: none;">
+                    <span th:text="${film.title} + ' (' + ${film.releaseDate.getYear()} + ')'"/>
+                </a>
+
+                <form action="/movie/unSubscribe" method="post" class="unSubsForm">
+                    <input type="hidden" name="tmdbId" th:value="${film.id}"/>
+                    <input type="submit" th:value="#{lang.unsubscribe}" class="btn btn-danger"/>
+                </form>
+            </div>
+        </div>
+    </th:block>
+</div>

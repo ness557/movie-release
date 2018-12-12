@@ -182,6 +182,7 @@ public class MovieController {
     public String getSubs(@RequestParam(value = "page", required = false) Integer page,
                           @RequestParam(value = "statuses", required = false) List<Status> statuses,
                           @RequestParam(value = "sortBy", required = false) MovieSortBy sortBy,
+                          @RequestParam(value = "as_list", required = false) Boolean asList,
                           Principal principal,
                           Model model) {
 
@@ -190,6 +191,10 @@ public class MovieController {
 
         if (statuses == null) {
             statuses = emptyList();
+        }
+
+        if(asList == null){
+            asList = false;
         }
 
         User user = userService.findByLogin(principal.getName());
@@ -211,15 +216,22 @@ public class MovieController {
         model.addAttribute("language", language);
         model.addAttribute("mode", mode);
 
-        Page<Film> filmPage = filmService.getByUserAndStatusWithOrderbyAndPages(statuses, sortBy, user, page, 10);
+        int size = asList ? 30 : 10;
+
+        Page<Film> filmPage = filmService.getByUserAndStatusWithOrderbyAndPages(statuses, sortBy, user, page, size);
         List<Film> films = filmPage.getContent();
 
-        List<MovieDetailsWrapper> tmdbFilms =
-                films.stream()
-                        .map(f -> movieService.getMovieDetails(f.getId().intValue(), language))
-                        .filter(Optional::isPresent)
-                        .map(Optional::get)
-                        .collect(toList());
+        List<MovieDetailsWrapper> tmdbFilms;
+
+        if (asList) {
+            tmdbFilms = films.stream().map(f -> MovieDetailsWrapper.of(f, language)).collect(toList());
+        } else {
+            tmdbFilms = films.stream()
+                            .map(f -> movieService.getMovieDetails(f.getId().intValue(), language))
+                            .filter(Optional::isPresent)
+                            .map(Optional::get)
+                            .collect(toList());
+        }
 
         model.addAttribute("statuses", statuses);
         model.addAttribute("sortBy", sortBy);
@@ -229,6 +241,9 @@ public class MovieController {
         model.addAttribute("films", tmdbFilms)
                 .addAttribute("page", page)
                 .addAttribute("pageCount", filmPage.getTotalPages());
+
+        model.addAttribute("asList", asList);
+
         return "movieSubscriptions";
     }
 
