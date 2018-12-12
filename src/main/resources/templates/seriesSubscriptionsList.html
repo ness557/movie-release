@@ -1,16 +1,16 @@
 <!DOCTYPE HTML>
 <html xmlns:th="http://www.thymeleaf.org" xmlns:sh="http://www.thymeleaf.org">
 <head th:replace="embeded/header.html :: header(~{::title})">
-    <title th:text="#{lang.title.subs.movies}"></title>
+    <title th:text="#{lang.title.subs.series}"></title>
 </head>
 <body>
 <nav th:insert="embeded/navbar.html"></nav>
 
-<script th:inline="javascript" th:replace="embeded/subscriptions.html :: movie_subscribe"></script>
+<script th:inline="javascript" th:replace="embeded/subscriptions.html :: series_subscribe"></script>
 
 <div class="container-fluid">
     <div class="alert alert-warning alert-dismissible fade show" role="alert" th:if="${not botInitialized}"
-         style="background-color: #F6EAC3;">
+         style="background-color: #F6EAC3; z-index: 999999;margin-bottom: 0">
         <p style="font-size: 18px; font-weight: normal; margin-bottom: 0; color: #A77C43;">
             <span th:text="#{lang.tg_meaasge.please}"></span>
             <strong>
@@ -25,10 +25,9 @@
         </button>
     </div>
 
-
     <div id="collapse-form">
         <div id="search-bar" style="background-color: #F9F9F9; height: 150%;">
-            <form action="/movie/subscriptions" method="get" style="height: 100%;">
+            <form action="/series/subscriptions" method="get" style="height: 100%;">
 
                 <div class="row"
                      style="font-weight: bold;font-family: 'Roboto', sans-serif;font-size: 18px;padding: 10px 20px;">
@@ -44,8 +43,7 @@
                     <div id="collapseFilter" style="padding: 15px 20px;">
 
                         <th:block
-                                th:each="status : ${T(com.ness.movie_release_web.model.wrapper.tmdb.movie.details.Status).values()}"
-                                th:if="${status.ordinal() != 0}">
+                                th:each="status : ${T(com.ness.movie_release_web.model.wrapper.tmdb.tvSeries.details.Status).values()}">
                             <div class="row">
                                 <div class="col-1">
                                     <input type="checkbox" class="option-input" th:id="${status.name()}"
@@ -61,6 +59,32 @@
                         </th:block>
                     </div>
 
+
+                    <div class="row"
+                         style="font-weight: normal;font-family: 'Roboto', sans-serif;font-size: 16px;padding: 15px 20px 5px 20px">
+                        <div class="col"><label th:text="#{lang.watch_status}"></label></div>
+                    </div>
+
+                    <div id="collapseFilter2" style="padding: 15px 20px;">
+
+                        <th:block
+                                th:each="status : ${T(com.ness.movie_release_web.model.wrapper.tmdb.tvSeries.WatchStatus).values()}">
+                            <div class="row">
+                                <div class="col-1">
+                                    <input type="checkbox" class="option-input" name="watch_status" th:value="${status}"
+                                           th:id="${status.name()}"
+                                           th:checked="${watch_statuses != null && watch_statuses.contains(status)}">
+                                </div>
+
+                                <div class="col-11"
+                                     style="font-family: 'Roboto', sans-serif;font-size: 16px;">
+                                    <label th:for="${status.name()}"
+                                           th:text="#{'lang.watchstatus.' + ${status}}"></label>
+                                </div>
+                            </div>
+                        </th:block>
+                    </div>
+
                     <div class="row"
                          style="font-weight: normal;font-family: 'Roboto', sans-serif;font-size: 16px;padding: 15px 20px 5px 20px">
                         <div class="col"><label th:text="#{lang.sort_by} + ':'"></label></div>
@@ -70,7 +94,7 @@
                         <div class="col col-centered">
                             <div id="selectSort" style="padding: 15px 20px;">
                                 <select th:name="sortBy" class="form-control selectpicker">
-                                    <option th:each="sort : ${T(com.ness.movie_release_web.repository.MovieSortBy).values()}"
+                                    <option th:each="sort : ${T(com.ness.movie_release_web.repository.TVSeriesSortBy).values()}"
                                             th:value="${sort}"
                                             th:text="#{'lang.sort.' + ${sort.name()}}"
                                             th:selected="${sort.equals(sortBy)}">
@@ -99,55 +123,33 @@
             <span id="collapse-button-text" th:text="#{lang.search_criteria_button_show}"></span>
         </a>
     </div>
-
 </div>
+
 
 <div class="container-fluid" id="content">
-    <div class="row">
-        <th:block th:each="film, iStat : ${films}">
+    <th:block th:each="serie, iStat : ${series}">
+        <div class="row">
 
-            <th:block th:if="${iStat.index % 5 == 0}">
-                <div class="offset-xl-1"></div>
-            </th:block>
-            <th:block th:if="${iStat.index > 0 && iStat.index % 5 == 0}">
-                <div class="offset-xl-1"></div>
-            </th:block>
+            <div class="col-12 info"
+                 style="font-weight: bold; padding-left: 100px;">
 
-            <div class="col-xs-6 col-sm-5 col-md-4 col-lg-3 col-xl-2"
-                 style="text-align: center; font-weight: bold; padding-bottom: 40px; padding-top: 40px;">
-                <div class="row" style="padding-bottom: 6px; height: 320px">
-                    <div class="col-xl-12">
-                        <a th:href="'/movie/' + ${film.id}">
-                            <img class="rounded" th:src="${film.posterPath}"
-                                 style="height: 300px; max-width: 260px">
-                        </a>
-                    </div>
-                </div>
-                <div class="row" style="min-height: 70px;padding-bottom: 12px">
-                    <div class="col-xl-12">
-                        <a th:href="'/movie/' + ${film.id}"
-                           style="color: #555555; text-decoration: none;">
-                            <span th:text="${film.title} + ' (' + ${film.releaseDate.getYear()} + ')'"/>
-                        </a>
-                    </div>
-                </div>
-                <div class="row">
-                    <div class="col-xl-12">
+                <a th:href="'/series/' + ${serie.id}"
+                   style="color: #555555; text-decoration: none;">
+                    <span th:text="${serie.name} + ' (' + ${serie.firstAirDate.getYear()} + ')'"/>
+                </a>
 
-                        <form action="/movie/unSubscribe" method="post" class="unSubsForm">
-                            <input type="hidden" name="tmdbId" th:value="${film.id}"/>
-                            <input type="submit" th:value="#{lang.unsubscribe}" class="btn btn-danger"/>
-                        </form>
-                    </div>
-                </div>
+                <form action="/series/unSubscribe" method="post" class="unSubsForm">
+                    <input type="hidden" name="tmdbId" th:value="${serie.id}"/>
+                    <input type="submit" th:value="#{lang.unsubscribe}" class="btn btn-danger"/>
+                </form>
             </div>
-        </th:block>
-    </div>
+        </div>
+    </th:block>
 </div>
 
-<div class="container" th:if="${films.isEmpty()}" style="height: 35%; color: #C9C9C9; font-size: 20px">
+<div th:if="${series.isEmpty()}" style="height: 35%; color: #C9C9C9; font-size: 20px">
     <div class="row" style="height: 100%;">
-        <div class="col-xl-12" style="text-align: center; position: relative">
+        <div class="col-xl-12" style="text-align: center;">
             <span style="bottom: 0; left: 0; right: 0" th:text="#{lang.subs.no_subs}"></span>
             <br>
             <span style="bottom: 0; left: 0; right: 0" th:text="#{lang.subs.to_add}"></span>
@@ -195,7 +197,6 @@
         selectAllText: [[#{lang.select_all}]]
     });
 
-    $(".subsForm").submit(subscribe);
     $(".unSubsForm").submit(unsubscribe);
 </script>
 </body>
