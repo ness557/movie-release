@@ -17,7 +17,7 @@ public abstract class Cacheable<T> {
     }
 
     protected void putToCache(Integer id, T object, Language language){
-        Map<Language, T> languageCompanyMap = cache.computeIfAbsent(id, k -> new HashMap<>());
-        languageCompanyMap.put(language, object);
+        Map<Language, T> languageMap = cache.computeIfAbsent(id, k -> new HashMap<>());
+        languageMap.put(language, object);
     }
 }

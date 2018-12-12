@@ -64,10 +64,6 @@ public class TVSeriesController {
     @Autowired
     private NetworkService networkService;
 
-    @Autowired
-    private PeopleService peopleService;
-
-
     @GetMapping("/{tmdbId}")
     public String getFilm(@PathVariable("tmdbId") Integer tmdbId,
                           Principal principal,
