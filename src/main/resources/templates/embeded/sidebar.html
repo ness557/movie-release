@@ -1,3 +1,12 @@
+<script th:inline="javascript" th:fragment="selectpicker_js">
+
+    $('.selectpicker').selectpicker({
+        noneSelectedText: [[#{lang.none_selected_text}]],
+        noneResultsText: [[#{lang.none_results_text}]],
+        selectAllText: [[#{lang.select_all}]]
+    });
+</script>
+
 <script th:inline="javascript" th:fragment="sidebar_js">
 
     var my_switch = true;
@@ -23,3 +32,4 @@
     });
 
 </script>
+

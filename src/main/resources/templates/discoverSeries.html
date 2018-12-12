@@ -228,6 +228,7 @@
 <footer th:insert="embeded/footer.html"></footer>
 
 <script th:inline="javascript" th:replace="embeded/sidebar.html :: sidebar_js"></script>
+<script th:inline="javascript" th:replace="embeded/sidebar.html :: selectpicker_js"></script>
 
 <script th:inline="javascript">
 
@@ -279,11 +280,6 @@
             }
         });
 
-        $('.selectpicker').selectpicker({
-            noneSelectedText: [[#{lang.none_selected_text}]],
-            noneResultsText: [[#{lang.none_results_text}]],
-            selectAllText: [[#{lang.select_all}]]
-        });
         $('#companyselectpicker').selectpicker().ajaxSelectPicker({
 
             ajax: {
