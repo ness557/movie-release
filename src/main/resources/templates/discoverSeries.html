@@ -226,31 +226,12 @@
 
 </div>
 <footer th:insert="embeded/footer.html"></footer>
+
+<script th:inline="javascript" th:replace="embeded/sidebar.html :: sidebar_js"></script>
+
 <script th:inline="javascript">
 
     $(document).ready(function () {
-
-        var my_switch = true;
-        $('#collapse-button').click(function (e) {
-            e.preventDefault();
-            //move search bar
-            $('#search-bar').toggleClass('toggled');
-            //resize content
-            $('#content').toggleClass('toggled');
-            //change bootstrap grid sizes
-            $(".info").toggleClass("col-xs-6 col-sm-5 col-md-4 col-lg-3 col-xl-2");
-            $(".info").toggleClass("col-xs-7 col-sm-6 col-md-5 col-lg-4 col-xl-3");
-            $(".offset").toggleClass("offset-xl-1");
-            //move sidebar button
-            $('#sidebar-button').toggleClass('toggled');
-            //change sidebar button text
-            $('#collapse-button-icon').toggleClass('fa-angle-right fa-angle-left');
-            if (my_switch)
-                $('#collapse-button-text').text([[#{lang.search_criteria_button_hide}]]);
-            else
-                $('#collapse-button-text').text([[#{lang.search_criteria_button_show}]]);
-            my_switch = !my_switch;
-        });
 
         $('#slider').slider({
             min: 0,
