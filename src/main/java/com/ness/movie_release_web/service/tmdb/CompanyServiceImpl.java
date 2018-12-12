@@ -12,14 +12,12 @@ import org.springframework.web.client.HttpStatusCodeException;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 import static java.lang.Thread.sleep;
 
 @Service
-public class CompanyServiceImpl implements CompanyService {
+public class CompanyServiceImpl extends Cacheable<ProductionCompanyWrapper> implements CompanyService {
 
     private RestTemplate restTemplate = new RestTemplate();
     private Logger logger = LoggerFactory.getLogger(this.getClass());
@@ -41,6 +39,12 @@ public class CompanyServiceImpl implements CompanyService {
 
     @Override
     public Optional<ProductionCompanyWrapper> getCompany(Integer id, Language language) {
+
+        Optional<ProductionCompanyWrapper> fromCache = getFromCache(id, language);
+        if (fromCache.isPresent()) {
+            return fromCache;
+        }
+
         UriComponentsBuilder movieBuilder = UriComponentsBuilder.fromHttpUrl(url + "company/")
                 .path(id.toString())
                 .queryParam("api_key", apikey)
@@ -64,6 +68,8 @@ public class CompanyServiceImpl implements CompanyService {
             }
             return Optional.empty();
         }
+
+        putToCache(id, response.getBody(), language);
 
         return Optional.ofNullable(response.getBody());
     }

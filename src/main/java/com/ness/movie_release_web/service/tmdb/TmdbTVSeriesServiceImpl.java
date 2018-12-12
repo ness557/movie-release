@@ -19,7 +19,7 @@ import static java.lang.Thread.sleep;
 
 @Service
 @Slf4j
-public class TmdbTVSeriesServiceImpl implements TmdbTVSeriesService {
+public class TmdbTVSeriesServiceImpl extends Cacheable<TVDetailsWrapper> implements TmdbTVSeriesService {
 
     private RestTemplate restTemplate = new RestTemplate();
 
@@ -31,6 +31,12 @@ public class TmdbTVSeriesServiceImpl implements TmdbTVSeriesService {
 
     @Override
     public Optional<TVDetailsWrapper> getTVDetails(Integer tmdbId, Language language) {
+
+        Optional<TVDetailsWrapper> fromCache = getFromCache(tmdbId, language);
+        if (fromCache.isPresent()) {
+            return fromCache;
+        }
+
         UriComponentsBuilder UrlBuilder = UriComponentsBuilder.fromHttpUrl(url + "tv/")
                 .path(tmdbId.toString())
                 .queryParam("api_key", apikey)
@@ -56,6 +62,8 @@ public class TmdbTVSeriesServiceImpl implements TmdbTVSeriesService {
             }
             return Optional.empty();
         }
+
+        putToCache(tmdbId, response.getBody(), language);
 
         return Optional.ofNullable(response.getBody());
     }
