@@ -14,7 +14,7 @@ public interface FilmService {
     void save(Film film);
 
     Film get(Long id);
-    Optional<Film> findByTmdbId(Integer tmdbId);
+    Optional<Film> findById(Long tmdbId);
 
     void delete(Film film);
     void delete(List<Film> films);

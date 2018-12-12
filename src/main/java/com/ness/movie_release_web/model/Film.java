@@ -17,11 +17,7 @@ import java.util.List;
 public class Film {
 
     @Id
-    @GeneratedValue
     private Long id;
-
-    @Column(name = "tmdb_id")
-    private Integer tmdbId;
 
     @Column(name = "name_en")
     private String nameEn;

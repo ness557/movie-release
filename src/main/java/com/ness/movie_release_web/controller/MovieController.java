@@ -104,10 +104,10 @@ public class MovieController {
 
         MovieDetailsWrapper movieDetailsWrapper = optionalMovieDetails.get();
 
-        Optional<Film> filmOpt = filmService.findByTmdbId(tmdbId);
+        Optional<Film> filmOpt = filmService.findById(tmdbId.longValue());
 
-        Film film = filmOpt.orElse(new Film(null,
-                movieDetailsWrapper.getId(),
+        Film film = filmOpt.orElse(new Film(
+                movieDetailsWrapper.getId().longValue(),
                 movieDetailsWrapper.getTitle(),
                 "",
                 movieDetailsWrapper.getStatus(),
@@ -123,8 +123,7 @@ public class MovieController {
 
     @PostMapping("/unSubscribe")
     public ResponseEntity unSubscribe(@RequestParam(value = "tmdbId") Integer tmdbId,
-                                      Principal principal,
-                                      HttpServletRequest request) {
+                                      Principal principal) {
 
         String login = principal.getName();
 
@@ -133,10 +132,7 @@ public class MovieController {
         Optional<Film> film = filmService.getByTmdbIdAndUser(tmdbId, user);
         film.ifPresent(f -> {
             f.getUsers().remove(user);
-            if (f.getUsers().isEmpty())
-                filmService.delete(f);
-            else
-                filmService.save(f);
+            filmService.save(f);
         });
 
         return ResponseEntity.ok().build();
@@ -220,7 +216,7 @@ public class MovieController {
 
         List<MovieDetailsWrapper> tmdbFilms =
                 films.stream()
-                        .map(f -> movieService.getMovieDetails(f.getTmdbId(), language))
+                        .map(f -> movieService.getMovieDetails(f.getId().intValue(), language))
                         .filter(Optional::isPresent)
                         .map(Optional::get)
                         .collect(toList());
