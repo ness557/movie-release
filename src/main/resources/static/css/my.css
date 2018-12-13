@@ -8,7 +8,7 @@ html, body {
 
 body {
     overflow-x: hidden;
-    padding-top: 70px;
+    padding-top: 40px;
 }
 
 .bg-light-my {
@@ -164,4 +164,16 @@ body {
 .carousel-control-prev, .carousel-control-next {
     top: 47%;
     bottom: 47%;
+}
+
+.subslist:hover{
+    background-color: #F3F3F3;
+}
+
+.hiden {
+    display: none;
+}
+
+.hiden:hover {
+    display: block;
 }
