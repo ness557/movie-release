@@ -8,7 +8,7 @@
 
 <script th:inline="javascript" th:replace="embeded/subscriptions.html :: movie_subscribe"></script>
 
-<div class="container-fluid">
+<div class="container-fluid" style="padding: 10px">
     <div class="alert alert-warning alert-dismissible fade show" role="alert" th:if="${not botInitialized}"
          style="background-color: #F6EAC3;">
         <p style="font-size: 18px; font-weight: normal; margin-bottom: 0; color: #A77C43;">
@@ -24,7 +24,6 @@
             <span aria-hidden="true">&times;</span>
         </button>
     </div>
-
 
     <div id="collapse-form">
         <div id="search-bar" style="background-color: #F9F9F9; height: 150%;">
