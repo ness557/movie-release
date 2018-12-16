@@ -12,8 +12,7 @@ import java.util.Optional;
 @Repository
 @Transactional
 public interface FilmRepository extends JpaRepository<Film, Long>, JpaSpecificationExecutor<Film> {
-    Optional<Film> findByTmdbIdAndUsers(Integer tmdbId, User user);
-    boolean existsByTmdbIdAndUsers(Integer tmdbId, User user);
+    Optional<Film> findByIdAndUsers(Long id, User user);
+    boolean existsByIdAndUsers(Long id, User user);
 
-    Optional<Film> findByTmdbId(Integer tmdbId);
 }

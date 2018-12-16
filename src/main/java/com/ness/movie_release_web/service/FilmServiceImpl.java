@@ -33,8 +33,8 @@ public class FilmServiceImpl implements FilmService {
     }
 
     @Override
-    public Optional<Film> findByTmdbId(Integer tmdbId) {
-        return repository.findByTmdbId(tmdbId);
+    public Optional<Film> findById(Long tmdbId) {
+        return repository.findById(tmdbId);
     }
 
     @Override
@@ -54,12 +54,12 @@ public class FilmServiceImpl implements FilmService {
 
     @Override
     public Optional<Film> getByTmdbIdAndUser(Integer tmdbId, User user) {
-        return repository.findByTmdbIdAndUsers(tmdbId, user);
+        return repository.findByIdAndUsers(tmdbId.longValue(), user);
     }
 
     @Override
     public boolean isExistsByTmdbIdAndUser(Integer tmdbId, User user) {
-        return repository.existsByTmdbIdAndUsers(tmdbId, user);
+        return repository.existsByIdAndUsers(tmdbId.longValue(), user);
     }
 
     @Override

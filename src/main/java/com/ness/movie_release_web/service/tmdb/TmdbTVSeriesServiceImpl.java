@@ -13,15 +13,20 @@ import org.springframework.web.client.HttpStatusCodeException;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Optional;
+import java.util.WeakHashMap;
 
 import static java.lang.Thread.sleep;
 
 @Service
 @Slf4j
-public class TmdbTVSeriesServiceImpl implements TmdbTVSeriesService {
+public class TmdbTVSeriesServiceImpl extends Cacheable<TVDetailsWrapper> implements TmdbTVSeriesService {
 
     private RestTemplate restTemplate = new RestTemplate();
+
+    private Map<Integer, Map<Integer, Map<Language, SeasonWrapper>>> seasonCache = new WeakHashMap<>();
 
     @Value("${tmdbapi.apikey}")
     private String apikey;
@@ -31,6 +36,12 @@ public class TmdbTVSeriesServiceImpl implements TmdbTVSeriesService {
 
     @Override
     public Optional<TVDetailsWrapper> getTVDetails(Integer tmdbId, Language language) {
+
+        Optional<TVDetailsWrapper> fromCache = getFromCache(tmdbId, language);
+        if (fromCache.isPresent()) {
+            return fromCache;
+        }
+
         UriComponentsBuilder UrlBuilder = UriComponentsBuilder.fromHttpUrl(url + "tv/")
                 .path(tmdbId.toString())
                 .queryParam("api_key", apikey)
@@ -57,11 +68,19 @@ public class TmdbTVSeriesServiceImpl implements TmdbTVSeriesService {
             return Optional.empty();
         }
 
+        putToCache(tmdbId, response.getBody(), language);
+
         return Optional.ofNullable(response.getBody());
     }
 
     @Override
     public Optional<SeasonWrapper> getSeasonDetails(Integer tmdbId, Integer season, Language language) {
+
+        Optional<SeasonWrapper> seasonFromCache = getSeasonFromCache(tmdbId, season, language);
+        if (seasonFromCache.isPresent()) {
+            return seasonFromCache;
+        }
+
         UriComponentsBuilder UrlBuilder = UriComponentsBuilder.fromHttpUrl(url + "tv/")
                 .path(tmdbId.toString())
                 .path("/season/")
@@ -88,6 +107,9 @@ public class TmdbTVSeriesServiceImpl implements TmdbTVSeriesService {
             }
             return Optional.empty();
         }
+
+        putSeasonToCache(tmdbId, response.getBody(), language);
+
         return Optional.ofNullable(response.getBody());
     }
 
@@ -155,5 +177,18 @@ public class TmdbTVSeriesServiceImpl implements TmdbTVSeriesService {
             return Optional.empty();
         }
         return Optional.ofNullable(response.getBody());
+    }
+
+
+    private Optional<SeasonWrapper> getSeasonFromCache(Integer id, Integer seasonNum, Language language){
+        Map<Integer, Map<Language, SeasonWrapper>> seriesMap = seasonCache.computeIfAbsent(id, k -> new HashMap<>());
+        Map<Language, SeasonWrapper> languageSeasonMap = seriesMap.computeIfAbsent(seasonNum, k -> new WeakHashMap<>());
+        return Optional.ofNullable(languageSeasonMap.get(language));
+    }
+
+    private void putSeasonToCache(Integer id, SeasonWrapper object, Language language){
+        Map<Integer, Map<Language, SeasonWrapper>> seriesMap = seasonCache.computeIfAbsent(id, k -> new HashMap<>());
+        Map<Language, SeasonWrapper> languageSeasonMap = seriesMap.computeIfAbsent(object.getSeasonNumber(), k -> new WeakHashMap<>());
+        languageSeasonMap.put(language, object);
     }
 }

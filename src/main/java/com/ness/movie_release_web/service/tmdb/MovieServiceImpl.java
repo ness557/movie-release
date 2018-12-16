@@ -20,7 +20,7 @@ import java.util.Optional;
 import static java.lang.Thread.sleep;
 
 @Service
-public class MovieServiceImpl implements MovieService {
+public class MovieServiceImpl extends Cacheable<MovieDetailsWrapper> implements MovieService {
 
     private RestTemplate restTemplate = new RestTemplate();
     private Logger logger = LoggerFactory.getLogger(this.getClass());
@@ -36,6 +36,11 @@ public class MovieServiceImpl implements MovieService {
 
     @Override
     public Optional<MovieDetailsWrapper> getMovieDetails(Integer tmdbId, Language language) {
+
+        Optional<MovieDetailsWrapper> fromCache = getFromCache(tmdbId, language);
+        if (fromCache.isPresent()) {
+            return fromCache;
+        }
 
         UriComponentsBuilder movieUrlBuilder = UriComponentsBuilder.fromHttpUrl(url + "movie/")
                 .path(tmdbId.toString())
@@ -70,6 +75,8 @@ public class MovieServiceImpl implements MovieService {
             List<ReleaseDateWrapper> releaseDateWrappers = releaseDatesService.getReleaseDates(result.getId());
             result.setReleaseDateWrappers(releaseDateWrappers);
         }
+
+        putToCache(tmdbId, response.getBody(), language);
 
         return Optional.ofNullable(result);
     }

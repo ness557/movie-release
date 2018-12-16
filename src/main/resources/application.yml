@@ -14,9 +14,7 @@ spring:
         dialect: org.hibernate.dialect.PostgreSQLDialect
         temp.use_jdbc_metadata_defaults: false
     hibernate:
-      ddl-auto: update
-  thymeleaf:
-    cache: false
+      ddl-auto: none
 
 tmdbapi:
   url: http://api.themoviedb.org/3/

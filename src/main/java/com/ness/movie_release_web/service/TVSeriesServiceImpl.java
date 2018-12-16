@@ -53,20 +53,33 @@ public class TVSeriesServiceImpl implements TVSeriesService {
     @Override
     public void subscribeUser(Integer tmdbId, User user) {
 
-
         if (userTVSeriesRepository.existsById(UserTVSeriesPK.wrap(user.getId(), tmdbId.longValue()))) {
             throw new ResponseStatusException(HttpStatus.CONFLICT);
         }
 
         Optional<TVDetailsWrapper> tvDetailsOptional = tvSeriesService.getTVDetails(tmdbId, Language.en);
+        Optional<TVDetailsWrapper> tvDetailsOptionalRu = tvSeriesService.getTVDetails(tmdbId, Language.ru);
 
         if (!tvDetailsOptional.isPresent())
             throw new ResponseStatusException(HttpStatus.CONFLICT);
 
+        TVDetailsWrapper tvDetails = tvDetailsOptional.get();
+        TVDetailsWrapper tvDetailsRu = tvDetailsOptionalRu.get();
+
         Optional<TVSeries> one = tvSeriesRepository.findById(tmdbId.longValue());
 
         UserTVSeries userTVSeries = new UserTVSeries();
-        userTVSeries.setTvSeries(one.orElse(new TVSeries(tmdbId.longValue())));
+        userTVSeries.setTvSeries(one.orElse(new TVSeries(
+                tmdbId.longValue(),
+                tvDetails.getName(),
+                tvDetailsRu.getName(),
+                tvDetails.getFirstAirDate(),
+                tvDetails.getLastAirDate(),
+                tvDetails.getVoteAverage(),
+                0,
+                0,
+                tvDetails.getStatus()
+                )));
         userTVSeries.setUser(user);
         userTVSeries.setCurrentSeason(0);
         userTVSeries.setCurrentEpisode(0);
@@ -78,8 +91,13 @@ public class TVSeriesServiceImpl implements TVSeriesService {
     public void setSeasonAndEpisode(Integer tmdbId, User user, Integer seasonNum, Integer episodeNum){
 
         Optional<TVDetailsWrapper> tvDetailsOptional = tvSeriesService.getTVDetails(tmdbId, Language.en);
+        Optional<TVDetailsWrapper> tvDetailsOptionalRu = tvSeriesService.getTVDetails(tmdbId, Language.ru);
+
         if (!tvDetailsOptional.isPresent())
             throw new ResponseStatusException(HttpStatus.CONFLICT);
+
+        TVDetailsWrapper tvDetails = tvDetailsOptional.get();
+        TVDetailsWrapper tvDetailsRu = tvDetailsOptionalRu.get();
 
         Optional<TVSeries> one = tvSeriesRepository.findById(tmdbId.longValue());
 
@@ -87,9 +105,19 @@ public class TVSeriesServiceImpl implements TVSeriesService {
         UserTVSeries userTVSeries = userTVSeriesOptional.orElse(new UserTVSeries(
                 new UserTVSeriesPK(),
                 user,
-                one.orElse(new TVSeries(tmdbId.longValue())),
+                one.orElse(new TVSeries(
+                        tmdbId.longValue(),
+                        tvDetails.getName(),
+                        tvDetailsRu.getName(),
+                        tvDetails.getFirstAirDate(),
+                        tvDetails.getLastAirDate(),
+                        tvDetails.getVoteAverage(),
+                        0,
+                        0,
+                        tvDetails.getStatus())),
                 seasonNum,
                 episodeNum));
+
         userTVSeries.setCurrentSeason(seasonNum);
         userTVSeries.setCurrentEpisode(episodeNum);
         userTVSeriesRepository.save(userTVSeries);

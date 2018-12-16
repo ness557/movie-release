@@ -1,0 +1,344 @@
+<script th:inline="javascript" th:fragment="series_subscribe">
+
+    function unsubscribe(event) {
+
+        var form = $(this);
+        var tmdbId = form.find('input').val();
+
+        $.post('/series/unSubscribe', form.serialize());
+
+        var par = form.parent();
+        par.html(
+            '<form class="subsForm" action="/series/subscribe" method="post" class="subsForm">' +
+            '    <input type="hidden" name="tmdbId" value="' + tmdbId + '"/>' +
+            '    <input type="submit" value="' + [[#{lang.subscribe}]] + '" class="btn btn-warning"/>' +
+            '</form>'
+        );
+        var newForm = par.find(".subsForm");
+        newForm.on('submit', subscribe);
+        return false;
+    }
+
+    function subscribe(event) {
+
+        var form = $(this);
+        var tmdbId = form.find('input').val();
+
+        $.post('/series/subscribe', $(this).serialize());
+
+        var par = form.parent();
+        par.html(
+            '<form class="unSubsForm" action="/series/unSubscribe" method="post" class="unSubsForm">' +
+            '    <input type="hidden" name="tmdbId" value="' + tmdbId + '"/>' +
+            '    <input type="submit" value="' + [[#{lang.unsubscribe}]] + '" class="btn btn-danger"/>' +
+            '</form>'
+        );
+        var newForm = par.find(".unSubsForm");
+        newForm.on('submit', unsubscribe);
+        return false;
+    }
+</script>
+
+
+<script th:inline="javascript" th:fragment="movie_subscribe">
+
+    function unsubscribe(event) {
+
+        var form = $(this);
+        var tmdbId = form.find('input').val();
+
+        $.post('/movie/unSubscribe', form.serialize());
+
+        var par = form.parent();
+        par.html(
+            '<form class="subsForm" action="/movie/subscribe" method="post" class="subsForm">' +
+            '    <input type="hidden" name="tmdbId" value="' + tmdbId + '"/>' +
+            '    <input type="submit" value="' + [[#{lang.subscribe}]] + '" class="btn btn-warning"/>' +
+            '</form>'
+        );
+        var newForm = par.find(".subsForm");
+        newForm.on('submit', subscribe);
+        return false;
+    }
+
+    function subscribe(event) {
+
+        var form = $(this);
+        var tmdbId = form.find('input').val();
+
+        $.post('/movie/subscribe', $(this).serialize());
+
+        var par = form.parent();
+        par.html(
+            '<form class="unSubsForm" action="/movie/unSubscribe" method="post" class="unSubsForm">' +
+            '    <input type="hidden" name="tmdbId" value="' + tmdbId + '"/>' +
+            '    <input type="submit" value="' + [[#{lang.unsubscribe}]] + '" class="btn btn-danger"/>' +
+            '</form>'
+        );
+        var newForm = par.find(".unSubsForm");
+        newForm.on('submit', unsubscribe);
+        return false;
+    }
+
+</script>
+
+<div class="container-fluid" id="content" th:fragment="series_subscriptions">
+    <div class="row"
+         th:with="urlBuilder=${T(org.springframework.web.servlet.support.ServletUriComponentsBuilder)}">
+        <div class="col-11 col-centered">
+            <div class="float-right">
+                <div class="row">
+                    <div class="col">
+                        <!--<a th:href="${urlBuilder.fromCurrentRequest().replaceQueryParam('as_list', false).toUriString()}">-->
+                        <div class="p-2 mb-3 rounded bg-light-my">
+                            <i class="fas fa-th fa-lg" style="color: #7A7A7A;"></i>
+                        </div>
+                        <!--</a>-->
+
+                    </div>
+                    <div class="col">
+                        <a th:href="${urlBuilder.fromCurrentRequest().replaceQueryParam('as_list', true).toUriString()}">
+                            <div class="shadow-sm p-2 mb-3 rounded">
+                                <i class="fas fa-list fa-lg" style="color: #7A7A7A;"></i>
+                            </div>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <th:block th:each="serie, iStat : ${series}">
+
+            <th:block th:if="${iStat.index % 5 == 0}">
+                <div class="offset-xl-1 offset"></div>
+            </th:block>
+            <th:block th:if="${iStat.index > 0 && iStat.index % 5 == 0}">
+                <div class="offset-xl-1 offset"></div>
+            </th:block>
+
+            <div class="col-xs-6 col-sm-5 col-md-4 col-lg-3 col-xl-2 info"
+                 style="text-align: center; font-weight: bold; padding-bottom: 40px; padding-top: 40px;">
+                <div class="row" style="padding-bottom: 6px; height: 320px">
+                    <div class="col-xl-12">
+                        <a th:href="'/series/' + ${serie.id}">
+                            <img class="rounded" th:src="${serie.posterPath}"
+                                 style="height: 300px; max-width: 260px">
+                        </a>
+                    </div>
+                </div>
+                <div class="row" style="min-height: 70px;padding-bottom: 12px">
+                    <div class="col-xl-12">
+                        <a th:href="'/series/' + ${serie.id}"
+                           style="color: #555555; text-decoration: none;">
+                            <span th:text="${serie.name} + ' (' + ${serie.firstAirDate.getYear()} + ')'"/>
+                        </a>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-xl-12">
+
+                        <form action="/series/unSubscribe" method="post" class="unSubsForm">
+                            <input type="hidden" name="tmdbId" th:value="${serie.id}"/>
+                            <input type="submit" th:value="#{lang.unsubscribe}" class="btn btn-danger"/>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </th:block>
+    </div>
+</div>
+
+<div class="container-fluid" id="content" th:fragment="series_subscriptions_list">
+    <div class="row"
+         th:with="urlBuilder=${T(org.springframework.web.servlet.support.ServletUriComponentsBuilder)}">
+        <div class="col-11 col-centered">
+            <div class="float-right">
+                <div class="row">
+                    <div class="col">
+                        <a th:href="${urlBuilder.fromCurrentRequest().replaceQueryParam('as_list', false).toUriString()}">
+                            <div class="shadow-sm p-2 mb-3 rounded">
+                                <i class="fas fa-th fa-lg" style="color: #7A7A7A;"></i>
+                            </div>
+                        </a>
+                    </div>
+                    <div class="col">
+                        <!--<a th:href="${urlBuilder.fromCurrentRequest().replaceQueryParam('as_list', true).toUriString()}">-->
+                        <div class="p-2 mb-3 rounded bg-light-my">
+                            <i class="fas fa-list fa-lg" style="color: #7A7A7A;"></i>
+                        </div>
+                        <!--</a>-->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="shadow rounded col-11 col-centered">
+            <th:block th:each="serie, iStat : ${series}">
+                <div class="row border-bottom subslist">
+
+                    <div class="col-8 p-3" style="font-weight: bold;">
+                        <a th:href="'/series/' + ${serie.id}"
+                           style="color: #555555; text-decoration: none;">
+                            <span th:text="${serie.name} + ' (' + ${serie.firstAirDate.getYear()} + ')'"/>
+                        </a>
+                    </div>
+                    <div class="col-4 p-2 hiden formbutton">
+                        <div class="float-right">
+                            <form action="/series/unSubscribe" method="post" class="unSubsForm">
+                                <input type="hidden" name="tmdbId" th:value="${serie.id}"/>
+                                <input type="submit" th:value="#{lang.unsubscribe}" class="btn btn-danger"/>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </th:block>
+        </div>
+    </div>
+
+    <script>
+        $('.subslist').hover(
+            function () {
+                $(this).addClass("bg-light-my");
+                $(this).find('.formbutton').removeClass('hiden');
+            }, function () {
+                $(this).removeClass("bg-light-my");
+                $(this).find('.formbutton').addClass('hiden');
+            })
+    </script>
+</div>
+
+<div class="container-fluid" id="content" th:fragment="movie_subscriptions">
+
+    <div class="row"
+         th:with="urlBuilder=${T(org.springframework.web.servlet.support.ServletUriComponentsBuilder)}">
+        <div class="col-11 col-centered">
+            <div class="float-right">
+                <div class="row">
+                    <div class="col">
+                        <!--<a th:href="${urlBuilder.fromCurrentRequest().replaceQueryParam('as_list', false).toUriString()}">-->
+                            <div class="p-2 mb-3 rounded bg-light-my">
+                                <i class="fas fa-th fa-lg" style="color: #7A7A7A;"></i>
+                            </div>
+                        <!--</a>-->
+
+                    </div>
+                    <div class="col">
+                        <a th:href="${urlBuilder.fromCurrentRequest().replaceQueryParam('as_list', true).toUriString()}">
+                        <div class="shadow-sm p-2 mb-3 rounded">
+                            <i class="fas fa-list fa-lg" style="color: #7A7A7A;"></i>
+                        </div>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <th:block th:each="film, iStat : ${films}">
+
+            <th:block th:if="${iStat.index % 5 == 0}">
+                <div class="offset-xl-1 offset"></div>
+            </th:block>
+            <th:block th:if="${iStat.index > 0 && iStat.index % 5 == 0}">
+                <div class="offset-xl-1 offset"></div>
+            </th:block>
+
+            <div class="col-xs-6 col-sm-5 col-md-4 col-lg-3 col-xl-2 info"
+                 style="text-align: center; font-weight: bold; padding-bottom: 40px; padding-top: 40px;">
+                <div class="row" style="padding-bottom: 6px; height: 320px">
+                    <div class="col-xl-12">
+                        <a th:href="'/movie/' + ${film.id}">
+                            <img class="rounded" th:src="${film.posterPath}"
+                                 style="height: 300px; max-width: 260px">
+                        </a>
+                    </div>
+                </div>
+                <div class="row" style="min-height: 70px;padding-bottom: 12px">
+                    <div class="col-xl-12">
+                        <a th:href="'/movie/' + ${film.id}"
+                           style="color: #555555; text-decoration: none;">
+                            <span th:text="${film.title} + ' (' + ${film.releaseDate.getYear()} + ')'"/>
+                        </a>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-xl-12">
+
+                        <form action="/movie/unSubscribe" method="post" class="unSubsForm">
+                            <input type="hidden" name="tmdbId" th:value="${film.id}"/>
+                            <input type="submit" th:value="#{lang.unsubscribe}" class="btn btn-danger"/>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </th:block>
+    </div>
+</div>
+
+<div class="container-fluid" id="content" th:fragment="movie_subscriptions_list">
+
+    <div class="row"
+         th:with="urlBuilder=${T(org.springframework.web.servlet.support.ServletUriComponentsBuilder)}">
+        <div class="col-11 col-centered">
+            <div class="float-right">
+                <div class="row">
+                    <div class="col">
+                        <a th:href="${urlBuilder.fromCurrentRequest().replaceQueryParam('as_list', false).toUriString()}">
+                            <div class="shadow-sm p-2 mb-3 rounded">
+                                <i class="fas fa-th fa-lg" style="color: #7A7A7A;"></i>
+                            </div>
+                        </a>
+
+                    </div>
+                    <div class="col">
+                        <!--<a th:href="${urlBuilder.fromCurrentRequest().replaceQueryParam('as_list', true).toUriString()}">-->
+                            <div class="p-2 mb-3 rounded bg-light-my">
+                                <i class="fas fa-list fa-lg" style="color: #7A7A7A;"></i>
+                            </div>
+                        <!--</a>-->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="shadow rounded col-11 col-centered">
+            <th:block th:each="film, iStat : ${films}">
+                <div class="row border-bottom subslist">
+
+                    <div class="col-8 p-3" style="font-weight: bold;">
+                        <a th:href="'/movie/' + ${film.id}"
+                           style="color: #555555; text-decoration: none;">
+                            <span th:text="${film.title} + ' (' + ${film.releaseDate.getYear()} + ')'"/>
+                        </a>
+                    </div>
+                    <div class="col-4 p-2 hiden formbutton">
+                        <div class="float-right">
+                            <form action="/movie/unSubscribe" method="post" class="unSubsForm">
+                                <input type="hidden" name="tmdbId" th:value="${film.id}"/>
+                                <input type="submit" th:value="#{lang.unsubscribe}" class="btn btn-danger"/>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </th:block>
+        </div>
+    </div>
+
+    <script>
+        $('.subslist').hover(
+            function () {
+                $(this).addClass("bg-light-my");
+                $(this).find('.formbutton').removeClass('hiden');
+            }, function () {
+                $(this).removeClass("bg-light-my");
+                $(this).find('.formbutton').addClass('hiden');
+            })
+    </script>
+</div>

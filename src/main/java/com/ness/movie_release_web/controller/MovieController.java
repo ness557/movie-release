@@ -104,10 +104,10 @@ public class MovieController {
 
         MovieDetailsWrapper movieDetailsWrapper = optionalMovieDetails.get();
 
-        Optional<Film> filmOpt = filmService.findByTmdbId(tmdbId);
+        Optional<Film> filmOpt = filmService.findById(tmdbId.longValue());
 
-        Film film = filmOpt.orElse(new Film(null,
-                movieDetailsWrapper.getId(),
+        Film film = filmOpt.orElse(new Film(
+                movieDetailsWrapper.getId().longValue(),
                 movieDetailsWrapper.getTitle(),
                 "",
                 movieDetailsWrapper.getStatus(),
@@ -123,8 +123,7 @@ public class MovieController {
 
     @PostMapping("/unSubscribe")
     public ResponseEntity unSubscribe(@RequestParam(value = "tmdbId") Integer tmdbId,
-                                      Principal principal,
-                                      HttpServletRequest request) {
+                                      Principal principal) {
 
         String login = principal.getName();
 
@@ -133,10 +132,7 @@ public class MovieController {
         Optional<Film> film = filmService.getByTmdbIdAndUser(tmdbId, user);
         film.ifPresent(f -> {
             f.getUsers().remove(user);
-            if (f.getUsers().isEmpty())
-                filmService.delete(f);
-            else
-                filmService.save(f);
+            filmService.save(f);
         });
 
         return ResponseEntity.ok().build();
@@ -186,6 +182,7 @@ public class MovieController {
     public String getSubs(@RequestParam(value = "page", required = false) Integer page,
                           @RequestParam(value = "statuses", required = false) List<Status> statuses,
                           @RequestParam(value = "sortBy", required = false) MovieSortBy sortBy,
+                          @RequestParam(value = "as_list", required = false) Boolean asList,
                           Principal principal,
                           Model model) {
 
@@ -194,6 +191,10 @@ public class MovieController {
 
         if (statuses == null) {
             statuses = emptyList();
+        }
+
+        if(asList == null){
+            asList = false;
         }
 
         User user = userService.findByLogin(principal.getName());
@@ -215,15 +216,22 @@ public class MovieController {
         model.addAttribute("language", language);
         model.addAttribute("mode", mode);
 
-        Page<Film> filmPage = filmService.getByUserAndStatusWithOrderbyAndPages(statuses, sortBy, user, page, 10);
+        int size = asList ? 30 : 10;
+
+        Page<Film> filmPage = filmService.getByUserAndStatusWithOrderbyAndPages(statuses, sortBy, user, page, size);
         List<Film> films = filmPage.getContent();
 
-        List<MovieDetailsWrapper> tmdbFilms =
-                films.stream()
-                        .map(f -> movieService.getMovieDetails(f.getTmdbId(), language))
-                        .filter(Optional::isPresent)
-                        .map(Optional::get)
-                        .collect(toList());
+        List<MovieDetailsWrapper> tmdbFilms;
+
+        if (asList) {
+            tmdbFilms = films.stream().map(f -> MovieDetailsWrapper.of(f, language)).collect(toList());
+        } else {
+            tmdbFilms = films.stream()
+                            .map(f -> movieService.getMovieDetails(f.getId().intValue(), language))
+                            .filter(Optional::isPresent)
+                            .map(Optional::get)
+                            .collect(toList());
+        }
 
         model.addAttribute("statuses", statuses);
         model.addAttribute("sortBy", sortBy);
@@ -233,6 +241,9 @@ public class MovieController {
         model.addAttribute("films", tmdbFilms)
                 .addAttribute("page", page)
                 .addAttribute("pageCount", filmPage.getTotalPages());
+
+        model.addAttribute("asList", asList);
+
         return "movieSubscriptions";
     }
 

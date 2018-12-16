@@ -27,10 +27,12 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.security.Principal;
-import java.util.*;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 
-import static com.ness.movie_release_web.model.wrapper.tmdb.Language.*;
 import static java.util.Collections.emptyList;
 import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toMap;
@@ -61,10 +63,6 @@ public class TVSeriesController {
 
     @Autowired
     private NetworkService networkService;
-
-    @Autowired
-    private PeopleService peopleService;
-
 
     @GetMapping("/{tmdbId}")
     public String getFilm(@PathVariable("tmdbId") Integer tmdbId,
@@ -109,9 +107,13 @@ public class TVSeriesController {
                 model.addAttribute("seasonWatched", seasonWrapper.getEpisodes().stream().noneMatch(e -> e.getEpisodeNumber() > currentEpisodeNum));
             }
 
-            model.addAttribute("lastEpisodeWatched", lastEpisodeToAir.getSeasonNumber() < currentSeasonNum ||
-                    (lastEpisodeToAir.getSeasonNumber().equals(currentSeasonNum) && lastEpisodeToAir.getEpisodeNumber() <= currentEpisodeNum));
+            model.addAttribute("lastEpisodeWatched", false);
 
+            if(lastEpisodeToAir != null) {
+                model.addAttribute("lastEpisodeWatched",
+                        lastEpisodeToAir.getSeasonNumber() < currentSeasonNum ||
+                                (lastEpisodeToAir.getSeasonNumber().equals(currentSeasonNum) && lastEpisodeToAir.getEpisodeNumber() <= currentEpisodeNum));
+            }
 
             Long minutes = dbSeriesService.spentTotalMinutesToSeries(tmdbId, user, userTVSeries.getCurrentSeason(), userTVSeries.getCurrentEpisode());
             if (minutes > 60) {
@@ -185,11 +187,6 @@ public class TVSeriesController {
         String login = principal.getName();
         User user = userService.findByLogin(login);
 
-        Optional<TVDetailsWrapper> optionalTvDetails = tmdbSeriesService.getTVDetails(tmdbId, en);
-
-        if (!optionalTvDetails.isPresent())
-            throw new ResponseStatusException(HttpStatus.CONFLICT);
-
         dbSeriesService.subscribeUser(tmdbId, user);
 
         return ResponseEntity.ok().build();
@@ -255,6 +252,7 @@ public class TVSeriesController {
                           @RequestParam(value = "statuses", required = false) List<Status> tvStatuses,
                           @RequestParam(value = "sortBy", required = false) TVSeriesSortBy sortBy,
                           @RequestParam(value = "watch_status", required = false) List<WatchStatus> watchStatuses,
+                          @RequestParam(value = "as_list", required = false) Boolean asList,
                           Principal principal,
                           Model model) {
 
@@ -267,6 +265,10 @@ public class TVSeriesController {
 
         if (watchStatuses == null) {
             watchStatuses = emptyList();
+        }
+
+        if(asList == null){
+            asList = false;
         }
 
         User user = userService.findByLogin(principal.getName());
@@ -288,14 +290,24 @@ public class TVSeriesController {
         model.addAttribute("language", language);
         model.addAttribute("mode", mode);
 
-        Page<UserTVSeries> userTVSeries = dbSeriesService.getByUserAndTVStatusesAndWatchStatusesWithOrderAndPages(tvStatuses, watchStatuses, sortBy, user, page, 10);
+        int size = asList ? 30 : 10;
+
+        Page<UserTVSeries> userTVSeries = dbSeriesService.getByUserAndTVStatusesAndWatchStatusesWithOrderAndPages(tvStatuses, watchStatuses, sortBy, user, page, size);
         List<UserTVSeries> series = userTVSeries.getContent();
 
-        List<TVDetailsWrapper> subscriptions = series.stream()
-                .map(f -> tmdbSeriesService.getTVDetails(f.getId().getTvSeriesId().intValue(), language))
-                .filter(Optional::isPresent)
-                .map(Optional::get)
-                .collect(toList());
+        List<TVDetailsWrapper> subscriptions = null;
+
+        if (asList){
+            subscriptions = series.stream()
+                    .map(UserTVSeries::getTvSeries)
+                    .map(s -> TVDetailsWrapper.of(s, language)).collect(toList());
+        } else {
+            subscriptions = series.stream()
+                    .map(f -> tmdbSeriesService.getTVDetails(f.getId().getTvSeriesId().intValue(), language))
+                    .filter(Optional::isPresent)
+                    .map(Optional::get)
+                    .collect(toList());
+        }
 
         model.addAttribute("statuses", tvStatuses);
         model.addAttribute("watch_statuses", watchStatuses);
@@ -306,6 +318,8 @@ public class TVSeriesController {
         model.addAttribute("series", subscriptions)
                 .addAttribute("page", page)
                 .addAttribute("pageCount", userTVSeries.getTotalPages());
+
+        model.addAttribute("asList", asList);
 
         return "seriesSubscriptions";
     }
