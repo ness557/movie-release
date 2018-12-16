@@ -3,6 +3,7 @@ package com.ness.movie_release_web.model.wrapper.tmdb.movie.discover;
 import com.ness.movie_release_web.model.wrapper.tmdb.Language;
 import com.ness.movie_release_web.model.wrapper.tmdb.releaseDates.ReleaseType;
 import lombok.*;
+import org.apache.commons.lang3.StringUtils;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -50,11 +51,14 @@ public class DiscoverSearchCriteria {
     }
 
     public void setDateRange(String dateRangeString) {
-        List<LocalDate> dates = stream(dateRangeString.split("-"))
-                .map(d -> parse(trim(d), ofPattern("dd.MM.yyyy")))
-                .collect(toList());
-        releaseDateMin = dates.get(0);
-        releaseDateMax = dates.get(1);
+        if (!StringUtils.isEmpty(dateRangeString)) {
+
+            List<LocalDate> dates = stream(dateRangeString.split("-"))
+                    .map(d -> parse(trim(d), ofPattern("dd.MM.yyyy")))
+                    .collect(toList());
+            releaseDateMin = dates.get(0);
+            releaseDateMax = dates.get(1);
+        }
     }
 
     public void setVoteAverageStr(String str){
@@ -74,6 +78,6 @@ public class DiscoverSearchCriteria {
     public String getDateRange() {
         if (releaseDateMin != null && releaseDateMax != null)
             return releaseDateMin.format(ofPattern("dd.MM.yyyy")) + " - " + releaseDateMax.format(ofPattern("dd.MM.yyyy"));
-        return LocalDate.now().minusYears(3).format(ofPattern("dd.MM.yyyy")) + " - " + LocalDate.now().format(ofPattern("dd.MM.yyyy"));
+        return "";
     }
 }

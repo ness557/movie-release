@@ -166,9 +166,18 @@
                     <div class="row" style="padding: 12px 0">
                         <div class="col col-centered">
                             <label th:text="#{lang.date_range} + ':'"></label>
-                            <input type="text" id="dates" th:field="*{dateRange}"
-                                   th:value="${criteria.getDateRange()}"
-                                   class="form-control discover-form-control">
+
+                            <div class="row">
+                                <div class="col-9">
+                                    <input type="text" id="dates" th:field="*{dateRange}"
+                                           th:value="${criteria.getDateRange()}"
+                                           class="form-control discover-form-control">
+                                </div>
+                                <div class="col-3" style="padding: 0">
+                                    <input type="button" class="btn btn-warning" th:value="#{lang.reset}"
+                                           onclick="resetDates()">
+                                </div>
+                            </div>
                         </div>
                     </div>
 
@@ -355,6 +364,10 @@
 <footer th:insert="embeded/footer.html"></footer>
 <script th:inline="javascript">
 
+    function resetDates() {
+        $('#dates').val('');
+    }
+
     $(document).ready(function () {
 
         var my_switch = true;
@@ -387,6 +400,8 @@
             focus: true,
             tooltip:'show'
         });
+
+        var dateVal = $('#dates').val();
 
         $('#dates').daterangepicker({
             locale: {
@@ -424,6 +439,9 @@
                 firstDay: 1
             }
         });
+
+        if(!dateVal || dateVal.length < 1)
+            $('#dates').val('');
 
         $('.selectpicker').selectpicker({
             noneSelectedText: [[#{lang.none_selected_text}]],
