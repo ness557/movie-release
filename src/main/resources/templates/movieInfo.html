@@ -94,7 +94,8 @@
                     <div class="filmPropSpaces">
                         <div class="collapse" id="collapseExample">
 
-                            <div id="carouselExampleControls" class="carousel slide" data-ride="carousel">
+                            <div id="carouselExampleControls" class="carousel slide" 
+                            data-ride="carousel" data-interval="false">
                                 <div class="carousel-inner">
                                     <div th:class="${i.index == 0 ? 'active' : ''} + ' carousel-item'"
                                          th:each="video, i : ${film.videos.videoList}"
@@ -105,16 +106,18 @@
                                     </div>
 
                                 </div>
-                                <a class="carousel-control-prev" href="#carouselExampleControls" role="button"
-                                   data-slide="prev">
-                                    <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-                                    <span class="sr-only">Previous</span>
-                                </a>
-                                <a class="carousel-control-next" href="#carouselExampleControls" role="button"
-                                   data-slide="next">
-                                    <span class="carousel-control-next-icon" aria-hidden="true"></span>
-                                    <span class="sr-only">Next</span>
-                                </a>
+                                <th:block th:if="${film.videos.videoList.size() > 1}">
+                                    <a class="carousel-control-prev" href="#carouselExampleControls" role="button"
+                                    data-slide="prev">
+                                        <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                                        <span class="sr-only">Previous</span>
+                                    </a>
+                                    <a class="carousel-control-next" href="#carouselExampleControls" role="button"
+                                    data-slide="next">
+                                        <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                                        <span class="sr-only">Next</span>
+                                    </a>
+                                </th:block>
                             </div>
                         </div>
                     </div>
