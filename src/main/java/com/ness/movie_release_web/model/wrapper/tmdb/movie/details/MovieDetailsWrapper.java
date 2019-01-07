@@ -41,45 +41,45 @@ public class MovieDetailsWrapper {
     private Integer budget;
 
     @JsonProperty("genres")
-    private Set<GenreWrapper> genreWrappers = new HashSet<>(); //used
+    private Set<GenreWrapper> genreWrappers = new HashSet<>(); 
 
     @JsonProperty("homepage")
-    private String homepage; //used
+    private String homepage; 
 
     @JsonProperty("id")
-    private Integer id; //used
+    private Integer id; 
 
     @JsonProperty("imdb_id")
     private String imdbId;
 
     @JsonProperty("original_language")
-    private String originalLanguage; //used
+    private String originalLanguage; 
 
     @JsonProperty("original_title")
     private String originalTitle;
 
     @JsonProperty("overview")
-    private String overview; //used
+    private String overview; 
 
     @JsonProperty("popularity")
     private Double popularity;
 
     @JsonDeserialize(using =TmdbPosterPathDeserializer.class)
     @JsonProperty("poster_path")
-    private String posterPath; //used
+    private String posterPath; 
 
     @JsonProperty("production_companies")
-    private List<ProductionCompanyWrapper> productionCompanies = new ArrayList<>(); //used
+    private List<ProductionCompanyWrapper> productionCompanies = new ArrayList<>(); 
 
     @JsonProperty("production_countries")
-    private List<ProductionCountryWrapper> productionCountries = new ArrayList<>(); //used
+    private List<ProductionCountryWrapper> productionCountries = new ArrayList<>(); 
 
     @JsonDeserialize(using = TmdbMovieReleaseDateDeserializer.class)
     @JsonProperty("release_date")
     private LocalDate releaseDate; //not needed
 
     @JsonProperty("revenue")
-    private Integer revenue; //used
+    private Integer revenue; 
 
     @JsonProperty("runtime")
     private Integer runtime; // minutes used
@@ -88,19 +88,19 @@ public class MovieDetailsWrapper {
     private List<SpokenLanguageWrapper> spokenLanguageWrappers = new ArrayList<>();
 
     @JsonProperty("status")
-    private Status status; //used
+    private Status status; 
 
     @JsonProperty("tagline")
-    private String tagline; //used
+    private String tagline; 
 
     @JsonProperty("title")
-    private String title; //used
+    private String title; 
 
     @JsonProperty("video")
     private Boolean video;
 
     @JsonProperty("vote_average")
-    private Double voteAverage; //used
+    private Double voteAverage; 
 
     @JsonProperty("vote_count")
     private Integer voteCount;
@@ -111,7 +111,7 @@ public class MovieDetailsWrapper {
     @JsonProperty("videos")
     private Videos videos;
 
-    private List<ReleaseDateWrapper> releaseDateWrappers = new ArrayList<>(); //used
+    private List<ReleaseDateWrapper> releaseDateWrappers = new ArrayList<>(); 
 
     public static MovieDetailsWrapper of(Film film, Language language){
         MovieDetailsWrapper wrapper = new MovieDetailsWrapper();
