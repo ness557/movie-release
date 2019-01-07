@@ -1,291 +1,274 @@
 <!DOCTYPE HTML>
 <html xmlns:th="http://www.thymeleaf.org">
+
 <head th:replace="embeded/header.html :: header(~{::title})">
     <title th:text="${film.title} + ' (' + ${film.releaseDate.getYear()} + ')'"></title>
 </head>
+
 <body>
-<nav th:insert="embeded/navbar.html"></nav>
+    <nav th:insert="embeded/navbar.html"></nav>
 
-<script th:inline="javascript" th:replace="embeded/subscriptions.html :: movie_subscribe"></script>
+    <script th:inline="javascript" th:replace="embeded/subscriptions.html :: movie_subscribe"></script>
 
-<div class="container-fluid mytext" style="padding-top: 30px">
-    <div class="row">
-        <div class="col-10 col-sm-6 col-md-5 col-lg-4 col-xl-3" style="text-align: right">
-            <div style="text-align: center; display: inline-block;">
-                <img th:src="${film.posterPath}" style="height: 400px; max-width: 300px" class="rounded"
-                     th:onerror="'this.src=\'' + @{/img/no-image.png} + '\'; this.onerror=null'">
+    <div class="container-fluid mytext" style="padding-top: 30px">
+        <div class="row">
+            <div class="col-10 col-sm-6 col-md-5 col-lg-4 col-xl-3" style="text-align: right">
+                <div style="text-align: center; display: inline-block;">
+                    <img th:src="${film.posterPath}" style="height: 400px; max-width: 300px" class="rounded" th:onerror="'this.src=\'' + @{/img/no-image.png} + '\'; this.onerror=null'">
 
-                <p style="margin-bottom: 12px; margin-top: 16px;"><span th:text="#{lang.score}"></span>
-                    <b th:if="${film.voteAverage > 6}"
-                       style="color: #33CC00"
-                       th:text="${film.voteAverage}"/>
+                    <p style="margin-bottom: 12px; margin-top: 16px;"><span th:text="#{lang.score}"></span>
+                        <b th:if="${film.voteAverage > 6}" style="color: #33CC00" th:text="${film.voteAverage}" />
 
-                    <b th:if="${film.voteAverage < 4}"
-                       style="color: #FD0100"
-                       th:text="${film.voteAverage}"/>
+                        <b th:if="${film.voteAverage < 4}" style="color: #FD0100" th:text="${film.voteAverage}" />
 
+                        <b th:if="${film.voteAverage >= 4 and film.voteAverage <= 6}" style="color: #E1AC00" th:text="${film.voteAverage}" />
+                    </p>
 
-                    <b th:if="${film.voteAverage >= 4 and film.voteAverage <= 6}"
-                       style="color: #E1AC00"
-                       th:text="${film.voteAverage}"/>
-                </p>
+                    <div>
+                        <form th:if="${subscribed}" action="/movie/unSubscribe" method="post" class="unSubsForm">
+                            <input type="hidden" name="tmdbId" th:value="${film.id}" />
+                            <input type="submit" th:value="#{lang.unsubscribe}" class="btn btn-danger" />
+                        </form>
+                    </div>
 
-                <div>
-                    <form th:if="${subscribed}" action="/movie/unSubscribe" method="post" class="unSubsForm">
-                        <input type="hidden" name="tmdbId" th:value="${film.id}"/>
-                        <input type="submit" th:value="#{lang.unsubscribe}" class="btn btn-danger"/>
-                    </form>
-                </div>
-
-                <div>
-                    <form th:unless="${subscribed}" action="/movie/subscribe" method="post" class="subsForm">
-                        <input type="hidden" name="tmdbId" th:value="${film.id}"/>
-                        <input type="submit" th:value="#{lang.subscribe}" class="btn btn-warning"/>
-                    </form>
-                </div>
-            </div>
-        </div>
-
-        <div class="col-12 col-sm-6 col-md-6 col-lg-8 col-xl-7">
-            <div class="row">
-                <div class="col-md-8">
-                    <div style="font-size: 27px;">
-                        <b th:text="${film.title} + ' (' + ${film.releaseDate.getYear()} + ')'"/>
+                    <div>
+                        <form th:unless="${subscribed}" action="/movie/subscribe" method="post" class="subsForm">
+                            <input type="hidden" name="tmdbId" th:value="${film.id}" />
+                            <input type="submit" th:value="#{lang.subscribe}" class="btn btn-warning" />
+                        </form>
                     </div>
                 </div>
             </div>
-            <div class="row" style="font-size: 12px; height: 32px; vertical-align: center; padding-top: 4px">
-                <div class="col-auto col-sm-auto col-md-auto col-lg-auto col-xl-auto">
-                    <div class="plate">
-                        <span class="plate-text" th:text="#{'lang.status.' + ${film.status}}"/>
-                    </div>
-                </div>
 
-                <div class="col-auto col-sm-auto col-md-auto col-lg-auto col-xl-auto">
-                    <div class="plate">
-                        <p class="plate-text" th:text="${#strings.capitalize(film.originalLanguage)}"/>
-                    </div>
-                </div>
-
-                <div th:unless="${film.runtime == null || film.runtime <= 0}"
-                     class="col-auto col-sm-auto col-md-auto col-lg-auto col-xl-auto"
-                     style="text-align: center; max-width: 100px">
-                    <img style="width: 16px; margin-right: 3px" th:src="@{/img/clock.png}"/>
-                    <span class="plate-text" th:text="${film.runtime} + ' ' + #{lang.minutes}"/>
-                </div>
-                <div th:unless="${film.homepage == null || film.homepage.equals('')}"
-                     class="col-auto col-sm-auto col-md-auto col-lg-auto col-xl-auto pr-2" style="padding: 0">
-                    <a class="plate-text site" style="color: #337ab7;" th:href="${film.homepage}"
-                       th:text="#{lang.website}"> </a>
-                </div>
-
-                <div th:if="${!film.videos.videoList.isEmpty()}"
-                     class="col-auto col-sm-auto col-md-auto col-lg-auto col-xl-auto" style="padding: 0">
-
-                    <a class="plate-text site" th:text="#{lang.video}"
-                       style="color: #337ab7;"
-                       data-toggle="collapse" href="#collapseExample" role="button"
-                       aria-expanded="false" aria-controls="collapseExample"></a>
-                </div>
-            </div>
-
-            <div class="row">
-                <div class="col-md-12">
-                    <div class="filmPropSpaces">
-                        <div class="collapse" id="collapseExample">
-
-                            <div id="carouselExampleControls" class="carousel slide" 
-                            data-ride="carousel" data-interval="false">
-                                <div class="carousel-inner">
-                                    <div th:class="${i.index == 0 ? 'active' : ''} + ' carousel-item'"
-                                         th:each="video, i : ${film.videos.videoList}"
-                                         style="height: 500px;">
-                                        <iframe height="500px" class="yt-frame"
-                                                th:src="${video.ytLink}">
-                                        </iframe>
-                                    </div>
-
-                                </div>
-                                <th:block th:if="${film.videos.videoList.size() > 1}">
-                                    <a class="carousel-control-prev" href="#carouselExampleControls" role="button"
-                                    data-slide="prev">
-                                        <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-                                        <span class="sr-only">Previous</span>
-                                    </a>
-                                    <a class="carousel-control-next" href="#carouselExampleControls" role="button"
-                                    data-slide="next">
-                                        <span class="carousel-control-next-icon" aria-hidden="true"></span>
-                                        <span class="sr-only">Next</span>
-                                    </a>
-                                </th:block>
-                            </div>
+            <div class="col-12 col-sm-6 col-md-6 col-lg-8 col-xl-7">
+                <div class="row">
+                    <div class="col-md-8">
+                        <div style="font-size: 27px;">
+                            <b th:text="${film.title} + ' (' + ${film.releaseDate.getYear()} + ')'" />
                         </div>
                     </div>
                 </div>
-            </div>
+                <div class="row" style="font-size: 12px; height: 32px; vertical-align: center; padding-top: 4px">
+                    <div class="col-auto col-sm-auto col-md-auto col-lg-auto col-xl-auto">
+                        <div class="plate">
+                            <span class="plate-text" th:text="#{'lang.status.' + ${film.status}}" />
+                        </div>
+                    </div>
 
-            <div class="row">
-                <div class="col-md-12">
-                    <div class="filmPropSpaces">
-                        <b th:text="#{lang.tag_line} + ':'"></b>
-                        <th:block th:text="${film.tagline}"/>
+                    <div class="col-auto col-sm-auto col-md-auto col-lg-auto col-xl-auto">
+                        <div class="plate">
+                            <p class="plate-text" th:text="${#strings.capitalize(film.originalLanguage)}" />
+                        </div>
+                    </div>
+
+                    <div th:unless="${film.runtime == null || film.runtime <= 0}" class="col-auto col-sm-auto col-md-auto col-lg-auto col-xl-auto"
+                        style="text-align: center; max-width: 100px">
+                        <img style="width: 16px; margin-right: 3px" th:src="@{/img/clock.png}" />
+                        <span class="plate-text" th:text="${film.runtime} + ' ' + #{lang.minutes}" />
+                    </div>
+                    <div th:unless="${film.homepage == null || film.homepage.equals('')}" class="col-auto col-sm-auto col-md-auto col-lg-auto col-xl-auto pr-2"
+                        style="padding: 0">
+                        <a class="plate-text site" style="color: #337ab7;" th:href="${film.homepage}" th:text="#{lang.website}">
+                        </a>
+                    </div>
+
+                    <div th:if="${!film.videos.videoList.isEmpty()}" class="col-auto col-sm-auto col-md-auto col-lg-auto col-xl-auto"
+                        style="padding: 0">
+
+                        <a class="plate-text site" th:text="#{lang.video}" style="color: #337ab7;" data-toggle="collapse"
+                            href="#collapseExample" role="button" aria-expanded="false" aria-controls="collapseExample"></a>
                     </div>
                 </div>
-            </div>
 
-            <div class="row">
-                <div class="col-md-12">
-                    <div class="filmPropSpaces">
-                        <b th:text="#{lang.genres} + ':'"></b>
-                        <th:block th:each="genre: ${film.genreWrappers}">
-                            <a class="genre-link" th:text="${#strings.capitalize(genre.name)}"
-                               th:href="${'/movie/discover?genres=' + genre.id}"></a>
-                        </th:block>
-                    </div>
-                </div>
-            </div>
-
-            <div class="row">
-                <div class="col-md-12">
-                    <div class="filmPropSpaces">
-                        <b th:text="#{lang.production} + ':'"></b>
-                        <th:block th:each="production: ${film.productionCompanies}">
-                            <a class="genre-link" th:text="${#strings.capitalize(production.name)}"
-                               th:href="${'/movie/discover?companies=' + production.id}"></a>
-                        </th:block>
-                    </div>
-                </div>
-            </div>
-
-            <div class="row">
-                <div class="col-md-12">
-                    <div class="filmPropSpaces">
-                        <b th:text="#{lang.countries} + ':'"></b>
-                        <th:block th:each="country: ${film.productionCountries}">
-                            <span th:text="${country.name}"></span>
-                            <span> </span>
-                        </th:block>
-                    </div>
-                </div>
-            </div>
-
-            <th:block th:each="release: ${releases}">
                 <div class="row">
                     <div class="col-md-12">
                         <div class="filmPropSpaces">
-                            <b>
-                                <th:block th:text="#{'lang.release.' + ${release.releaseType.name()}}"/>
-                                <span th:text="#{lang.release_date} + ':'"></span></b>
-                            <th:block th:text='${#temporals.format(release.releaseDate, "dd MMMM yyyy")}'/>
-                        </div>
-                    </div>
-                </div>
-            </th:block>
+                            <div class="collapse" id="collapseExample">
 
-            <div class="row">
-                <div class="col-md-12">
-                    <div class="filmPropSpaces">
-                        <b th:text="#{lang.budget} + ':'"></b>
-                        <th:block th:text="${'$' + #numbers.formatDecimal(film.budget, 0, 'COMMA', 2, 'POINT')}"/>
-                    </div>
-                </div>
-            </div>
+                                <div id="carouselExampleControls" class="carousel slide" data-ride="carousel"
+                                    data-interval="false">
+                                    <div class="carousel-inner">
+                                        <div th:class="${i.index == 0 ? 'active' : ''} + ' carousel-item'" th:each="video, i : ${film.videos.videoList}"
+                                            style="height: 500px;">
+                                            <iframe height="500px" class="yt-frame" th:src="${video.ytLink}">
+                                            </iframe>
+                                        </div>
 
-            <div class="row">
-                <div class="col-md-12">
-                    <div class="filmPropSpaces">
-                        <b th:text="#{lang.revenue} + ':'"></b>
-                        <th:block th:text="${'$' + #numbers.formatDecimal(film.revenue, 0, 'COMMA', 2, 'POINT')}"/>
-                    </div>
-                </div>
-            </div>
-
-            <div class="row">
-                <div class="col-md-12">
-                    <div class="filmPropSpaces">
-                        <b th:text="#{lang.overview} + ':'"></b>
-                        <th:block th:text="${film.overview}"/>
-                    </div>
-                </div>
-            </div>
-
-            <div class="row">
-                <div class="col-11">
-                    <div class="filmPropSpaces">
-                        <b th:text="#{lang.actors} + ':'"></b>
-                        <div class="owl-carousel owl-theme" id="owl-actors">
-                            <div th:each="actor : ${film.credits.casts}"
-                                 class="season shadow p-2 mb-3 mr-2 ml-2 rounded">
-
-                                <a class="text-dark" style="text-decoration: none !important"
-                                   th:href="'/people/' + ${actor.id}">
-
-                                    <img th:src="${actor.profilePath}"
-                                         style="height:250px;  width:175px;  object-fit: cover"
-                                         th:onerror="'this.src=\'' + @{/img/no-image.png} + '\'; this.onerror=null'">
-                                    <div th:text="${actor.name}" class="pt-1"
-                                         style="text-align: center; width: 100%"></div>
-                                    <div th:text="${actor.character}" class="pt-1"
-                                         style="text-align: center; width: 100%; font-size: 14px"></div>
-                                </a>
+                                    </div>
+                                    <th:block th:if="${film.videos.videoList.size() > 1}">
+                                        <a class="carousel-control-prev" href="#carouselExampleControls" role="button"
+                                            data-slide="prev">
+                                            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                                            <span class="sr-only">Previous</span>
+                                        </a>
+                                        <a class="carousel-control-next" href="#carouselExampleControls" role="button"
+                                            data-slide="next">
+                                            <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                                            <span class="sr-only">Next</span>
+                                        </a>
+                                    </th:block>
+                                </div>
                             </div>
                         </div>
                     </div>
                 </div>
-                <div class="col-1">
-                    <div style="text-align: right; top: 40%; position: absolute">
-                        <a href="javascript:void(0);" id="actor-prev">
-                            <i class="fas fa-2x fa-angle-left" style="color: #676767; padding-right: 15px;"></i>
-                        </a>
-                        <br>
-                        <a href="javascript:void(0);" id="actor-next">
-                            <i class="fas fa-2x fa-angle-right" style="color: #676767; padding-right: 15px;"></i>
-                        </a>
+
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="filmPropSpaces">
+                            <b th:text="#{lang.tag_line} + ':'"></b>
+                            <th:block th:text="${film.tagline}" />
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="filmPropSpaces">
+                            <b th:text="#{lang.genres} + ':'"></b>
+                            <th:block th:each="genre: ${film.genreWrappers}">
+                                <a class="genre-link" th:text="${#strings.capitalize(genre.name)}" th:href="${'/movie/discover?genres=' + genre.id}"></a>
+                            </th:block>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="filmPropSpaces">
+                            <b th:text="#{lang.production} + ':'"></b>
+                            <th:block th:each="production: ${film.productionCompanies}">
+                                <a class="genre-link" th:text="${#strings.capitalize(production.name)}" th:href="${'/movie/discover?companies=' + production.id}"></a>
+                            </th:block>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="filmPropSpaces">
+                            <b th:text="#{lang.countries} + ':'"></b>
+                            <th:block th:each="country: ${film.productionCountries}">
+                                <span th:text="${country.name}"></span>
+                                <span> </span>
+                            </th:block>
+                        </div>
+                    </div>
+                </div>
+
+                <th:block th:each="release: ${releases}">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="filmPropSpaces">
+                                <b>
+                                    <th:block th:text="#{'lang.release.' + ${release.releaseType.name()}}" />
+                                    <span th:text="#{lang.release_date} + ':'"></span></b>
+                                <th:block th:text='${#temporals.format(release.releaseDate, "dd MMMM yyyy")}' />
+                            </div>
+                        </div>
+                    </div>
+                </th:block>
+
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="filmPropSpaces">
+                            <b th:text="#{lang.budget} + ':'"></b>
+                            <th:block th:text="${'$' + #numbers.formatDecimal(film.budget, 0, 'COMMA', 2, 'POINT')}" />
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="filmPropSpaces">
+                            <b th:text="#{lang.revenue} + ':'"></b>
+                            <th:block th:text="${'$' + #numbers.formatDecimal(film.revenue, 0, 'COMMA', 2, 'POINT')}" />
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="filmPropSpaces">
+                            <b th:text="#{lang.overview} + ':'"></b>
+                            <th:block th:text="${film.overview}" />
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-11">
+                        <div class="filmPropSpaces">
+                            <b th:text="#{lang.actors} + ':'"></b>
+                            <div class="owl-carousel owl-theme" id="owl-actors">
+                                <div th:each="actor : ${film.credits.casts}" class="season shadow p-2 mb-3 mr-2 ml-2 rounded">
+
+                                    <a class="text-dark" style="text-decoration: none !important" th:href="'/people/' + ${actor.id}">
+
+                                        <img th:src="${actor.profilePath}" style="height:250px;  width:175px;  object-fit: cover"
+                                            th:onerror="'this.src=\'' + @{/img/no-image.png} + '\'; this.onerror=null'">
+                                        <div th:text="${actor.name}" class="pt-1" style="text-align: center; width: 100%"></div>
+                                        <div th:text="${actor.character}" class="pt-1" style="text-align: center; width: 100%; font-size: 14px"></div>
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-1">
+                        <div style="text-align: right; top: 40%; position: absolute">
+                            <a href="javascript:void(0);" id="actor-prev">
+                                <i class="fas fa-2x fa-angle-left" style="color: #676767; padding-right: 15px;"></i>
+                            </a>
+                            <br>
+                            <a href="javascript:void(0);" id="actor-next">
+                                <i class="fas fa-2x fa-angle-right" style="color: #676767; padding-right: 15px;"></i>
+                            </a>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
     </div>
-</div>
 
-<div class="back-to-top" style="display: inline;">
-    <a style="pointer-events: none">
-        <img th:src="@{/img/scroll-up-button.png}">
-    </a>
-</div>
+    <div class="back-to-top" style="display: inline;">
+        <a style="pointer-events: none">
+            <img th:src="@{/img/scroll-up-button.png}">
+        </a>
+    </div>
 
-<footer th:insert="embeded/footer.html"></footer>
+    <footer th:insert="embeded/footer.html"></footer>
 
-<script th:inline="javascript">
+    <script th:inline="javascript">
 
-    owl = $('.owl-carousel');
-    owlActor = $('#owl-actors');
+        owl = $('.owl-carousel');
+        owlActor = $('#owl-actors');
 
-    owl.on('mousewheel', '.owl-stage', function (e) {
-        if (e.originalEvent.deltaY > 30) {
-            owl.trigger('next.owl');
-        } else if (e.originalEvent.deltaY < -30) {
-            owl.trigger('prev.owl');
-        }
-        e.preventDefault();
-    });
+        owl.on('mousewheel', '.owl-stage', function (e) {
+            if (e.originalEvent.deltaY > 30) {
+                owl.trigger('next.owl');
+            } else if (e.originalEvent.deltaY < -30) {
+                owl.trigger('prev.owl');
+            }
+            e.preventDefault();
+        });
 
-    owl.owlCarousel({
-        loop: false,
-        autoWidth: true,
-        dots: false
-    });
+        owl.owlCarousel({
+            loop: false,
+            autoWidth: true,
+            dots: false
+        });
 
-    $('#actor-next').click(function () {
-        owlActor.trigger('next.owl.carousel')
-    });
+        $('#actor-next').click(function () {
+            owlActor.trigger('next.owl.carousel')
+        });
 
-    $('#actor-prev').click(function () {
-        owlActor.trigger('prev.owl.carousel')
-    });
+        $('#actor-prev').click(function () {
+            owlActor.trigger('prev.owl.carousel')
+        });
 
-    $(".subsForm").submit(subscribe);
-    $(".unSubsForm").submit(unsubscribe);
-</script>
+        $(".subsForm").submit(subscribe);
+        $(".unSubsForm").submit(unsubscribe);
+    </script>
 </body>
+
 </html>
