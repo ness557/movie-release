@@ -97,7 +97,7 @@
 
                     </div>
                     <div class="col">
-                        <a th:href="${urlBuilder.fromCurrentRequest().replaceQueryParam('as_list', true).toUriString()}">
+                        <a th:href="${urlBuilder.fromCurrentRequest().replaceQueryParam('as_list', true).replaceQueryParam('page', 0).toUriString()}">
                             <div class="shadow-sm p-2 mb-3 rounded">
                                 <i class="fas fa-list fa-lg" style="color: #7A7A7A;"></i>
                             </div>
@@ -157,7 +157,7 @@
             <div class="float-right">
                 <div class="row">
                     <div class="col">
-                        <a th:href="${urlBuilder.fromCurrentRequest().replaceQueryParam('as_list', false).toUriString()}">
+                        <a th:href="${urlBuilder.fromCurrentRequest().replaceQueryParam('as_list', false).replaceQueryParam('page', 0).toUriString()}">
                             <div class="shadow-sm p-2 mb-3 rounded">
                                 <i class="fas fa-th fa-lg" style="color: #7A7A7A;"></i>
                             </div>
