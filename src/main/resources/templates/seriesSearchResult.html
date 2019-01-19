@@ -36,7 +36,7 @@
                         <div class="col-xl-12">
                             <a th:href="'/series/' + ${serie.key.id}"
                                style="color: #555555; text-decoration: none;">
-                                <span th:text="${serie.key.name} + ' (' + ${serie.key.firstAirDate.getYear()} + ')'"></span>
+                                <span th:text="${serie.key.name} + ' (' + ${serie.key.firstAirDate?.getYear()} + ')'"></span>
                             </a>
                         </div>
                     </div>

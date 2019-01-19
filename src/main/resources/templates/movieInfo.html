@@ -2,7 +2,7 @@
 <html xmlns:th="http://www.thymeleaf.org">
 
 <head th:replace="embeded/header.html :: header(~{::title})">
-    <title th:text="${film.title} + ' (' + ${film.releaseDate.getYear()} + ')'"></title>
+    <title th:text="${film.title} + ' (' + ${film.releaseDate?.getYear()} + ')'"></title>
 </head>
 
 <body>
@@ -44,7 +44,7 @@
                 <div class="row">
                     <div class="col-md-8">
                         <div style="font-size: 27px;">
-                            <b th:text="${film.title} + ' (' + ${film.releaseDate.getYear()} + ')'" />
+                            <b th:text="${film.title} + ' (' + ${film.releaseDate?.getYear()} + ')'" />
                         </div>
                     </div>
                 </div>

@@ -132,7 +132,7 @@
                     <div class="col-xl-12">
                         <a th:href="'/series/' + ${serie.id}"
                            style="color: #555555; text-decoration: none;">
-                            <span th:text="${serie.name} + ' (' + ${serie.firstAirDate.getYear()} + ')'"/>
+                            <span th:text="${serie.name} + ' (' + ${serie.firstAirDate?.getYear()} + ')'"/>
                         </a>
                     </div>
                 </div>
@@ -183,7 +183,7 @@
                     <div class="col-8 p-3" style="font-weight: bold;">
                         <a th:href="'/series/' + ${serie.id}"
                            style="color: #555555; text-decoration: none;">
-                            <span th:text="${serie.name} + ' (' + ${serie.firstAirDate.getYear()} + ')'"/>
+                            <span th:text="${serie.name} + ' (' + ${serie.firstAirDate?.getYear()} + ')'"/>
                         </a>
                     </div>
                     <div class="col-4 p-2 hiden formbutton">
@@ -262,7 +262,7 @@
                     <div class="col-xl-12">
                         <a th:href="'/movie/' + ${film.id}"
                            style="color: #555555; text-decoration: none;">
-                            <span th:text="${film.title} + ' (' + ${film.releaseDate.getYear()} + ')'"/>
+                            <span th:text="${film.title} + ' (' + ${film.releaseDate?.getYear()} + ')'"/>
                         </a>
                     </div>
                 </div>
@@ -315,7 +315,7 @@
                     <div class="col-8 p-3" style="font-weight: bold;">
                         <a th:href="'/movie/' + ${film.id}"
                            style="color: #555555; text-decoration: none;">
-                            <span th:text="${film.title} + ' (' + ${film.releaseDate.getYear()} + ')'"/>
+                            <span th:text="${film.title} + ' (' + ${film.releaseDate?.getYear()} + ')'"/>
                         </a>
                     </div>
                     <div class="col-4 p-2 hiden formbutton">
