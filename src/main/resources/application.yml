@@ -7,6 +7,9 @@ spring:
     driver-class-name: org.postgresql.Driver
     hikari:
       maximum-pool-size: 5
+      
+  freemarker:
+    template-loader-path: classpath:/templates/email
 
   jpa:
     properties:

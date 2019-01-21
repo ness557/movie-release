@@ -68,7 +68,7 @@ public class EmailServiceImpl implements EmailService {
                         .format(DateTimeFormatter.ofPattern("dd MMMM yyyy")
                                 .withLocale(user.getLanguage().getLocale())));
                 put("releaseType",
-                        messageSource.getMessage("lang.release_type." + releaseDate.getReleaseType().name(), new Object[]{}, user.getLanguage().getLocale()));
+                        messageSource.getMessage("lang.release." + releaseDate.getReleaseType().name(), new Object[]{}, user.getLanguage().getLocale()));
 
                 put("link", "http://" + webLink + "/movie/" + movie.getId());
             }};

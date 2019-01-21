@@ -62,7 +62,7 @@ public class TelegramServiceImpl implements TelegramService {
                 .append(") ")
                 .append(messageSource.getMessage("lang.telegram.had_a", new Object[]{}, user.getLanguage().getLocale()))
                 .append(" *")
-                .append(messageSource.getMessage("lang.release_type." + releaseDate.getReleaseType().name(), new Object[]{}, user.getLanguage().getLocale()))
+                .append(messageSource.getMessage("lang.release." + releaseDate.getReleaseType().name(), new Object[]{}, user.getLanguage().getLocale()))
                 .append("* ")
                 .append(messageSource.getMessage("lang.telegram.released_at", new Object[]{}, user.getLanguage().getLocale()))
                 .append(" ")
