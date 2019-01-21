@@ -16,12 +16,29 @@ spring:
     hibernate:
       ddl-auto: none
 
+  mail:
+    port: 465
+    username: qwertyzxcvbn55779@gmail.com
+    password: norepqw2
+    default-encoding: UTF-8
+    protocol: smtp
+    host: smtp.gmail.com
+    properties:
+      mail:
+        smtp:
+          ssl:
+            enable: true
+
 tmdbapi:
   url: http://api.themoviedb.org/3/
   apikey: d6d669ef1d4e1efa83890eef2dda482f
 
 telegram:
   bot: movie_notify_bot
+  id: movie_notify_bot
+  name: Movie Notification Bot
+  token: 660414759:AAE1wAzNDmEvxKf2HMzPH6n5ZXQ9enSwANo
+  webInterfaceLink: movie-release.ddns.net
 
 logging:
   level:
@@ -38,3 +55,11 @@ google:
   recaptcha:
     site: 6LcUS3gUAAAAAAc09fr__CsINv6N751HtyVw5D_j
     secret: 6LcUS3gUAAAAAFKbqkepCbRPq3PK3fPmlYprq01k
+
+# <second> <minute> <hour> <day-of-month> <month> <day-of-week> <year>
+cron:
+  pattern:
+    notify:
+      movie: 0 0 11 * * *
+      series: 0 0 12 * * *
+    updateDB: 0 0 9 * * *

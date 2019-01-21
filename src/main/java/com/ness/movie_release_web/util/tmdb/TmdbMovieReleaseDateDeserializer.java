@@ -35,4 +35,9 @@ public class TmdbMovieReleaseDateDeserializer extends StdDeserializer<LocalDate>
             return LocalDate.of(1870, 1, 1);
         }
     }
+
+    @Override
+    public LocalDate getNullValue(){
+        return LocalDate.of(1870, 1, 1);
+    }
 }

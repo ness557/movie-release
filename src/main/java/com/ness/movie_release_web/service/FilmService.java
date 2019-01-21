@@ -29,4 +29,6 @@ public interface FilmService {
                                                   User user,
                                                   Integer page,
                                                   Integer size);
+
+    void updateDB();
 }

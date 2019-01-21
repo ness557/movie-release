@@ -18,6 +18,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
@@ -150,6 +151,11 @@ public class TVSeriesServiceImpl implements TVSeriesService {
     }
 
     @Override
+    public List<UserTVSeries> getAllUserTVSeries() {
+        return userTVSeriesRepository.findAll();
+    }
+
+    @Override
     public Long spentTotalMinutesToSeries(Integer tmdbId, User user, Integer currentSeason, Integer currentEpisode) {
 
         Optional<TVDetailsWrapper> tvDetailsOptional = tvSeriesService.getTVDetails(tmdbId, user.getLanguage());
@@ -202,5 +208,45 @@ public class TVSeriesServiceImpl implements TVSeriesService {
             return ((Double) (seasonDetails.orElse(new SeasonWrapper()).getEpisodes().stream().filter(e -> e.getEpisodeNumber() <= currentEpisode).count() * average)).longValue();
 
         return 0L;
+    }
+
+    @Scheduled(cron = "${cron.pattern.updateDB}")
+    @Override
+    public void updateDB() {
+
+        log.info("Updating series db...");
+        tvSeriesRepository.findAll().forEach(tvs -> {
+            Long id = tvs.getId();
+            Optional<TVDetailsWrapper> tvDetails = tvSeriesService.getTVDetails(id.intValue(), Language.en);
+
+            if (!tvDetails.isPresent()) {
+                return;
+            }
+
+            TVDetailsWrapper tvDetailsWrapper = tvDetails.get();
+            tvs.setReleaseDate(tvDetailsWrapper.getFirstAirDate());
+            tvs.setLastEpisodeAirDate(tvDetailsWrapper.getLastAirDate());
+            tvs.setVoteAverage(tvDetailsWrapper.getVoteAverage());
+            tvs.setNameEn(tvDetailsWrapper.getName());
+            tvs.setStatus(tvDetailsWrapper.getStatus());
+
+            Optional<TVDetailsWrapper> tvDetailsRu = tvSeriesService.getTVDetails(id.intValue(), Language.ru);
+            tvDetailsRu.ifPresent(tvDetailsWrapper1 -> tvs.setNameRu(tvDetailsWrapper1.getName()));
+
+            Optional<SeasonWrapper> seasonDetails = tvSeriesService.getSeasonDetails(id.intValue(), tvDetailsWrapper.getNumberOfSeasons(), Language.en);
+            if (!seasonDetails.isPresent()) {
+                tvSeriesRepository.save(tvs);
+                return;
+            }
+
+            SeasonWrapper seasonWrapper = seasonDetails.get();
+            seasonWrapper.getEpisodes().stream().sorted((s1, s2) -> s2.getEpisodeNumber() - s1.getEpisodeNumber()).findFirst().ifPresent(e -> {
+                tvs.setLastSeasonNumber(e.getSeasonNumber());
+                tvs.setLastEpisodeNumber(e.getEpisodeNumber());
+            });
+
+            tvSeriesRepository.save(tvs);
+        });
+        log.info("series db updated!");
     }
 }

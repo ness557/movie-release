@@ -27,9 +27,13 @@ public interface TVSeriesService {
                                                                                Integer page,
                                                                                Integer size);
 
+    List<UserTVSeries> getAllUserTVSeries();
+
     void setSeasonAndEpisode(Integer tmdbId, User user, Integer seasonNum, Integer episodeNum);
 
     Long spentTotalMinutesToSeries(Integer tmdbId, User user, Integer currentSeason, Integer currentEpisode);
 
     Long spentTotalMinutesToSeriesSeason(Integer tmdbId, Integer season, User user, Integer currentSeason, Integer currentEpisode);
+
+    void updateDB();
 }

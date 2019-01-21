@@ -1,6 +1,6 @@
 package com.ness.movie_release_web.service.tmdb;
 
-import com.ness.movie_release_web.model.wrapper.tmdb.releaseDates.ReleaseDateWrapper;
+import com.ness.movie_release_web.model.wrapper.tmdb.releaseDates.ReleaseDate;
 import com.ness.movie_release_web.model.wrapper.tmdb.releaseDates.ReleaseDateResultWrapper;
 import com.ness.movie_release_web.model.wrapper.tmdb.releaseDates.ReleaseDateResultListWrapper;
 import com.ness.movie_release_web.model.wrapper.tmdb.releaseDates.ReleaseType;
@@ -42,7 +42,7 @@ public class TmdbDatesServiceImpl implements TmdbDatesService {
     private ExternalIdService externalIdService;
 
     @Override
-    public List<ReleaseDateWrapper> getReleaseDates(String imdbId, ReleaseType... releaseTypes) {
+    public List<ReleaseDate> getReleaseDates(String imdbId, ReleaseType... releaseTypes) {
 
         if (releaseTypes.length < 1) {
             logger.error("No releaseTypes");
@@ -56,7 +56,7 @@ public class TmdbDatesServiceImpl implements TmdbDatesService {
     }
 
     @Override
-    public List<ReleaseDateWrapper> getReleaseDates(String imdbId) {
+    public List<ReleaseDate> getReleaseDates(String imdbId) {
 
         Integer tmdbId = externalIdService.getTmdbIdByImdbId(imdbId);
         List<ReleaseDateResultWrapper> releaseDates = getReleaseDatesByTmdbId(tmdbId);
@@ -64,7 +64,7 @@ public class TmdbDatesServiceImpl implements TmdbDatesService {
         return distinctReleaseDates(releaseDates);
     }
 
-    public List<ReleaseDateWrapper> getReleaseDates(Integer tmdbId, ReleaseType... releaseTypes) {
+    public List<ReleaseDate> getReleaseDates(Integer tmdbId, ReleaseType... releaseTypes) {
 
         if (releaseTypes.length < 1) {
             logger.error("No releaseTypes");
@@ -77,27 +77,27 @@ public class TmdbDatesServiceImpl implements TmdbDatesService {
     }
 
 
-    public List<ReleaseDateWrapper> getReleaseDates(Integer tmdbId) {
+    public List<ReleaseDate> getReleaseDates(Integer tmdbId) {
 
         List<ReleaseDateResultWrapper> releaseDates = getReleaseDatesByTmdbId(tmdbId);
 
         return distinctReleaseDates(releaseDates);
     }
 
-    private List<ReleaseDateWrapper> distinctReleaseDates(List<ReleaseDateResultWrapper> releaseDates) {
-        List<ReleaseDateWrapper> result = new ArrayList<>();
+    private List<ReleaseDate> distinctReleaseDates(List<ReleaseDateResultWrapper> releaseDates) {
+        List<ReleaseDate> result = new ArrayList<>();
 
-        releaseDates.forEach(e -> result.addAll(e.getReleaseDateWrappers()));
+        releaseDates.forEach(e -> result.addAll(e.getReleaseDates()));
 
-        return result.stream().sorted().filter(distinctByKey(ReleaseDateWrapper::getReleaseType)).collect(toList());
+        return result.stream().sorted().filter(distinctByKey(ReleaseDate::getReleaseType)).collect(toList());
     }
 
-    private List<ReleaseDateWrapper> distinctAndFilterReleadeDates(List<ReleaseDateResultWrapper> releaseDates, ReleaseType[] releaseTypes) {
-        List<ReleaseDateWrapper> result = new ArrayList<>();
+    private List<ReleaseDate> distinctAndFilterReleadeDates(List<ReleaseDateResultWrapper> releaseDates, ReleaseType[] releaseTypes) {
+        List<ReleaseDate> result = new ArrayList<>();
 
         releaseDates.forEach(e -> {
-            List<ReleaseDateWrapper> filteredByReleaseTypes =
-                    e.getReleaseDateWrappers().stream()
+            List<ReleaseDate> filteredByReleaseTypes =
+                    e.getReleaseDates().stream()
                             .filter(rd -> Arrays.stream(releaseTypes)
                                     .collect(toList())
                                     .contains(rd.getReleaseType()))
@@ -105,7 +105,7 @@ public class TmdbDatesServiceImpl implements TmdbDatesService {
 
             result.addAll(filteredByReleaseTypes);
         });
-        return result.stream().sorted().filter(distinctByKey(ReleaseDateWrapper::getReleaseType)).collect(toList());
+        return result.stream().sorted().filter(distinctByKey(ReleaseDate::getReleaseType)).collect(toList());
     }
 
     private List<ReleaseDateResultWrapper> getReleaseDatesByTmdbId(Integer tmdbId) {

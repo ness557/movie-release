@@ -3,7 +3,7 @@ package com.ness.movie_release_web.service.tmdb;
 import com.ness.movie_release_web.model.wrapper.tmdb.Language;
 import com.ness.movie_release_web.model.wrapper.tmdb.movie.details.MovieDetailsWrapper;
 import com.ness.movie_release_web.model.wrapper.tmdb.movie.search.MovieSearchWrapper;
-import com.ness.movie_release_web.model.wrapper.tmdb.releaseDates.ReleaseDateWrapper;
+import com.ness.movie_release_web.model.wrapper.tmdb.releaseDates.ReleaseDate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -72,8 +72,8 @@ public class MovieServiceImpl extends Cacheable<MovieDetailsWrapper> implements 
 
         if (result != null) {
 
-            List<ReleaseDateWrapper> releaseDateWrappers = releaseDatesService.getReleaseDates(result.getId());
-            result.setReleaseDateWrappers(releaseDateWrappers);
+            List<ReleaseDate> releaseDates = releaseDatesService.getReleaseDates(result.getId());
+            result.setReleaseDates(releaseDates);
         }
 
         putToCache(tmdbId, response.getBody(), language);

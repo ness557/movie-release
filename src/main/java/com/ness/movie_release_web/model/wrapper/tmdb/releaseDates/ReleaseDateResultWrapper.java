@@ -14,5 +14,5 @@ import java.util.List;
 public class ReleaseDateResultWrapper {
 
     @JsonProperty("release_dates")
-    private List<ReleaseDateWrapper> releaseDateWrappers = new ArrayList<>();
+    private List<ReleaseDate> releaseDates = new ArrayList<>();
 }

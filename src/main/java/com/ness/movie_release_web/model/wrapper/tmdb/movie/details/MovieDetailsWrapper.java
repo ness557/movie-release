@@ -8,7 +8,7 @@ import com.ness.movie_release_web.model.wrapper.tmdb.Language;
 import com.ness.movie_release_web.model.wrapper.tmdb.ProductionCompanyWrapper;
 import com.ness.movie_release_web.model.wrapper.tmdb.Videos;
 import com.ness.movie_release_web.model.wrapper.tmdb.credits.PeopleCreditsWrapper;
-import com.ness.movie_release_web.model.wrapper.tmdb.releaseDates.ReleaseDateWrapper;
+import com.ness.movie_release_web.model.wrapper.tmdb.releaseDates.ReleaseDate;
 import com.ness.movie_release_web.util.tmdb.TmdbMovieReleaseDateDeserializer;
 import com.ness.movie_release_web.util.tmdb.TmdbPosterPathDeserializer;
 import lombok.*;
@@ -111,7 +111,7 @@ public class MovieDetailsWrapper {
     @JsonProperty("videos")
     private Videos videos;
 
-    private List<ReleaseDateWrapper> releaseDateWrappers = new ArrayList<>(); 
+    private List<ReleaseDate> releaseDates = new ArrayList<>();
 
     public static MovieDetailsWrapper of(Film film, Language language){
         MovieDetailsWrapper wrapper = new MovieDetailsWrapper();

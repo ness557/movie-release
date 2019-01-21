@@ -10,6 +10,7 @@ import javax.transaction.Transactional;
 @Transactional
 public interface UserRepository extends JpaRepository<User, Long> {
     User findByLogin(String login);
+    User findByTelegramId(String telegramId);
     boolean existsByLogin(String login);
     boolean existsByIdNotAndLogin(Long id, String login);
 }

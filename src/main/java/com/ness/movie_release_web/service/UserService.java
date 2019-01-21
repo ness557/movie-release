@@ -11,4 +11,5 @@ public interface UserService {
     User findByLogin(String login);
     boolean isExists(String login);
     boolean existsByIdNotAndLogin(Long id, String login);
+    User findByTelegramId(String telegramId);
 }

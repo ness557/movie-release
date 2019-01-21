@@ -49,4 +49,9 @@ public class UserServiceImpl implements UserService {
     public boolean existsByIdNotAndLogin(Long id, String login) {
         return repository.existsByIdNotAndLogin(id, login);
     }
+
+    @Override
+    public User findByTelegramId(String telegramId) {
+        return repository.findByTelegramId(telegramId);
+    }
 }
