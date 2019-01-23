@@ -31,7 +31,7 @@ import java.util.List;
 import java.util.Locale;
 
 @Controller
-@SessionAttributes(names = {"language"}, types = {Language.class})
+// @SessionAttributes(names = { "language" }, types = { Language.class })
 public class UserController {
 
     @Autowired
@@ -54,19 +54,23 @@ public class UserController {
     private RecaptchaService recaptchaService;
 
     @GetMapping("/login")
-    public String login(Model model, Principal principal) {
-        if (principal != null) {
-            model.addAttribute("language", service.findByLogin(principal.getName()).getLanguage());
-        }
-
+    public String login(@CookieValue(value = "language", defaultValue = "en") Language language,
+                        @CookieValue(value = "mode", defaultValue = "movie") Mode mode, 
+                        Model model) {
+    
+        model.addAttribute("language", language);
+        model.addAttribute("mode", mode);
         return "login";
     }
 
     @GetMapping("/register")
-    public String registerForm(Model model, Principal principal) {
-        if (principal != null) {
-            model.addAttribute("language", service.findByLogin(principal.getName()).getLanguage());
-        }
+    public String registerForm(@CookieValue(value = "language", defaultValue = "en") Language language, 
+                                @CookieValue(value = "mode", defaultValue = "movie") Mode mode, 
+                                Model model,
+                                Principal principal) {
+
+        model.addAttribute("language", language);
+        model.addAttribute("mode", mode);
 
         model.addAttribute(new User());
         return "register";
@@ -74,10 +78,9 @@ public class UserController {
 
     @PostMapping("/login")
     public ResponseEntity postLogin(@RequestParam("username") String username,
-                                    @RequestParam("password") String password,
-                                    @RequestParam(name = "g-recaptcha-response") String recaptchaResponse,
-                                    HttpServletResponse response,
-                                    HttpServletRequest request) {
+            @RequestParam("password") String password,
+            @RequestParam(name = "g-recaptcha-response") String recaptchaResponse, HttpServletResponse response,
+            HttpServletRequest request) {
 
         UserDetails userDetails = userDetailsService.loadUserByUsername(username);
 
@@ -92,44 +95,44 @@ public class UserController {
     }
 
     @PostMapping("/register")
-    public String register(@Valid @ModelAttribute User user,
-                           BindingResult bindingResult,
-                           @RequestParam(name = "g-recaptcha-response") String recaptchaResponse,
-                           Model model,
-                           Locale locale,
-                           HttpServletResponse response,
-                           HttpServletRequest request,
-                           Principal principal) {
+    public String register(@Valid @ModelAttribute User user, BindingResult bindingResult,
+                            @RequestParam(name = "g-recaptcha-response") String recaptchaResponse, 
+                            @CookieValue(value = "language", defaultValue = "en") Language language,
+                            @CookieValue(value = "mode", defaultValue = "movie") Mode mode, 
+                            Model model, Locale locale,
+                            HttpServletResponse response, 
+                            HttpServletRequest request, 
+                            Principal principal) {
 
         User fromDB = null;
         if (principal != null) {
             fromDB = service.findByLogin(principal.getName());
-            model.addAttribute("language", fromDB.getLanguage());
-            model.addAttribute("mode", fromDB.getMode());
             user.setTelegramId(fromDB.getTelegramId());
         }
+        model.addAttribute("mode", mode);
+        model.addAttribute("language", language);
 
         List<String> errors = new ArrayList<>();
 
         if (!user.getEncPassword().equals(user.getMatchPassword()))
-            errors.add(messageSource.getMessage("lang.passwords_not_match", new Object[]{}, locale));
+            errors.add(messageSource.getMessage("lang.passwords_not_match", new Object[] {}, locale));
 
         if (user.getEmail().isEmpty() && !user.isTelegramNotify())
-            errors.add(messageSource.getMessage("lang.empty_email", new Object[]{}, locale));
+            errors.add(messageSource.getMessage("lang.empty_email", new Object[] {}, locale));
 
         if (user.getTelegramId().isEmpty() && user.isTelegramNotify())
-            errors.add(messageSource.getMessage("lang.empty_telegram_id", new Object[]{}, locale));
+            errors.add(messageSource.getMessage("lang.empty_telegram_id", new Object[] {}, locale));
 
         if (user.getId() == null) {
             if (service.isExists(user.getLogin()))
-                errors.add(messageSource.getMessage("lang.user_exists", new Object[]{}, locale));
+                errors.add(messageSource.getMessage("lang.user_exists", new Object[] {}, locale));
         } else {
             if (service.existsByIdNotAndLogin(user.getId(), user.getLogin()))
-                errors.add(messageSource.getMessage("lang.login_used", new Object[]{}, locale));
+                errors.add(messageSource.getMessage("lang.login_used", new Object[] {}, locale));
         }
 
         if (!recaptchaService.verifyRecaptcha(request.getRemoteAddr(), recaptchaResponse))
-            errors.add(messageSource.getMessage("lang.recaptcha_error", new Object[]{}, locale));
+            errors.add(messageSource.getMessage("lang.recaptcha_error", new Object[] {}, locale));
 
         if (!errors.isEmpty()) {
             model.addAttribute("errors", errors);
@@ -141,9 +144,10 @@ public class UserController {
 
         user.setRole(fromDB != null && !fromDB.getRole().isEmpty() ? fromDB.getRole() : "ROLE_USER");
         user.setTelegramId(StringUtils.lowerCase(user.getTelegramId()));
-        user.setMode(user.getMode() != null ? user.getMode() : Mode.movie);
 
         service.saveWithPassEncryption(user);
+
+        response.addCookie(new Cookie("language", language.getValue()));
 
         postLogin(user.getLogin(), user.getMatchPassword(), recaptchaResponse, response, request);
 
@@ -151,34 +155,35 @@ public class UserController {
     }
 
     @GetMapping("/userInfo")
-    public String userInfo(Model model, Principal principal) {
+    public String userInfo(@CookieValue(value = "language", defaultValue = "en") Language language,
+                            @CookieValue(value = "mode", defaultValue = "movie") Mode mode, 
+                            Model model,
+            Principal principal) {
 
         User user = service.findByLogin(principal.getName());
-        model.addAttribute("language", user.getLanguage());
-        model.addAttribute("mode", user.getMode());
+        model.addAttribute("language", language);
+        model.addAttribute("mode", mode);
         model.addAttribute(user);
         return "register";
-}
+    }
 
     @PostMapping("/setLanguage")
-    public ResponseEntity setLanguage(@RequestParam(value = "language") Language language, Principal principal, Model model) {
+    public ResponseEntity setLanguage(@RequestParam(value = "language") Language language,
+                                        Principal principal,
+                                        HttpServletResponse response) {
+
         User user = service.findByLogin(principal.getName());
         user.setLanguage(language);
         service.save(user);
 
-        model.addAttribute("language", language);
-
+        response.addCookie(new Cookie("language", language.getValue()));
         return ResponseEntity.ok().build();
     }
 
     @PostMapping("/setMode")
-    public ResponseEntity setMode(@RequestParam(value = "mode") Mode mode, Principal principal, Model model){
-        User user = service.findByLogin(principal.getName());
-        user.setMode(mode);
-        service.save(user);
-
-        model.addAttribute("mode", mode);
-
+    public ResponseEntity setMode(@RequestParam(value = "mode") Mode mode, 
+                                    HttpServletResponse response) {
+        response.addCookie(new Cookie("mode", mode.name()));
         return ResponseEntity.ok().build();
     }
 }

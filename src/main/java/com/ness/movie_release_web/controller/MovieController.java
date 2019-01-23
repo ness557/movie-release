@@ -66,12 +66,12 @@ public class MovieController {
 
     @GetMapping("/{tmdbId}")
     public String getFilm(@PathVariable("tmdbId") Integer tmdbId,
+                          @CookieValue(value = "language", defaultValue = "en") Language language,
+                          @CookieValue(value = "mode", defaultValue = "movie") Mode mode,
                           Principal principal,
                           Model model) {
 
         User user = userService.findByLogin(principal.getName());
-        Language language = user.getLanguage();
-        Mode mode = user.getMode();
         model.addAttribute("language", language);
         model.addAttribute("mode", mode);
 
@@ -145,12 +145,12 @@ public class MovieController {
     public String search(@RequestParam("query") String query,
                          @RequestParam(required = false, name = "year") Integer year,
                          @RequestParam(required = false, name = "page") Integer page,
+                         @CookieValue(value = "language", defaultValue = "en") Language language,
+                         @CookieValue(value = "mode", defaultValue = "movie") Mode mode,
                          Principal principal,
                          Model model) {
 
         User user = userService.findByLogin(principal.getName());
-        Language language = user.getLanguage();
-        Mode mode = user.getMode();
 
         // trim space at start
         query = StringUtils.trim(query);
@@ -186,6 +186,8 @@ public class MovieController {
                           @RequestParam(value = "statuses", required = false) List<Status> statuses,
                           @RequestParam(value = "sortBy", required = false) MovieSortBy sortBy,
                           @CookieValue(value = "subsMode", defaultValue = "false") String subsMode,
+                          @CookieValue(value = "language", defaultValue = "en") Language language,
+                          @CookieValue(value = "mode", defaultValue = "movie") Mode mode,
                           HttpServletResponse response,
                           Principal principal,
                           Model model) {
@@ -197,12 +199,9 @@ public class MovieController {
             statuses = emptyList();
         }
 
-        response.addCookie(new Cookie("subsMode", subsMode));
         Boolean viewMode = new Boolean(subsMode);
 
         User user = userService.findByLogin(principal.getName());
-        Language language = user.getLanguage();
-        Mode mode = user.getMode();
 
         if(sortBy == null){
             switch (language) {
@@ -253,12 +252,12 @@ public class MovieController {
     @GetMapping("/discover")
     public String discover(@ModelAttribute("criteria") DiscoverSearchCriteria criteria,
                            @RequestParam(value = "page", required = false) Integer page,
+                           @CookieValue(value = "language", defaultValue = "en") Language language,
+                           @CookieValue(value = "mode", defaultValue = "movie") Mode mode,
                            Principal principal,
                            Model model) {
 
         User user = userService.findByLogin(principal.getName());
-        Language language = user.getLanguage();
-        Mode mode = user.getMode();
 
         if (page == null)
             page = 1;

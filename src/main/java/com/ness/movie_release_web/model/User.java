@@ -1,7 +1,5 @@
 package com.ness.movie_release_web.model;
 
-import com.ness.movie_release_web.model.wrapper.tmdb.Language;
-import com.ness.movie_release_web.model.wrapper.tmdb.Mode;
 import lombok.*;
 import org.springframework.lang.Nullable;
 
@@ -9,6 +7,9 @@ import javax.persistence.*;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.Pattern;
+
+import com.ness.movie_release_web.model.wrapper.tmdb.Language;
+import com.ness.movie_release_web.model.wrapper.tmdb.Mode;
 
 @Entity
 @Table(name = "uzer")
@@ -53,8 +54,4 @@ public class User {
     @Enumerated
     @Column(name = "language")
     private Language language;
-
-    @Enumerated
-    @Column(name = "mode")
-    private Mode mode;
 }

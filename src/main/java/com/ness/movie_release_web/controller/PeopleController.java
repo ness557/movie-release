@@ -11,6 +11,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.CookieValue;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -25,9 +26,6 @@ import java.util.Optional;
 public class PeopleController {
 
     @Autowired
-    private UserService userService;
-
-    @Autowired
     private PeopleService peopleService;
 
     @GetMapping("/search")
@@ -38,12 +36,11 @@ public class PeopleController {
 
     @GetMapping("/{tmdbId}")
     public String getDetails(@PathVariable("tmdbId") Integer id,
+                             @CookieValue(value = "language", defaultValue = "en") Language language,
+                             @CookieValue(value = "mode", defaultValue = "movie") Mode mode,
                              Model model,
                              Principal principal) {
 
-        User user = userService.findByLogin(principal.getName());
-        Language language = user.getLanguage();
-        Mode mode = user.getMode();
         model.addAttribute("language", language);
         model.addAttribute("mode", mode);
 

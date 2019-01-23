@@ -69,12 +69,12 @@ public class TVSeriesController {
 
     @GetMapping("/{tmdbId}")
     public String getFilm(@PathVariable("tmdbId") Integer tmdbId,
+                          @CookieValue(value = "language", defaultValue = "en") Language language,
+                          @CookieValue(value = "mode", defaultValue = "movie") Mode mode,
                           Principal principal,
                           Model model) {
 
         User user = userService.findByLogin(principal.getName());
-        Language language = user.getLanguage();
-        Mode mode = user.getMode();
         model.addAttribute("language", language);
         model.addAttribute("mode", mode);
         model.addAttribute("subscribed", false);
@@ -100,7 +100,7 @@ public class TVSeriesController {
             model.addAttribute("seasonWatched", false);
 
             if(currentSeasonNum > 0){
-                Optional<SeasonWrapper> seasonDetailsOpt = tmdbSeriesService.getSeasonDetails(tmdbId, currentSeasonNum, user.getLanguage());
+                Optional<SeasonWrapper> seasonDetailsOpt = tmdbSeriesService.getSeasonDetails(tmdbId, currentSeasonNum, language);
                 if (!seasonDetailsOpt.isPresent())
                     throw new ResponseStatusException(HttpStatus.NOT_FOUND);
 
@@ -134,12 +134,12 @@ public class TVSeriesController {
     public String getSeason(@PathVariable("tmdbId") Integer tmdbId,
                             @PathVariable("seasonNumber") Integer seasonNumber,
                             @RequestParam(value = "episodeToOpen", required = false) Integer episodeToOpen,
+                            @CookieValue(value = "language", defaultValue = "en") Language language,
+                            @CookieValue(value = "mode", defaultValue = "movie") Mode mode,
                             Principal principal,
                             Model model) {
 
         User user = userService.findByLogin(principal.getName());
-        Language language = user.getLanguage();
-        Mode mode = user.getMode();
         model.addAttribute("language", language);
         model.addAttribute("mode", mode);
 
@@ -211,12 +211,12 @@ public class TVSeriesController {
     public String search(@RequestParam("query") String query,
                          @RequestParam(required = false, name = "year") Integer year,
                          @RequestParam(required = false, name = "page") Integer page,
+                         @CookieValue(value = "language", defaultValue = "en") Language language,
+                         @CookieValue(value = "mode", defaultValue = "movie") Mode mode,
                          Principal principal,
                          Model model) {
 
         User user = userService.findByLogin(principal.getName());
-        Language language = user.getLanguage();
-        Mode mode = user.getMode();
 
         // trim space at start
         query = StringUtils.trim(query);
@@ -256,6 +256,8 @@ public class TVSeriesController {
                           @RequestParam(value = "sortBy", required = false) TVSeriesSortBy sortBy,
                           @RequestParam(value = "watch_status", required = false) List<WatchStatus> watchStatuses,
                           @CookieValue(value = "subsMode", defaultValue = "false") String subsMode, 
+                          @CookieValue(value = "language", defaultValue = "en") Language language,
+                          @CookieValue(value = "mode", defaultValue = "movie") Mode mode,
                           HttpServletResponse response,
                           Principal principal,
                           Model model) {
@@ -271,12 +273,9 @@ public class TVSeriesController {
             watchStatuses = emptyList();
         }
 
-        response.addCookie(new Cookie("subsMode", subsMode));
         Boolean viewMode = new Boolean(subsMode);
 
         User user = userService.findByLogin(principal.getName());
-        Language language = user.getLanguage();
-        Mode mode = user.getMode();
 
         if(sortBy == null){
             switch (language) {
@@ -330,12 +329,12 @@ public class TVSeriesController {
     @GetMapping("/discover")
     public String discover(@ModelAttribute("criteria") DiscoverSearchCriteria criteria,
                            @RequestParam(value = "page", required = false) Integer page,
+                           @CookieValue(value = "language", defaultValue = "en") Language language,
+                           @CookieValue(value = "mode", defaultValue = "movie") Mode mode,
                            Principal principal,
                            Model model) {
 
         User user = userService.findByLogin(principal.getName());
-        Language language = user.getLanguage();
-        Mode mode = user.getMode();
 
         if (page == null)
             page = 1;

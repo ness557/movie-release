@@ -121,7 +121,7 @@ public class MovieDetailsWrapper {
                 wrapper.setTitle(film.getNameRu());
                 break;
             case en:
-                wrapper.setTitle(film.getNameRu());
+                wrapper.setTitle(film.getNameEn());
                 break;
             default:
                 wrapper.setTitle(film.getNameRu());

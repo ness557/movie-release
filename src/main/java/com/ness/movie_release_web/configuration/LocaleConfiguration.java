@@ -1,5 +1,6 @@
 package com.ness.movie_release_web.configuration;
 
+import com.ness.movie_release_web.service.CookieLocaleResolver;
 import com.ness.movie_release_web.service.DBLocaleResolver;
 import com.ness.movie_release_web.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,7 +24,7 @@ public class LocaleConfiguration implements WebMvcConfigurer {
 
     @Bean
     public LocaleResolver localeResolver() {
-        return new DBLocaleResolver(userService);
+        return new CookieLocaleResolver();
     }
 
     @Bean
