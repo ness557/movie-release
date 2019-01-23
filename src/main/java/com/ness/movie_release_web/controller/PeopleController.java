@@ -1,10 +1,8 @@
 package com.ness.movie_release_web.controller;
 
-import com.ness.movie_release_web.model.User;
 import com.ness.movie_release_web.model.wrapper.tmdb.Language;
 import com.ness.movie_release_web.model.wrapper.tmdb.Mode;
 import com.ness.movie_release_web.model.wrapper.tmdb.people.PeopleWrapper;
-import com.ness.movie_release_web.service.UserService;
 import com.ness.movie_release_web.service.tmdb.PeopleService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;

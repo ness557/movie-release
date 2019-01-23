@@ -1,8 +1,6 @@
 package com.ness.movie_release_web.configuration;
 
 import com.ness.movie_release_web.service.CookieLocaleResolver;
-import com.ness.movie_release_web.service.DBLocaleResolver;
-import com.ness.movie_release_web.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.Bean;
@@ -15,9 +13,6 @@ import org.springframework.web.servlet.i18n.LocaleChangeInterceptor;
 
 @Configuration
 public class LocaleConfiguration implements WebMvcConfigurer {
-
-    @Autowired
-    private UserService userService;
 
     @Autowired
     private MessageSource messageSource;

@@ -9,7 +9,6 @@ import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.Pattern;
 
 import com.ness.movie_release_web.model.wrapper.tmdb.Language;
-import com.ness.movie_release_web.model.wrapper.tmdb.Mode;
 
 @Entity
 @Table(name = "uzer")
