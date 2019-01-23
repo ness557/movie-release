@@ -33,6 +33,9 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 
+import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletResponse;
+
 import static java.util.Collections.emptyList;
 import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toMap;
@@ -252,7 +255,8 @@ public class TVSeriesController {
                           @RequestParam(value = "statuses", required = false) List<Status> tvStatuses,
                           @RequestParam(value = "sortBy", required = false) TVSeriesSortBy sortBy,
                           @RequestParam(value = "watch_status", required = false) List<WatchStatus> watchStatuses,
-                          @RequestParam(value = "as_list", required = false) Boolean asList,
+                          @CookieValue(value = "subsMode", defaultValue = "false") String subsMode, 
+                          HttpServletResponse response,
                           Principal principal,
                           Model model) {
 
@@ -267,9 +271,8 @@ public class TVSeriesController {
             watchStatuses = emptyList();
         }
 
-        if(asList == null){
-            asList = false;
-        }
+        response.addCookie(new Cookie("subsMode", subsMode));
+        Boolean viewMode = new Boolean(subsMode);
 
         User user = userService.findByLogin(principal.getName());
         Language language = user.getLanguage();
@@ -290,14 +293,14 @@ public class TVSeriesController {
         model.addAttribute("language", language);
         model.addAttribute("mode", mode);
 
-        int size = asList ? 30 : 10;
+        int size = viewMode ? 30 : 10;
 
         Page<UserTVSeries> userTVSeries = dbSeriesService.getByUserAndTVStatusesAndWatchStatusesWithOrderAndPages(tvStatuses, watchStatuses, sortBy, user, page, size);
         List<UserTVSeries> series = userTVSeries.getContent();
 
         List<TVDetailsWrapper> subscriptions = null;
 
-        if (asList){
+        if (viewMode){
             subscriptions = series.stream()
                     .map(UserTVSeries::getTvSeries)
                     .map(s -> TVDetailsWrapper.of(s, language)).collect(toList());
@@ -319,7 +322,7 @@ public class TVSeriesController {
                 .addAttribute("page", page)
                 .addAttribute("pageCount", userTVSeries.getTotalPages());
 
-        model.addAttribute("asList", asList);
+        model.addAttribute("asList", viewMode);
 
         return "seriesSubscriptions";
     }

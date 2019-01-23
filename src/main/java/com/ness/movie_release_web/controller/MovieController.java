@@ -24,6 +24,9 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.Cookie;
+
 import java.security.Principal;
 import java.util.*;
 
@@ -182,7 +185,8 @@ public class MovieController {
     public String getSubs(@RequestParam(value = "page", required = false) Integer page,
                           @RequestParam(value = "statuses", required = false) List<Status> statuses,
                           @RequestParam(value = "sortBy", required = false) MovieSortBy sortBy,
-                          @RequestParam(value = "as_list", required = false) Boolean asList,
+                          @CookieValue(value = "subsMode", defaultValue = "false") String subsMode,
+                          HttpServletResponse response,
                           Principal principal,
                           Model model) {
 
@@ -193,9 +197,8 @@ public class MovieController {
             statuses = emptyList();
         }
 
-        if(asList == null){
-            asList = false;
-        }
+        response.addCookie(new Cookie("subsMode", subsMode));
+        Boolean viewMode = new Boolean(subsMode);
 
         User user = userService.findByLogin(principal.getName());
         Language language = user.getLanguage();
@@ -216,14 +219,14 @@ public class MovieController {
         model.addAttribute("language", language);
         model.addAttribute("mode", mode);
 
-        int size = asList ? 30 : 10;
+        int size = viewMode ? 30 : 10;
 
         Page<Film> filmPage = filmService.getByUserAndStatusWithOrderbyAndPages(statuses, sortBy, user, page, size);
         List<Film> films = filmPage.getContent();
 
         List<MovieDetailsWrapper> tmdbFilms;
 
-        if (asList) {
+        if (viewMode) {
             tmdbFilms = films.stream().map(f -> MovieDetailsWrapper.of(f, language)).collect(toList());
         } else {
             tmdbFilms = films.stream()
@@ -242,7 +245,7 @@ public class MovieController {
                 .addAttribute("page", page)
                 .addAttribute("pageCount", filmPage.getTotalPages());
 
-        model.addAttribute("asList", asList);
+        model.addAttribute("asList", viewMode);
 
         return "movieSubscriptions";
     }
