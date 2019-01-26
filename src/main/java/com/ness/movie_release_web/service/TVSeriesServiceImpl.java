@@ -197,7 +197,6 @@ public class TVSeriesServiceImpl implements TVSeriesService {
 
         TVDetailsWrapper tvDetails = tvDetailsOptional.get();
         Double average = tvDetails.getEpisodeRunTime().stream().mapToDouble(Integer::doubleValue).average().orElse(0d);
-        Double result = 0d;
 
         Optional<SeasonWrapper> seasonDetails = tvSeriesService.getSeasonDetails(tmdbId, currentSeason, user.getLanguage());
 

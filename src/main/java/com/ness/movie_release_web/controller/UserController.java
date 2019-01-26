@@ -77,7 +77,7 @@ public class UserController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity postLogin(@RequestParam("username") String username,
+    public ResponseEntity<String> postLogin(@RequestParam("username") String username,
             @RequestParam("password") String password,
             @RequestParam(name = "g-recaptcha-response") String recaptchaResponse, HttpServletResponse response,
             HttpServletRequest request) {
@@ -168,7 +168,8 @@ public class UserController {
     }
 
     @PostMapping("/setLanguage")
-    public ResponseEntity setLanguage(@RequestParam(value = "language") Language language,
+    @ResponseStatus(value = HttpStatus.OK)
+    public void setLanguage(@RequestParam(value = "language") Language language,
                                         Principal principal,
                                         HttpServletResponse response) {
 
@@ -177,13 +178,12 @@ public class UserController {
         service.save(user);
 
         response.addCookie(new Cookie("language", language.getValue()));
-        return ResponseEntity.ok().build();
     }
 
     @PostMapping("/setMode")
-    public ResponseEntity setMode(@RequestParam(value = "mode") Mode mode, 
+    @ResponseStatus(value = HttpStatus.OK)
+    public void setMode(@RequestParam(value = "mode") Mode mode, 
                                     HttpServletResponse response) {
         response.addCookie(new Cookie("mode", mode.name()));
-        return ResponseEntity.ok().build();
     }
 }

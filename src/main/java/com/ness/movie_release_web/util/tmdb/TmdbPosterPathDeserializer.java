@@ -9,6 +9,8 @@ import java.io.IOException;
 
 public class TmdbPosterPathDeserializer extends StdDeserializer<String> {
 
+    private static final long serialVersionUID = -7857518805513504955L;
+
     public TmdbPosterPathDeserializer() {
         this(null);
     }

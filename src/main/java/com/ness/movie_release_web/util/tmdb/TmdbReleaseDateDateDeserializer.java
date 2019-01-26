@@ -12,6 +12,8 @@ import java.time.format.DateTimeFormatter;
 
 public class TmdbReleaseDateDateDeserializer extends StdDeserializer<LocalDate> {
 
+    private static final long serialVersionUID = 8294581490791029061L;
+
     public TmdbReleaseDateDateDeserializer() {
         this(null);
     }

@@ -33,7 +33,6 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 
-import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletResponse;
 
 import static java.util.Collections.emptyList;
@@ -184,27 +183,25 @@ public class TVSeriesController {
     }
 
     @PostMapping("/subscribe")
-    public ResponseEntity subscribe(@RequestParam(value = "tmdbId") Integer tmdbId,
+    @ResponseStatus(value = HttpStatus.OK)
+    public void subscribe(@RequestParam(value = "tmdbId") Integer tmdbId,
                                     Principal principal) {
 
         String login = principal.getName();
         User user = userService.findByLogin(login);
 
         dbSeriesService.subscribeUser(tmdbId, user);
-
-        return ResponseEntity.ok().build();
     }
 
     @PostMapping("/unSubscribe")
-    public ResponseEntity unSubscribe(@RequestParam(value = "tmdbId") Integer tmdbId,
+    @ResponseStatus(value = HttpStatus.OK)
+    public void unSubscribe(@RequestParam(value = "tmdbId") Integer tmdbId,
                                       Principal principal) {
 
         String login = principal.getName();
         User user = userService.findByLogin(login);
 
         dbSeriesService.unSubscribeUser(tmdbId, user);
-
-        return ResponseEntity.ok().build();
     }
 
     @GetMapping("/search")
@@ -390,7 +387,8 @@ public class TVSeriesController {
     }
 
     @PostMapping("/setSeasonAndEpisode")
-    public ResponseEntity setCurrentSeasonAndEpisode(@RequestParam(value = "tmdbId") Integer tmdbId,
+    @ResponseStatus(value = HttpStatus.OK)
+    public void setCurrentSeasonAndEpisode(@RequestParam(value = "tmdbId") Integer tmdbId,
                                                      @RequestParam(value = "season") Integer season,
                                                      @RequestParam(value = "episode") Integer episode,
                                                      Principal principal) {
@@ -398,7 +396,5 @@ public class TVSeriesController {
         User user = userService.findByLogin(principal.getName());
 
         dbSeriesService.setSeasonAndEpisode(tmdbId, user, season, episode);
-
-        return ResponseEntity.ok().build();
     }
 }

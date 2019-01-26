@@ -21,7 +21,7 @@ public class CompanyController {
     private CompanyService companyService;
 
     @GetMapping("/search")
-    public ResponseEntity search(@RequestParam(value = "query") String query,
+    public ResponseEntity<CompanySearchWrapper> search(@RequestParam(value = "query") String query,
                                 @CookieValue(value = "language", defaultValue = "en") Language language,
                                 @RequestParam(value = "page", required = false) Integer page,
                                 Principal principal){

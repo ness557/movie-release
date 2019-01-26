@@ -15,7 +15,9 @@ import java.io.Serializable;
 @EqualsAndHashCode
 public class UserTVSeriesPK implements Serializable {
 
-    public static UserTVSeriesPK wrap(Long userId, Long tvseriesId){
+    private static final long serialVersionUID = -8231526708476460485L;
+
+    public static UserTVSeriesPK wrap(Long userId, Long tvseriesId) {
         UserTVSeriesPK userTVSeriesPK = new UserTVSeriesPK();
         userTVSeriesPK.setUserId(userId);
         userTVSeriesPK.setTvSeriesId(tvseriesId);

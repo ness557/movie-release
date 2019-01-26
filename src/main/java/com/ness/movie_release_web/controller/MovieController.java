@@ -25,7 +25,6 @@ import org.springframework.web.server.ResponseStatusException;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.Cookie;
 
 import java.security.Principal;
 import java.util.*;
@@ -87,7 +86,8 @@ public class MovieController {
     }
 
     @PostMapping("/subscribe")
-    public ResponseEntity subscribe(@RequestParam(value = "tmdbId") Integer tmdbId, Principal principal,
+    @ResponseStatus(value = HttpStatus.OK)
+    public void subscribe(@RequestParam(value = "tmdbId") Integer tmdbId, Principal principal,
             HttpServletRequest request) {
 
         String login = principal.getName();
@@ -112,11 +112,11 @@ public class MovieController {
         film.getUsers().add(user);
 
         filmService.save(film);
-        return ResponseEntity.ok().build();
     }
 
     @PostMapping("/unSubscribe")
-    public ResponseEntity unSubscribe(@RequestParam(value = "tmdbId") Integer tmdbId, Principal principal) {
+    @ResponseStatus(value = HttpStatus.OK)
+    public void unSubscribe(@RequestParam(value = "tmdbId") Integer tmdbId, Principal principal) {
 
         String login = principal.getName();
 
@@ -127,8 +127,6 @@ public class MovieController {
             f.getUsers().remove(user);
             filmService.save(f);
         });
-
-        return ResponseEntity.ok().build();
     }
 
     @GetMapping("/search")

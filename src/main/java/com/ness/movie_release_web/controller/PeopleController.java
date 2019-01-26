@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.security.Principal;
+import java.util.List;
 import java.util.Optional;
 
 @Controller
@@ -27,7 +28,7 @@ public class PeopleController {
     private PeopleService peopleService;
 
     @GetMapping("/search")
-    public ResponseEntity search(@RequestParam(value = "query") String query) {
+    public ResponseEntity<List<PeopleWrapper>> search(@RequestParam(value = "query") String query) {
 
         return ResponseEntity.ok(peopleService.search(query));
     }

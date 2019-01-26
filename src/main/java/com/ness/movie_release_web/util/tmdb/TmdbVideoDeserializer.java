@@ -9,6 +9,8 @@ import java.io.IOException;
 
 public class TmdbVideoDeserializer extends StdDeserializer<String> {
 
+    private static final long serialVersionUID = -6383547657776911528L;
+
     public TmdbVideoDeserializer() {
         this(null);
     }
