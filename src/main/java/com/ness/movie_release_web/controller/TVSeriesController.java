@@ -250,6 +250,21 @@ public class TVSeriesController {
         return "seriesSearchResult";
     }
 
+    @GetMapping("/api/search")
+    @ResponseBody
+    public ResponseEntity<TVSearchWrapper> searchApi(@RequestParam("query") String query,
+                         @RequestParam(required = false, name = "year") Integer year,
+                         @RequestParam(required = false, name = "page") Integer page,
+                         @CookieValue(value = "language", defaultValue = "en") Language language){
+
+        Optional<TVSearchWrapper> optionalSearchResult = tmdbSeriesService.search(query, page, year, language);
+        if (!optionalSearchResult.isPresent()) {
+            throw new ResponseStatusException(HttpStatus.NO_CONTENT);
+        }
+
+        return ResponseEntity.ok(optionalSearchResult.get());
+    }
+
     @GetMapping("/subscriptions")
     public String getSubs(@RequestParam(value = "page", required = false) Integer page,
                           @RequestParam(value = "statuses", required = false) List<Status> tvStatuses,

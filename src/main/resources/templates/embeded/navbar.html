@@ -2,16 +2,14 @@
 <nav class="navbar fixed-top navbar-expand-lg navbar-dark bg-dark" id="navbar" style="z-index: 1000">
     <div class="container-fluid">
         <div class="navbar-header">
-            <a href="/home"
-               class="navbar-brand">
-                <img style="width: 64px; height: 50px" th:src="@{/img/logo.png}"/>
+            <a href="/home" class="navbar-brand">
+                <img style="width: 64px; height: 50px" th:src="@{/img/logo.png}" />
                 Movie Notifier Service
             </a>
         </div>
 
-        <button class="navbar-toggler collapsed" type="button" data-toggle="collapse"
-                data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false"
-                aria-label="Toggle navigation">
+        <button class="navbar-toggler collapsed" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
         </button>
 
@@ -21,22 +19,19 @@
                 <div th:if="${#request.isUserInRole('USER')}">
                     <ul class="navbar-nav mr-auto">
                         <li class="nav-item">
-                            <form method="get" class="form-inline"
-                                  th:action="${'/' + (mode != null ? mode.name() : 'movie' ) + '/search'}">
+                            <form method="get" class="form-inline" th:action="${'/' + (mode != null ? mode.name() : 'movie' ) + '/search'}">
 
                                 <div class="form-group ml-auto" style="margin-right: 10px; margin-bottom:0">
                                     <div class="icon-addon addon-md">
-                                        <input id="query" type="text" style="width: 170px" name="query"
-                                               th:placeholder="#{lang.query_input_placeholder}"
-                                               class="form-control" th:value="${query}">
+                                        <input id="query" type="text" style="width: 170px" name="query" th:placeholder="#{lang.query_input_placeholder}"
+                                            class="form-control" th:value="${query}">
                                     </div>
                                 </div>
                                 <div class="form-group" style="margin-right: 10px; margin-bottom:0">
                                     <div class="icon-addon addon-md">
-                                        <input type="number" step="1" style="width: 100px" min="1000" max="3000"
-                                               name="year"
-                                               th:placeholder="#{lang.year_input_placeholder}"
-                                               class="form-control no-spinners" th:value="${year}">
+                                        <input type="number" step="1" style="width: 100px" min="1000" max="3000" name="year"
+                                            th:placeholder="#{lang.year_input_placeholder}" class="form-control no-spinners"
+                                            th:value="${year}">
                                     </div>
                                 </div>
                                 <input type="submit" th:value="#{lang.find_button}" class="btn btn-primary">
@@ -48,20 +43,18 @@
                 <ul class="navbar-nav ml-auto">
                     <li class="nav-item dropdown">
                         <a class="nav-link dropdown-toggle" href="javascript:void(0);" id="navbarDropdown" role="button"
-                           data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                            <th:block
-                                    th:text="#{lang.sign_in_button} + ' ' + ${#request.getUserPrincipal().getName()}"/>
-                            <img style="width: 20px;" th:src="@{/img/user-light.png}"/>
+                            data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            <th:block th:text="#{lang.sign_in_button} + ' ' + ${#request.getUserPrincipal().getName()}" />
+                            <img style="width: 20px;" th:src="@{/img/user-light.png}" />
                         </a>
-                        <div class="dropdown-menu dropdown-menu-right text-right ml-auto"
-                             aria-labelledby="navbarDropdown">
+                        <div class="dropdown-menu dropdown-menu-right text-right ml-auto" aria-labelledby="navbarDropdown">
                             <a href="/userInfo" class="dropdown-item">
                                 <span th:text="#{lang.edit_profile}"></span>
-                                <img style="width: 20px;" th:src="@{/img/edit-dark.png}"/>
+                                <img style="width: 20px;" th:src="@{/img/edit-dark.png}" />
                             </a>
                             <a href="/logout" class="dropdown-item ml-auto">
                                 <span th:text="#{lang.sign_out}"></span>
-                                <img style="width: 20px;" th:src="@{/img/sign-out-dark.png}"/>
+                                <img style="width: 20px;" th:src="@{/img/sign-out-dark.png}" />
                             </a>
                         </div>
                     </li>
@@ -77,18 +70,52 @@
                     <li class="nav-item">
                         <a href="/login" class="nav-link">
                             Sign in
-                            <img style="width: 20px;" th:src="@{/img/user-light.png}"/>
+                            <img style="width: 20px;" th:src="@{/img/user-light.png}" />
                         </a>
                     </li>
                     <li class="nav-item">
                         <a href="/register" class="nav-link">
                             Register
-                            <img style="width: 20px;" th:src="@{/img/register-light.png}"/>
+                            <img style="width: 20px;" th:src="@{/img/register-light.png}" />
                         </a>
                     </li>
                 </ul>
             </th:block>
 
-        </div><!--/.nav-collapse -->
+        </div>
+        <!--/.nav-collapse -->
     </div>
+
+    <script th:inline="javascript">
+        var mode = [[${ mode != null ? mode.name() : 'movie'}]];
+
+        $('#query').autocomplete({
+            serviceUrl: "/" + mode + '/api/search',
+            paramName: "query",
+            minChars: 2,
+            width:170,
+            lookupLimit:7,
+
+            transformResult: function (response) {
+                return {
+                    suggestions: $.map(jQuery.parseJSON(response).results, function (dataItem) {
+                        var year;
+                        switch (mode) {
+                            case 'movie':
+                                year = new Date(dataItem.release_date).getFullYear();
+                                break;
+                            case 'series':
+                                year = new Date(dataItem.first_air_date).getFullYear();
+                                break;
+                        }
+                        return { value: dataItem.name + ' (' + year + ')', data: dataItem.id };
+                    }).slice(0, 10)
+                }
+            },
+
+            onSelect: function (suggestion) {
+                location.href = '/' + mode + '/' + suggestion.data;
+            }
+        });
+    </script>
 </nav>
