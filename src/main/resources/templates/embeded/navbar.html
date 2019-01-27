@@ -93,22 +93,25 @@
             serviceUrl: "/" + mode + '/api/search',
             paramName: "query",
             minChars: 2,
-            width:170,
-            lookupLimit:7,
+            width: 170,
+            lookupLimit: 7,
 
             transformResult: function (response) {
                 return {
                     suggestions: $.map(jQuery.parseJSON(response).results, function (dataItem) {
                         var year;
+                        var name;
                         switch (mode) {
                             case 'movie':
+                                name = dataItem.title;
                                 year = new Date(dataItem.release_date).getFullYear();
                                 break;
                             case 'series':
+                                name = dataItem.name;
                                 year = new Date(dataItem.first_air_date).getFullYear();
                                 break;
                         }
-                        return { value: dataItem.name + ' (' + year + ')', data: dataItem.id };
+                        return { value: name + ' (' + year + ')', data: dataItem.id };
                     }).slice(0, 10)
                 }
             },
