@@ -1,5 +1,5 @@
 <html xmlns:th="http://www.thymeleaf.org">
-<nav class="navbar fixed-top navbar-expand-lg navbar-dark bg-dark" id="navbar" style="z-index: 1000">
+<nav class="navbar fixed-top navbar-expand-lg navbar-dark bg-dark" id="navbar" style="z-index: 555">
     <div class="container-fluid">
         <div class="navbar-header">
             <a href="/home" class="navbar-brand">
@@ -21,9 +21,9 @@
                         <li class="nav-item">
                             <form method="get" class="form-inline" th:action="${'/' + (mode != null ? mode.name() : 'movie' ) + '/search'}">
 
-                                <div class="form-group ml-auto" style="margin-right: 10px; margin-bottom:0">
+                                <div class="form-group ml-auto" style="margin-right: 10px; margin-bottom:0;">
                                     <div class="icon-addon addon-md">
-                                        <input id="query" type="text" style="width: 170px" name="query" th:placeholder="#{lang.query_input_placeholder}"
+                                        <input id="query" type="text" style="width: 170px;position: relative; z-index: 9999;" name="query" th:placeholder="#{lang.query_input_placeholder}"
                                             class="form-control" th:value="${query}">
                                     </div>
                                 </div>
@@ -93,8 +93,10 @@
             serviceUrl: "/" + mode + '/api/search',
             paramName: "query",
             minChars: 2,
-            width: 170,
+            width: 360,
             lookupLimit: 7,
+            zIndex: 556,
+            maxHeight: 350,
 
             transformResult: function (response) {
                 return {
