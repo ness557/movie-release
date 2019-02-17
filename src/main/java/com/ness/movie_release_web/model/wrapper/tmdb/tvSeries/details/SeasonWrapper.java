@@ -14,7 +14,7 @@ import java.util.List;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@ToString
+@ToString(exclude = "episodes")
 @EqualsAndHashCode
 public class SeasonWrapper {
 

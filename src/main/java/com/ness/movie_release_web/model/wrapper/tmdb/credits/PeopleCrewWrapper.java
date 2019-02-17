@@ -10,7 +10,7 @@ import lombok.*;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@ToString
+@ToString(exclude = "profilePath")
 @EqualsAndHashCode
 public class PeopleCrewWrapper {
 

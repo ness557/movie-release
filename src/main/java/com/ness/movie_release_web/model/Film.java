@@ -13,7 +13,7 @@ import java.util.List;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-@ToString
+@ToString(exclude = "users")
 public class Film {
 
     @Id

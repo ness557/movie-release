@@ -23,14 +23,20 @@ import java.util.Set;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@ToString
+@ToString(exclude = {"backdropPath",
+                     "genreWrappers",
+                     "posterPath",
+                     "productionCompanies",
+                     "productionCountries",
+                     "spokenLanguageWrappers",
+                     "credits"})
 @EqualsAndHashCode
 public class MovieDetailsWrapper {
 
     @JsonProperty("adult")
     private Boolean adult;
 
-    @JsonDeserialize(using =TmdbPosterPathDeserializer.class)
+    @JsonDeserialize(using = TmdbPosterPathDeserializer.class)
     @JsonProperty("backdrop_path")
     private String backdropPath;
 
@@ -41,45 +47,45 @@ public class MovieDetailsWrapper {
     private Integer budget;
 
     @JsonProperty("genres")
-    private Set<GenreWrapper> genreWrappers = new HashSet<>(); 
+    private Set<GenreWrapper> genreWrappers = new HashSet<>();
 
     @JsonProperty("homepage")
-    private String homepage; 
+    private String homepage;
 
     @JsonProperty("id")
-    private Integer id; 
+    private Integer id;
 
     @JsonProperty("imdb_id")
     private String imdbId;
 
     @JsonProperty("original_language")
-    private String originalLanguage; 
+    private String originalLanguage;
 
     @JsonProperty("original_title")
     private String originalTitle;
 
     @JsonProperty("overview")
-    private String overview; 
+    private String overview;
 
     @JsonProperty("popularity")
     private Double popularity;
 
-    @JsonDeserialize(using =TmdbPosterPathDeserializer.class)
+    @JsonDeserialize(using = TmdbPosterPathDeserializer.class)
     @JsonProperty("poster_path")
-    private String posterPath; 
+    private String posterPath;
 
     @JsonProperty("production_companies")
-    private List<ProductionCompanyWrapper> productionCompanies = new ArrayList<>(); 
+    private List<ProductionCompanyWrapper> productionCompanies = new ArrayList<>();
 
     @JsonProperty("production_countries")
-    private List<ProductionCountryWrapper> productionCountries = new ArrayList<>(); 
+    private List<ProductionCountryWrapper> productionCountries = new ArrayList<>();
 
     @JsonDeserialize(using = TmdbMovieReleaseDateDeserializer.class)
     @JsonProperty("release_date")
     private LocalDate releaseDate; //not needed
 
     @JsonProperty("revenue")
-    private Integer revenue; 
+    private Integer revenue;
 
     @JsonProperty("runtime")
     private Integer runtime; // minutes used
@@ -88,19 +94,19 @@ public class MovieDetailsWrapper {
     private List<SpokenLanguageWrapper> spokenLanguageWrappers = new ArrayList<>();
 
     @JsonProperty("status")
-    private Status status; 
+    private Status status;
 
     @JsonProperty("tagline")
-    private String tagline; 
+    private String tagline;
 
     @JsonProperty("title")
-    private String title; 
+    private String title;
 
     @JsonProperty("video")
     private Boolean video;
 
     @JsonProperty("vote_average")
-    private Double voteAverage; 
+    private Double voteAverage;
 
     @JsonProperty("vote_count")
     private Integer voteCount;
@@ -113,7 +119,7 @@ public class MovieDetailsWrapper {
 
     private List<ReleaseDate> releaseDates = new ArrayList<>();
 
-    public static MovieDetailsWrapper of(Film film, Language language){
+    public static MovieDetailsWrapper of(Film film, Language language) {
         MovieDetailsWrapper wrapper = new MovieDetailsWrapper();
         wrapper.setId(film.getId().intValue());
         switch (language) {

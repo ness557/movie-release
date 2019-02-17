@@ -13,35 +13,47 @@ import java.util.List;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@ToString
+@ToString(exclude = {"video", "posterPath", "overview", "backdropPath"})
 @EqualsAndHashCode
 public class MovieWrapper {
-    @JsonProperty("vote_count")
-    private Integer voteCount;
     @JsonProperty("id")
     private Integer id;
+
     @JsonProperty("video")
     private Boolean video;
+
+    @JsonProperty("vote_count")
+    private Integer voteCount;
+
     @JsonProperty("vote_average")
     private Integer voteAverage;
+
     @JsonProperty("title")
     private String title;
+
     @JsonProperty("popularity")
     private Double popularity;
 
     @JsonDeserialize(using = TmdbPosterPathDeserializer.class)
     @JsonProperty("poster_path")
     private String posterPath;
+
     @JsonProperty("original_language")
     private String originalLanguage;
+
     @JsonProperty("original_title")
     private String originalTitle;
+
     @JsonProperty("genre_ids")
     private List<Integer> genreIds = null;
+
+    @JsonDeserialize(using = TmdbPosterPathDeserializer.class)
     @JsonProperty("backdrop_path")
     private String backdropPath;
+
     @JsonProperty("adult")
     private Boolean adult;
+
     @JsonProperty("overview")
     private String overview;
 
