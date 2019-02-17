@@ -20,7 +20,7 @@ import java.util.List;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@ToString(exclude = {"networks", "productionCompanies", "seasons"})
+@ToString(exclude = {"networks", "productionCompanies", "seasons", "overview"})
 @EqualsAndHashCode
 public class TVDetailsWrapper {
 

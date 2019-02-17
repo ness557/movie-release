@@ -14,7 +14,7 @@ import java.util.List;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@ToString(exclude = {"originCountry", "posterPath"})
+@ToString(exclude = {"originCountry", "posterPath", "overview"})
 @EqualsAndHashCode
 public class TVWrapper {
 

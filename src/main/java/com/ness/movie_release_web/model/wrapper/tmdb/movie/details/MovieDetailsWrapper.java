@@ -26,6 +26,7 @@ import java.util.Set;
 @ToString(exclude = {"backdropPath",
                      "genreWrappers",
                      "posterPath",
+                     "overview",
                      "productionCompanies",
                      "productionCountries",
                      "spokenLanguageWrappers",
