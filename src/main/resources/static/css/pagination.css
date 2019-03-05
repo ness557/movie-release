@@ -5,6 +5,7 @@
     vertical-align: middle;
     line-height: 50px;
     font-weight: bolder;
+    cursor: pointer;
 }
 
 .my-page-number {
