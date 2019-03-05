@@ -15,7 +15,7 @@
 
                         <!-- ARROW BACK -->
                         <div class="col col-fixed-arrow my-page-link"
-                             th:onclick="'location.href=' + ${page > 0 ? urlBuilder.fromCurrentRequest().replaceQueryParam('page', page - 1).build() : 'javascript:void(0);'}">
+                             th:onclick="'location.href=\'' + ${page > 0 ? urlBuilder.fromCurrentRequest().replaceQueryParam('page', page - 1).build() : 'javascript:void(0);'} + '\''">
                             <!-- active link -->
                             <th:block th:if="${page > 0}">
                                 <img class="page-arrow" th:src="@{/img/pagination/page-back.png}">
@@ -30,7 +30,7 @@
                         <!--separate link to first page -->
                         <th:block th:if="${page > 1}">
                             <div class="col col-fixed-page my-page-link my-page-number"
-                                 th:onclick="'location.href=' + ${urlBuilder.fromCurrentRequest().replaceQueryParam('page', 0).build()}">
+                                 th:onclick="'location.href=\'' + ${urlBuilder.fromCurrentRequest().replaceQueryParam('page', 0).build()}  + '\''">
                                 <span class="text-secondary" th:text="${1}"></span>
                             </div>
 
@@ -52,7 +52,7 @@
 
                                 <!-- Link To Page -->
                                 <div class="col col-fixed-page my-page-link my-page-number" th:unless="${page == i}"
-                                     th:onclick="'location.href=' + ${urlBuilder.fromCurrentRequest().replaceQueryParam('page', i).build()}">
+                                     th:onclick="'location.href=\'' + ${urlBuilder.fromCurrentRequest().replaceQueryParam('page', i).build()} + '\''">
                                     <span class="text-secondary my-page-number" th:text="${i + 1}"></span>
                                 </div>
                             </th:block>
@@ -65,14 +65,14 @@
                             </div>
 
                             <div class="col col-fixed-page my-page-link my-page-number"
-                                 th:onclick="'location.href=' + ${urlBuilder.fromCurrentRequest().replaceQueryParam('page', pageCount - 1).build()}">
+                                 th:onclick="'location.href=\'' + ${urlBuilder.fromCurrentRequest().replaceQueryParam('page', pageCount - 1).build()} + '\''">
                                 <span class="text-secondary" th:text="${pageCount}"></span>
                             </div>
                         </th:block>
 
                         <!-- ARROW FORWARD-->
                         <div class="col col-fixed-arrow my-page-link"
-                             th:onclick="'location.href=' + ${page < pageCount - 1 ? urlBuilder.fromCurrentRequest().replaceQueryParam('page', page + 1).build() : 'javascript:void(0);'}">
+                             th:onclick="'location.href=\'' + ${page < pageCount - 1 ? urlBuilder.fromCurrentRequest().replaceQueryParam('page', page + 1).build() : 'javascript:void(0);'} + '\''">
 
                             <!-- active link -->
                             <th:block th:if="${page < pageCount - 1}">
