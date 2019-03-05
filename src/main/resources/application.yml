@@ -1,5 +1,4 @@
 spring:
-  #heroku datasource
   datasource:
     url: jdbc:postgresql://localhost:5432/movie_release?useSSL=false
     username: postgres
@@ -21,8 +20,8 @@ spring:
 
   mail:
     port: 465
-    username: qwertyzxcvbn55779@gmail.com
-    password: norepqw2
+    username: ${EMAIL_ADDRESS}
+    password: ${EMAIL_PASSWORD}
     default-encoding: UTF-8
     protocol: smtp
     host: smtp.gmail.com
@@ -34,13 +33,13 @@ spring:
 
 tmdbapi:
   url: http://api.themoviedb.org/3/
-  apikey: d6d669ef1d4e1efa83890eef2dda482f
+  apikey: ${API_TOKEN}
 
 telegram:
   bot: movie_notify_bot
   id: movie_notify_bot
-  name: Movie Notification Bot
-  token: 660414759:AAE1wAzNDmEvxKf2HMzPH6n5ZXQ9enSwANo
+  name: ${BOT_NAME}
+  token: ${BOT_TOKEN}
   webInterfaceLink: movie-release.ddns.net
 
 logging:
@@ -56,8 +55,8 @@ my_jwt:
 
 google:
   recaptcha:
-    site: 6LcUS3gUAAAAAAc09fr__CsINv6N751HtyVw5D_j
-    secret: 6LcUS3gUAAAAAFKbqkepCbRPq3PK3fPmlYprq01k
+    site: ${RECAPTCHA_SITE}
+    secret: ${RECAPTCHA_TOKEN}
 
 # <second> <minute> <hour> <day-of-month> <month> <day-of-week> <year>
 cron:
