@@ -277,10 +277,6 @@ public class TVSeriesController {
         if (page == null)
             page = 0;
 
-        if (page > 0) {
-            page = page - 1;
-        }
-
         if (tvStatuses == null) {
             tvStatuses = emptyList();
         }
@@ -310,7 +306,7 @@ public class TVSeriesController {
 
         int size = viewMode ? 30 : 10;
 
-        Page<UserTVSeries> userTVSeries = dbSeriesService.getByUserAndTVStatusesAndWatchStatusesWithOrderAndPages(tvStatuses, watchStatuses, sortBy, user, page, size);
+        Page<UserTVSeries> userTVSeries = dbSeriesService.getByUserAndTVStatusesAndWatchStatusesWithOrderAndPages(tvStatuses, watchStatuses, sortBy, user, page - 1, size);
         List<UserTVSeries> series = userTVSeries.getContent();
 
         List<TVDetailsWrapper> subscriptions = null;

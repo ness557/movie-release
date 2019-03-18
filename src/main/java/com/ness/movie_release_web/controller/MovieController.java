@@ -191,10 +191,6 @@ public class MovieController {
         if (page == null)
             page = 0;
 
-        if(page > 0){
-            page = page - 1;
-        }
-
         if (statuses == null) {
             statuses = emptyList();
         }
@@ -220,7 +216,7 @@ public class MovieController {
 
         int size = viewMode ? 30 : 10;
 
-        Page<Film> filmPage = filmService.getByUserAndStatusWithOrderbyAndPages(statuses, sortBy, user, page, size);
+        Page<Film> filmPage = filmService.getByUserAndStatusWithOrderbyAndPages(statuses, sortBy, user, page - 1, size);
         List<Film> films = filmPage.getContent();
 
         List<MovieDetailsWrapper> tmdbFilms;
