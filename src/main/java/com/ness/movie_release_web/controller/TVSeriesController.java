@@ -277,6 +277,10 @@ public class TVSeriesController {
         if (page == null)
             page = 0;
 
+        if (page > 0) {
+            page = page - 1;
+        }
+
         if (tvStatuses == null) {
             tvStatuses = emptyList();
         }

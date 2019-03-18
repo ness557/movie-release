@@ -15,22 +15,22 @@
 
                         <!-- ARROW BACK -->
                         <div class="col col-fixed-arrow my-page-link"
-                             th:onclick="'location.href=\'' + ${page > 0 ? urlBuilder.fromCurrentRequest().replaceQueryParam('page', page - 1).build() : 'javascript:void(0);'} + '\''">
+                             th:onclick="'location.href=\'' + ${page > 1 ? urlBuilder.fromCurrentRequest().replaceQueryParam('page', page - 1).build() : 'javascript:void(0);'} + '\''">
                             <!-- active link -->
-                            <th:block th:if="${page > 0}">
+                            <th:block th:if="${page > 1}">
                                 <img class="page-arrow" th:src="@{/img/pagination/page-back.png}">
                             </th:block>
 
                             <!-- inactive link-->
-                            <th:block th:unless="${page > 0}">
+                            <th:block th:unless="${page > 1}">
                                 <img class="page-arrow" th:src="@{/img/pagination/page-back-inactive.png}">
                             </th:block>
                         </div>
 
                         <!--separate link to first page -->
-                        <th:block th:if="${page > 1}">
+                        <th:block th:if="${page > 2}">
                             <div class="col col-fixed-page my-page-link my-page-number"
-                                 th:onclick="'location.href=\'' + ${urlBuilder.fromCurrentRequest().replaceQueryParam('page', 0).build()}  + '\''">
+                                 th:onclick="'location.href=\'' + ${urlBuilder.fromCurrentRequest().replaceQueryParam('page', 1).build()}  + '\''">
                                 <span class="text-secondary" th:text="${1}"></span>
                             </div>
 
@@ -42,45 +42,45 @@
                         <!-- pages loop -->
                         <th:block th:each="i : ${#numbers.sequence(page - 1, page + 1)}">
                             <!-- skip first-1  and last+1 pages-->
-                            <th:block th:if="${i >= 0 and i <= pageCount - 1}">
+                            <th:block th:if="${i >= 1 and i <= pageCount}">
 
                                 <!-- CURRENT PAGE -->
                                 <!-- my-page-current -->
                                 <div class="col col-fixed-page my-page-link  my-page-current " th:if="${page == i}">
-                                    <span class="text-secondary" th:text="${i + 1}"></span>
+                                    <span class="text-secondary" th:text="${i}"></span>
                                 </div>
 
                                 <!-- Link To Page -->
                                 <div class="col col-fixed-page my-page-link my-page-number" th:unless="${page == i}"
                                      th:onclick="'location.href=\'' + ${urlBuilder.fromCurrentRequest().replaceQueryParam('page', i).build()} + '\''">
-                                    <span class="text-secondary my-page-number" th:text="${i + 1}"></span>
+                                    <span class="text-secondary my-page-number" th:text="${i}"></span>
                                 </div>
                             </th:block>
                         </th:block>
 
                         <!--separate link to last page -->
-                        <th:block th:if="${page < pageCount - 2}">
+                        <th:block th:if="${page < pageCount - 1}">
                             <div class="col my-page-splitter col-fixed-splitter">
                                 <span>...</span>
                             </div>
 
                             <div class="col col-fixed-page my-page-link my-page-number"
-                                 th:onclick="'location.href=\'' + ${urlBuilder.fromCurrentRequest().replaceQueryParam('page', pageCount - 1).build()} + '\''">
+                                 th:onclick="'location.href=\'' + ${urlBuilder.fromCurrentRequest().replaceQueryParam('page', pageCount).build()} + '\''">
                                 <span class="text-secondary" th:text="${pageCount}"></span>
                             </div>
                         </th:block>
 
                         <!-- ARROW FORWARD-->
                         <div class="col col-fixed-arrow my-page-link"
-                             th:onclick="'location.href=\'' + ${page < pageCount - 1 ? urlBuilder.fromCurrentRequest().replaceQueryParam('page', page + 1).build() : 'javascript:void(0);'} + '\''">
+                             th:onclick="'location.href=\'' + ${page < pageCount ? urlBuilder.fromCurrentRequest().replaceQueryParam('page', page + 1).build() : 'javascript:void(0);'} + '\''">
 
                             <!-- active link -->
-                            <th:block th:if="${page < pageCount - 1}">
+                            <th:block th:if="${page < pageCount}">
                                 <img class="page-arrow" th:src="@{/img/pagination/page-next.png}">
                             </th:block>
 
                             <!-- inactive link-->
-                            <th:block th:unless="${page < pageCount - 1}">
+                            <th:block th:unless="${page < pageCount}">
                                 <img class="page-arrow" th:src="@{/img/pagination/page-next-inactive.png}">
                             </th:block>
                         </div>

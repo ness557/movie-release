@@ -191,6 +191,10 @@ public class MovieController {
         if (page == null)
             page = 0;
 
+        if(page > 0){
+            page = page - 1;
+        }
+
         if (statuses == null) {
             statuses = emptyList();
         }
