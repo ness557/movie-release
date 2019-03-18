@@ -275,7 +275,7 @@ public class TVSeriesController {
                           Model model) {
 
         if (page == null)
-            page = 0;
+            page = 1;
 
         if (tvStatuses == null) {
             tvStatuses = emptyList();

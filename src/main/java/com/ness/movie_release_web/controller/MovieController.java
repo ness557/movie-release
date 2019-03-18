@@ -189,7 +189,7 @@ public class MovieController {
             Principal principal, Model model) {
 
         if (page == null)
-            page = 0;
+            page = 1;
 
         if (statuses == null) {
             statuses = emptyList();
