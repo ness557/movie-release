@@ -12,7 +12,6 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.web.authentication.www.BasicAuthenticationFilter;
 
 @Configuration
 public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
@@ -21,8 +20,6 @@ public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
     @Qualifier("myUserDetailService")
     private UserDetailsService userDetailsService;
 
-    @Autowired
-    private TokenAuthFilter tokenAuthFilter;
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
@@ -30,14 +27,8 @@ public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
         http.csrf()
                 .disable()
             .sessionManagement()
-                .sessionCreationPolicy(SessionCreationPolicy.NEVER)
+                .sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED)
                 .and()
-            .formLogin()
-                .loginPage("/login")
-                .permitAll()
-                .defaultSuccessUrl("/home")
-                .and()
-            .addFilterAfter(tokenAuthFilter, BasicAuthenticationFilter.class)
             .authorizeRequests()
                 .antMatchers("/", "/home", "/register", "/login", "/register")
                 .permitAll()
@@ -49,10 +40,14 @@ public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
                 .hasAnyRole("ADMIN")
                 .anyRequest().anonymous()
                 .and()
+            .formLogin()
+                .loginPage("/login")
+                .loginProcessingUrl("/login")
+                .defaultSuccessUrl("/нахуй")
+                .and()
             .logout()
                 .logoutUrl("/logout")
                 .logoutSuccessUrl("/home")
-                .deleteCookies("authorization")
                 .permitAll();
         //@formatter:on
     }

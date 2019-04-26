@@ -3,24 +3,18 @@ package com.ness.movie_release_web.controller;
 import com.ness.movie_release_web.model.User;
 import com.ness.movie_release_web.model.wrapper.tmdb.Language;
 import com.ness.movie_release_web.model.wrapper.tmdb.Mode;
-import com.ness.movie_release_web.security.TokenService;
 import com.ness.movie_release_web.service.UserService;
 import com.ness.movie_release_web.service.google.recapcha.RecaptchaService;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.MessageSource;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.server.ResponseStatusException;
 
+import javax.servlet.ServletException;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -31,24 +25,13 @@ import java.util.List;
 import java.util.Locale;
 
 @Controller
-// @SessionAttributes(names = { "language" }, types = { Language.class })
 public class UserController {
 
     @Autowired
     private UserService service;
 
     @Autowired
-    @Qualifier("myUserDetailService")
-    private UserDetailsService userDetailsService;
-
-    @Autowired
     private MessageSource messageSource;
-
-    @Autowired
-    private TokenService tokenService;
-
-    @Autowired
-    private PasswordEncoder passwordEncoder;
 
     @Autowired
     private RecaptchaService recaptchaService;
@@ -61,24 +44,6 @@ public class UserController {
         model.addAttribute("language", language);
         model.addAttribute("mode", mode);
         return "login";
-    }
-
-    @PostMapping("/login")
-    public ResponseEntity<String> postLogin(@RequestParam("username") String username,
-                                            @RequestParam("password") String password,
-                                            @RequestParam(name = "g-recaptcha-response") String recaptchaResponse, HttpServletResponse response,
-                                            HttpServletRequest request) {
-
-        UserDetails userDetails = userDetailsService.loadUserByUsername(username);
-
-        if (!passwordEncoder.matches(password, userDetails.getPassword())) {
-            throw new ResponseStatusException(HttpStatus.FORBIDDEN);
-        }
-
-        String token = tokenService.getToken(userDetails);
-        response.addCookie(new Cookie("authorization", "bearer:" + token));
-
-        return ResponseEntity.ok().build();
     }
 
     @GetMapping("/register")
@@ -102,7 +67,7 @@ public class UserController {
                             Model model, Locale locale,
                             HttpServletResponse response, 
                             HttpServletRequest request, 
-                            Principal principal) {
+                            Principal principal) throws ServletException {
 
         User fromDB = null;
         if (principal != null) {
@@ -149,8 +114,8 @@ public class UserController {
 
         response.addCookie(new Cookie("language", language.getValue()));
 
-        postLogin(user.getLogin(), user.getMatchPassword(), recaptchaResponse, response, request);
-
+//        login(user.getLogin(), user.getMatchPassword());
+        request.login(user.getLogin(), user.getMatchPassword());
         return "redirect:/home";
     }
 
