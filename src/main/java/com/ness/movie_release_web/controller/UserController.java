@@ -63,24 +63,11 @@ public class UserController {
         return "login";
     }
 
-    @GetMapping("/register")
-    public String registerForm(@CookieValue(value = "language", defaultValue = "en") Language language, 
-                                @CookieValue(value = "mode", defaultValue = "movie") Mode mode, 
-                                Model model,
-                                Principal principal) {
-
-        model.addAttribute("language", language);
-        model.addAttribute("mode", mode);
-
-        model.addAttribute(new User());
-        return "register";
-    }
-
     @PostMapping("/login")
     public ResponseEntity<String> postLogin(@RequestParam("username") String username,
-            @RequestParam("password") String password,
-            @RequestParam(name = "g-recaptcha-response") String recaptchaResponse, HttpServletResponse response,
-            HttpServletRequest request) {
+                                            @RequestParam("password") String password,
+                                            @RequestParam(name = "g-recaptcha-response") String recaptchaResponse, HttpServletResponse response,
+                                            HttpServletRequest request) {
 
         UserDetails userDetails = userDetailsService.loadUserByUsername(username);
 
@@ -91,7 +78,20 @@ public class UserController {
         String token = tokenService.getToken(userDetails);
         response.addCookie(new Cookie("authorization", "bearer:" + token));
 
-        return ResponseEntity.ok("/home");
+        return ResponseEntity.ok().build();
+    }
+
+    @GetMapping("/register")
+    public String registerForm(@CookieValue(value = "language", defaultValue = "en") Language language,
+                                @CookieValue(value = "mode", defaultValue = "movie") Mode mode,
+                                Model model,
+                                Principal principal) {
+
+        model.addAttribute("language", language);
+        model.addAttribute("mode", mode);
+
+        model.addAttribute(new User());
+        return "register";
     }
 
     @PostMapping("/register")
