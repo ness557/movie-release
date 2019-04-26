@@ -11,8 +11,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
-import java.security.Principal;
-
 @Controller
 @RequestMapping("/company")
 public class CompanyController {
@@ -23,8 +21,7 @@ public class CompanyController {
     @GetMapping("/search")
     public ResponseEntity<CompanySearchWrapper> search(@RequestParam(value = "query") String query,
                                 @CookieValue(value = "language", defaultValue = "en") Language language,
-                                @RequestParam(value = "page", required = false) Integer page,
-                                Principal principal){
+                                @RequestParam(value = "page", required = false) Integer page){
         if (page == null)
             page = 1;
 
