@@ -14,8 +14,8 @@ import com.ness.movie_release_web.service.FilmService;
 import com.ness.movie_release_web.service.TVSeriesService;
 import com.ness.movie_release_web.service.email.EmailService;
 import com.ness.movie_release_web.service.telegram.TelegramService;
-import com.ness.movie_release_web.service.tmdb.MovieService;
 import com.ness.movie_release_web.service.tmdb.TmdbDatesService;
+import com.ness.movie_release_web.service.tmdb.TmdbMovieService;
 import com.ness.movie_release_web.service.tmdb.TmdbTVSeriesService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -32,7 +32,7 @@ import static java.util.stream.Collectors.toMap;
 public class NotificationServiceImpl implements NotificationService {
 
     private FilmService filmService;
-    private MovieService movieService;
+    private TmdbMovieService tmdbMovieService;
     private TelegramService telegramService;
     private EmailService emailService;
     private TmdbDatesService tmdbDatesService;
@@ -43,7 +43,7 @@ public class NotificationServiceImpl implements NotificationService {
 
     @Autowired
     public NotificationServiceImpl(FilmService filmService,
-                                   MovieService movieService,
+                                   TmdbMovieService tmdbMovieService,
                                    TelegramService telegramService,
                                    EmailService emailService,
                                    TmdbDatesService tmdbDatesService,
@@ -52,7 +52,7 @@ public class NotificationServiceImpl implements NotificationService {
         this.filmService = filmService;
         this.telegramService = telegramService;
         this.emailService = emailService;
-        this.movieService = movieService;
+        this.tmdbMovieService = tmdbMovieService;
         this.tmdbDatesService = tmdbDatesService;
         this.tvSeriesService = tvSeriesService;
         this.tmdbTVSeriesService = tmdbTVSeriesService;
@@ -83,7 +83,7 @@ public class NotificationServiceImpl implements NotificationService {
                             ReleaseType.Physical);
 
             Map<Language, MovieDetailsWrapper> langMovie =
-                    Arrays.stream(Language.values()).collect(toMap(l -> l, l -> movieService.getMovieDetails(f.getId().intValue(), l).orElse(new MovieDetailsWrapper())));
+                    Arrays.stream(Language.values()).collect(toMap(l -> l, l -> tmdbMovieService.getMovieDetails(f.getId().intValue(), l).orElse(new MovieDetailsWrapper())));
 
             f.getUsers().forEach(u -> {
                 releaseDates.forEach(rd -> {

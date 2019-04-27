@@ -1,5 +1,6 @@
 package com.ness.movie_release_web.service;
 
+import com.ness.movie_release_web.model.TVSeries;
 import com.ness.movie_release_web.model.User;
 import com.ness.movie_release_web.model.UserTVSeries;
 import com.ness.movie_release_web.model.wrapper.tmdb.tvSeries.WatchStatus;
@@ -15,10 +16,6 @@ public interface TVSeriesService {
     Boolean isExistsByTmdbIdAndUserId(Integer tmdbId, Long userId);
 
     Optional<UserTVSeries> getByTmdbIdAndUserId(Integer tmdbId, Long userId);
-
-    void subscribeUser(Integer tmdbId, User user);
-
-    void unSubscribeUser(Integer tmdbId, User user);
 
     Page<UserTVSeries> getByUserAndTVStatusesAndWatchStatusesWithOrderAndPages(List<Status> tvStatuses,
                                                                                List<WatchStatus> watchStatuses,
@@ -36,4 +33,6 @@ public interface TVSeriesService {
     Long spentTotalMinutesToSeriesSeason(Integer tmdbId, Integer season, User user, Integer currentSeason, Integer currentEpisode);
 
     void updateDB();
+
+    Optional<TVSeries> findById(Long id);
 }

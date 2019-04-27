@@ -20,7 +20,7 @@ import java.util.Optional;
 import static java.lang.Thread.sleep;
 
 @Service
-public class MovieServiceImpl extends Cacheable<MovieDetailsWrapper> implements MovieService {
+public class TmdbMovieServiceImpl extends Cacheable<MovieDetailsWrapper> implements TmdbMovieService {
 
     private RestTemplate restTemplate = new RestTemplate();
     private Logger logger = LoggerFactory.getLogger(this.getClass());

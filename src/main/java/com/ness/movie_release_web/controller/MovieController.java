@@ -11,10 +11,11 @@ import com.ness.movie_release_web.model.wrapper.tmdb.movie.search.MovieSearchWra
 import com.ness.movie_release_web.model.wrapper.tmdb.movie.search.MovieWrapper;
 import com.ness.movie_release_web.repository.MovieSortBy;
 import com.ness.movie_release_web.service.FilmService;
+import com.ness.movie_release_web.service.SubscriptionService;
 import com.ness.movie_release_web.service.UserService;
 import com.ness.movie_release_web.service.tmdb.*;
+import lombok.AllArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -23,11 +24,12 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
-import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-
 import java.security.Principal;
-import java.util.*;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 
 import static java.util.Collections.emptyList;
 import static java.util.stream.Collectors.toList;
@@ -37,31 +39,18 @@ import static java.util.stream.Collectors.toMap;
 @RequestMapping("/movie")
 @SessionAttributes(names = { "query", "year", "language", "mode" }, types = { String.class, Integer.class,
         Language.class, Mode.class })
+@AllArgsConstructor
 public class MovieController {
 
-    @Autowired
-    private MovieServiceImpl movieService;
-
-    @Autowired
+    private TmdbMovieServiceImpl movieService;
     private FilmService filmService;
-
-    @Autowired
     private UserService userService;
-
-    @Autowired
     private TmdbDatesService tmdbDatesService;
-
-    @Autowired
     private DiscoverService discoverService;
-
-    @Autowired
     private GenreService genreService;
-
-    @Autowired
     private CompanyService companyService;
-
-    @Autowired
     private PeopleService peopleService;
+    private SubscriptionService subscriptionService;
 
     @GetMapping("/{tmdbId}")
     public String getFilm(@PathVariable("tmdbId") Integer tmdbId,
@@ -87,46 +76,14 @@ public class MovieController {
 
     @PostMapping("/subscribe")
     @ResponseStatus(value = HttpStatus.OK)
-    public void subscribe(@RequestParam(value = "tmdbId") Integer tmdbId, Principal principal,
-            HttpServletRequest request) {
-
-        String login = principal.getName();
-
-        User user = userService.findByLogin(login);
-
-        if (filmService.isExistsByTmdbIdAndUser(tmdbId, user))
-            throw new ResponseStatusException(HttpStatus.CONFLICT);
-
-        Optional<MovieDetailsWrapper> optionalMovieDetails = movieService.getMovieDetails(tmdbId, Language.en);
-
-        if (!optionalMovieDetails.isPresent())
-            throw new ResponseStatusException(HttpStatus.CONFLICT);
-
-        MovieDetailsWrapper movieDetailsWrapper = optionalMovieDetails.get();
-
-        Optional<Film> filmOpt = filmService.findById(tmdbId.longValue());
-
-        Film film = filmOpt.orElse(new Film(movieDetailsWrapper.getId().longValue(), movieDetailsWrapper.getTitle(), "",
-                movieDetailsWrapper.getStatus(), movieDetailsWrapper.getReleaseDate(),
-                movieDetailsWrapper.getVoteAverage().floatValue(), new ArrayList<>()));
-        film.getUsers().add(user);
-
-        filmService.save(film);
+    public void subscribe(@RequestParam(value = "tmdbId") Integer tmdbId, Principal principal) {
+        subscriptionService.subscribeToMovie(tmdbId, principal.getName());
     }
 
     @PostMapping("/unSubscribe")
     @ResponseStatus(value = HttpStatus.OK)
     public void unSubscribe(@RequestParam(value = "tmdbId") Integer tmdbId, Principal principal) {
-
-        String login = principal.getName();
-
-        User user = userService.findByLogin(login);
-
-        Optional<Film> film = filmService.getByTmdbIdAndUser(tmdbId, user);
-        film.ifPresent(f -> {
-            f.getUsers().remove(user);
-            filmService.save(f);
-        });
+        subscriptionService.unsubscribeFromMovie(tmdbId, principal.getName());
     }
 
     @GetMapping("/search")

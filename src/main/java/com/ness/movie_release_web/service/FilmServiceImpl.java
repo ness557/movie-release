@@ -7,7 +7,7 @@ import com.ness.movie_release_web.model.wrapper.tmdb.movie.details.MovieDetailsW
 import com.ness.movie_release_web.model.wrapper.tmdb.movie.details.Status;
 import com.ness.movie_release_web.repository.FilmRepository;
 import com.ness.movie_release_web.repository.MovieSortBy;
-import com.ness.movie_release_web.service.tmdb.MovieService;
+import com.ness.movie_release_web.service.tmdb.TmdbMovieService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -27,7 +27,7 @@ public class FilmServiceImpl implements FilmService {
     private FilmRepository repository;
 
     @Autowired
-    private MovieService movieService;
+    private TmdbMovieService tmdbMovieService;
 
     @Override
     public void save(Film film) {
@@ -85,7 +85,7 @@ public class FilmServiceImpl implements FilmService {
         log.info("Updating film db...");
         repository.findAll().forEach(f -> {
             Integer tmdbId = f.getId().intValue();
-            Optional<MovieDetailsWrapper> movieDetails = movieService.getMovieDetails(tmdbId, Language.en);
+            Optional<MovieDetailsWrapper> movieDetails = tmdbMovieService.getMovieDetails(tmdbId, Language.en);
 
             if (!movieDetails.isPresent()) {
                 return;
@@ -97,7 +97,7 @@ public class FilmServiceImpl implements FilmService {
             f.setNameEn(movieDetailsWrapper.getTitle());
             f.setStatus(movieDetailsWrapper.getStatus());
 
-            Optional<MovieDetailsWrapper> movieDetailsRuOpt = movieService.getMovieDetails(tmdbId, Language.ru);
+            Optional<MovieDetailsWrapper> movieDetailsRuOpt = tmdbMovieService.getMovieDetails(tmdbId, Language.ru);
             movieDetailsRuOpt.ifPresent(movieDetailsRu -> f.setNameRu(movieDetailsRu.getTitle()));
 
             repository.save(f);

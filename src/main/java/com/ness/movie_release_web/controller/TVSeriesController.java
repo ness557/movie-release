@@ -13,11 +13,12 @@ import com.ness.movie_release_web.model.wrapper.tmdb.tvSeries.details.TVDetailsW
 import com.ness.movie_release_web.model.wrapper.tmdb.tvSeries.search.TVSearchWrapper;
 import com.ness.movie_release_web.model.wrapper.tmdb.tvSeries.search.TVWrapper;
 import com.ness.movie_release_web.repository.TVSeriesSortBy;
+import com.ness.movie_release_web.service.SubscriptionService;
 import com.ness.movie_release_web.service.TVSeriesService;
 import com.ness.movie_release_web.service.UserService;
 import com.ness.movie_release_web.service.tmdb.*;
+import lombok.AllArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -26,14 +27,13 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
+import javax.servlet.http.HttpServletResponse;
 import java.security.Principal;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.TimeUnit;
-
-import javax.servlet.http.HttpServletResponse;
 
 import static java.util.Collections.emptyList;
 import static java.util.stream.Collectors.toList;
@@ -43,28 +43,17 @@ import static java.util.stream.Collectors.toMap;
 @RequestMapping("/series")
 @SessionAttributes(names = {"query", "year", "language", "mode"},
         types = {String.class, Integer.class, Language.class, Mode.class})
+@AllArgsConstructor
 public class TVSeriesController {
 
-    @Autowired
     private UserService userService;
-
-    @Autowired
     private TVSeriesService dbSeriesService;
-
-    @Autowired
     private TmdbTVSeriesService tmdbSeriesService;
-
-    @Autowired
     private DiscoverService discoverService;
-
-    @Autowired
     private CompanyService companyService;
-
-    @Autowired
     private GenreService genreService;
-
-    @Autowired
     private NetworkService networkService;
+    private SubscriptionService subscriptionService;
 
     @GetMapping("/{tmdbId}")
     public String getFilm(@PathVariable("tmdbId") Integer tmdbId,
@@ -186,22 +175,14 @@ public class TVSeriesController {
     @ResponseStatus(value = HttpStatus.OK)
     public void subscribe(@RequestParam(value = "tmdbId") Integer tmdbId,
                                     Principal principal) {
-
-        String login = principal.getName();
-        User user = userService.findByLogin(login);
-
-        dbSeriesService.subscribeUser(tmdbId, user);
+        subscriptionService.subscribeToSeries(tmdbId, principal.getName());
     }
 
     @PostMapping("/unSubscribe")
     @ResponseStatus(value = HttpStatus.OK)
     public void unSubscribe(@RequestParam(value = "tmdbId") Integer tmdbId,
                                       Principal principal) {
-
-        String login = principal.getName();
-        User user = userService.findByLogin(login);
-
-        dbSeriesService.unSubscribeUser(tmdbId, user);
+        subscriptionService.unsubscribeFromSeries(tmdbId, principal.getName());
     }
 
     @GetMapping("/search")
@@ -285,7 +266,7 @@ public class TVSeriesController {
             watchStatuses = emptyList();
         }
 
-        Boolean viewMode = new Boolean(subsMode);
+        Boolean viewMode = Boolean.valueOf(subsMode);
 
         User user = userService.findByLogin(principal.getName());
 

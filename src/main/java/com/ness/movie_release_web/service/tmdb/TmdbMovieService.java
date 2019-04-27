@@ -7,7 +7,7 @@ import org.springframework.lang.Nullable;
 
 import java.util.Optional;
 
-public interface MovieService {
+public interface TmdbMovieService {
     Optional<MovieDetailsWrapper> getMovieDetails(Integer tmdbId, Language language);
     Optional<MovieSearchWrapper> searchForMovies(String query, @Nullable Integer page, @Nullable Integer year, Language language);
 }

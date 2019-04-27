@@ -25,7 +25,7 @@ public class MyUserDetailService implements UserDetailsService {
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
 
         if (!service.isExists(username)) {
-            throw new UsernameNotFoundException("Not such user: " + username);
+            throw new UsernameNotFoundException("No such user: " + username);
         }
 
         UserWrapper user = UserWrapper.wrap(service.findByLogin(username));
