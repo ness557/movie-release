@@ -21,10 +21,10 @@ public class EpisodeWrapper {
     private LocalDate airDate;
 
     @JsonProperty("episode_number")
-    private Integer episodeNumber;
+    private Long episodeNumber;
 
     @JsonProperty("id")
-    private Integer id;
+    private Long id;
 
     @JsonProperty("name")
     private String name;
@@ -36,10 +36,10 @@ public class EpisodeWrapper {
     private String productionCode;
 
     @JsonProperty("season_number")
-    private Integer seasonNumber;
+    private Long seasonNumber;
 
     @JsonProperty("show_id")
-    private Integer showId;
+    private Long showId;
 
     @JsonDeserialize(using = TmdbPosterPathDeserializer.class)
     @JsonProperty("still_path")
@@ -49,5 +49,5 @@ public class EpisodeWrapper {
     private Float voteAverage;
 
     @JsonProperty("vote_count")
-    private Integer voteCount;
+    private Long voteCount;
 }

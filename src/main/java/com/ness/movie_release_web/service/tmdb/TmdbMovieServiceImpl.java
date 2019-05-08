@@ -35,7 +35,7 @@ public class TmdbMovieServiceImpl extends Cacheable<MovieDetailsWrapper> impleme
     private TmdbDatesService releaseDatesService;
 
     @Override
-    public Optional<MovieDetailsWrapper> getMovieDetails(Integer tmdbId, Language language) {
+    public Optional<MovieDetailsWrapper> getMovieDetails(Long tmdbId, Language language) {
 
         Optional<MovieDetailsWrapper> fromCache = getFromCache(tmdbId, language);
         if (fromCache.isPresent()) {
@@ -82,7 +82,7 @@ public class TmdbMovieServiceImpl extends Cacheable<MovieDetailsWrapper> impleme
     }
 
     @Override
-    public Optional<MovieSearchWrapper> searchForMovies(String query, Integer page, Integer year, Language language) {
+    public Optional<MovieSearchWrapper> searchForMovies(String query, Integer page, Long year, Language language) {
         UriComponentsBuilder searchUrlBuilder = UriComponentsBuilder.fromHttpUrl(url + "search/movie/")
                 .queryParam("api_key", apikey)
                 .queryParam("language", language.name())

@@ -42,17 +42,17 @@ public class TVSeriesServiceImpl implements TVSeriesService {
 
 
     @Override
-    public Boolean isExistsByTmdbIdAndUserId(Integer tmdbId, Long userId) {
-        return userTVSeriesRepository.existsById(UserTVSeriesPK.wrap(userId, tmdbId.longValue()));
+    public Boolean isExistsByTmdbIdAndUserId(Long tmdbId, Long userId) {
+        return userTVSeriesRepository.existsById(UserTVSeriesPK.wrap(userId, tmdbId));
     }
 
     @Override
-    public Optional<UserTVSeries> getByTmdbIdAndUserId(Integer tmdbId, Long userId) {
-        return userTVSeriesRepository.findById(UserTVSeriesPK.wrap(userId, tmdbId.longValue()));
+    public Optional<UserTVSeries> getByTmdbIdAndUserId(Long tmdbId, Long userId) {
+        return userTVSeriesRepository.findById(UserTVSeriesPK.wrap(userId, tmdbId));
     }
 
     @Override
-    public void setSeasonAndEpisode(Integer tmdbId, User user, Integer seasonNum, Integer episodeNum){
+    public void setSeasonAndEpisode(Long tmdbId, User user, Long seasonNum, Long episodeNum) {
 
         Optional<TVDetailsWrapper> tvDetailsOptional = tvSeriesService.getTVDetails(tmdbId, Language.en);
         Optional<TVDetailsWrapper> tvDetailsOptionalRu = tvSeriesService.getTVDetails(tmdbId, Language.ru);
@@ -63,21 +63,21 @@ public class TVSeriesServiceImpl implements TVSeriesService {
         TVDetailsWrapper tvDetails = tvDetailsOptional.get();
         TVDetailsWrapper tvDetailsRu = tvDetailsOptionalRu.get();
 
-        Optional<TVSeries> one = tvSeriesRepository.findById(tmdbId.longValue());
+        Optional<TVSeries> one = tvSeriesRepository.findById(tmdbId);
 
-        Optional<UserTVSeries> userTVSeriesOptional = userTVSeriesRepository.findById(UserTVSeriesPK.wrap(user.getId(), tmdbId.longValue()));
+        Optional<UserTVSeries> userTVSeriesOptional = userTVSeriesRepository.findById(UserTVSeriesPK.wrap(user.getId(), tmdbId));
         UserTVSeries userTVSeries = userTVSeriesOptional.orElse(new UserTVSeries(
                 new UserTVSeriesPK(),
                 user,
                 one.orElse(new TVSeries(
-                        tmdbId.longValue(),
+                        tmdbId,
                         tvDetails.getName(),
                         tvDetailsRu.getName(),
                         tvDetails.getFirstAirDate(),
                         tvDetails.getLastAirDate(),
                         tvDetails.getVoteAverage(),
-                        0,
-                        0,
+                        0L,
+                        0L,
                         tvDetails.getStatus())),
                 seasonNum,
                 episodeNum));
@@ -107,19 +107,19 @@ public class TVSeriesServiceImpl implements TVSeriesService {
     }
 
     @Override
-    public Long spentTotalMinutesToSeries(Integer tmdbId, User user, Integer currentSeason, Integer currentEpisode) {
+    public Long spentTotalMinutesToSeries(Long tmdbId, User user, Long currentSeason, Long currentEpisode) {
 
         Optional<TVDetailsWrapper> tvDetailsOptional = tvSeriesService.getTVDetails(tmdbId, user.getLanguage());
         if (!tvDetailsOptional.isPresent())
             return 0L;
 
         TVDetailsWrapper tvDetails = tvDetailsOptional.get();
-        Double average = tvDetails.getEpisodeRunTime().stream().mapToDouble(Integer::doubleValue).average().orElse(0d);
+        Double average = tvDetails.getEpisodeRunTime().stream().mapToDouble(Long::doubleValue).average().orElse(0d);
         Double result = 0d;
 
 
         for (int i = 1; i < currentSeason; i++) {
-            Optional<SeasonWrapper> seasonDetailsOpt = tvSeriesService.getSeasonDetails(tmdbId, i, user.getLanguage());
+            Optional<SeasonWrapper> seasonDetailsOpt = tvSeriesService.getSeasonDetails(tmdbId, (long) i, user.getLanguage());
             if (!seasonDetailsOpt.isPresent())
                 continue;
 
@@ -140,21 +140,21 @@ public class TVSeriesServiceImpl implements TVSeriesService {
     }
 
     @Override
-    public Long spentTotalMinutesToSeriesSeason(Integer tmdbId, Integer season, User user, Integer currentSeason, Integer currentEpisode) {
+    public Long spentTotalMinutesToSeriesSeason(Long tmdbId, Long season, User user, Long currentSeason, Long currentEpisode) {
 
         Optional<TVDetailsWrapper> tvDetailsOptional = tvSeriesService.getTVDetails(tmdbId, user.getLanguage());
         if (!tvDetailsOptional.isPresent())
             return 0L;
 
         TVDetailsWrapper tvDetails = tvDetailsOptional.get();
-        Double average = tvDetails.getEpisodeRunTime().stream().mapToDouble(Integer::doubleValue).average().orElse(0d);
+        Double average = tvDetails.getEpisodeRunTime().stream().mapToDouble(Long::doubleValue).average().orElse(0d);
 
         Optional<SeasonWrapper> seasonDetails = tvSeriesService.getSeasonDetails(tmdbId, currentSeason, user.getLanguage());
 
-        if(season < currentSeason)
+        if (season < currentSeason)
             return ((Double) (seasonDetails.orElse(new SeasonWrapper()).getEpisodes().size() * average)).longValue();
 
-        if(season.equals(currentSeason))
+        if (season.equals(currentSeason))
             return ((Double) (seasonDetails.orElse(new SeasonWrapper()).getEpisodes().stream().filter(e -> e.getEpisodeNumber() <= currentEpisode).count() * average)).longValue();
 
         return 0L;
@@ -167,7 +167,7 @@ public class TVSeriesServiceImpl implements TVSeriesService {
         log.info("Updating series db...");
         tvSeriesRepository.findAll().forEach(tvs -> {
             Long id = tvs.getId();
-            Optional<TVDetailsWrapper> tvDetails = tvSeriesService.getTVDetails(id.intValue(), Language.en);
+            Optional<TVDetailsWrapper> tvDetails = tvSeriesService.getTVDetails(id, Language.en);
 
             if (!tvDetails.isPresent()) {
                 return;
@@ -180,20 +180,21 @@ public class TVSeriesServiceImpl implements TVSeriesService {
             tvs.setNameEn(tvDetailsWrapper.getName());
             tvs.setStatus(tvDetailsWrapper.getStatus());
 
-            Optional<TVDetailsWrapper> tvDetailsRu = tvSeriesService.getTVDetails(id.intValue(), Language.ru);
+            Optional<TVDetailsWrapper> tvDetailsRu = tvSeriesService.getTVDetails(id, Language.ru);
             tvDetailsRu.ifPresent(tvDetailsWrapper1 -> tvs.setNameRu(tvDetailsWrapper1.getName()));
 
-            Optional<SeasonWrapper> seasonDetails = tvSeriesService.getSeasonDetails(id.intValue(), tvDetailsWrapper.getNumberOfSeasons(), Language.en);
+            Optional<SeasonWrapper> seasonDetails = tvSeriesService.getSeasonDetails(id, tvDetailsWrapper.getNumberOfSeasons(), Language.en);
             if (!seasonDetails.isPresent()) {
                 tvSeriesRepository.save(tvs);
                 return;
             }
 
             SeasonWrapper seasonWrapper = seasonDetails.get();
-            seasonWrapper.getEpisodes().stream().sorted((s1, s2) -> s2.getEpisodeNumber() - s1.getEpisodeNumber()).findFirst().ifPresent(e -> {
-                tvs.setLastSeasonNumber(e.getSeasonNumber());
-                tvs.setLastEpisodeNumber(e.getEpisodeNumber());
-            });
+            seasonWrapper.getEpisodes().stream().min((s1, s2) -> ((Long) (s2.getEpisodeNumber() - s1.getEpisodeNumber())).intValue())
+                    .ifPresent(e -> {
+                        tvs.setLastSeasonNumber(e.getSeasonNumber());
+                        tvs.setLastEpisodeNumber(e.getEpisodeNumber());
+                    });
 
             tvSeriesRepository.save(tvs);
         });

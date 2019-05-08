@@ -14,7 +14,7 @@ import lombok.*;
 public class ProductionCompanyWrapper {
 
     @JsonProperty("id")
-    private Integer id;
+    private Long id;
 
     @JsonDeserialize(using = TmdbPosterPathDeserializer.class)
     @JsonProperty("logo_path")

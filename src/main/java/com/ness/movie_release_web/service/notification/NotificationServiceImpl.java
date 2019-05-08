@@ -77,13 +77,13 @@ public class NotificationServiceImpl implements NotificationService {
 
             List<ReleaseDate> releaseDates =
                     tmdbDatesService.getReleaseDates(
-                            f.getId().intValue(),
+                            f.getId(),
                             ReleaseType.Theatrical,
                             ReleaseType.Digital,
                             ReleaseType.Physical);
 
             Map<Language, MovieDetailsWrapper> langMovie =
-                    Arrays.stream(Language.values()).collect(toMap(l -> l, l -> tmdbMovieService.getMovieDetails(f.getId().intValue(), l).orElse(new MovieDetailsWrapper())));
+                    Arrays.stream(Language.values()).collect(toMap(l -> l, l -> tmdbMovieService.getMovieDetails(f.getId(), l).orElse(new MovieDetailsWrapper())));
 
             f.getUsers().forEach(u -> {
                 releaseDates.forEach(rd -> {
@@ -129,7 +129,7 @@ public class NotificationServiceImpl implements NotificationService {
 
             // get foll tv show info
             Optional<TVDetailsWrapper> tvDetails =
-                    tmdbTVSeriesService.getTVDetails(tv.getId().getTvSeriesId().intValue(),
+                    tmdbTVSeriesService.getTVDetails(tv.getId().getTvSeriesId(),
                                                      tv.getUser().getLanguage());
             if (tvDetails.isPresent()) {
                 TVDetailsWrapper tvDetailsWrapper = tvDetails.get();

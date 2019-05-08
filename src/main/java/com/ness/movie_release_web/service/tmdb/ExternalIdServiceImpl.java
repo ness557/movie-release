@@ -25,7 +25,7 @@ public class ExternalIdServiceImpl implements ExternalIdService {
     private String url;
 
     @Override
-    public Integer getTmdbIdByImdbId(String imdbId) {
+    public Long getTmdbIdByImdbId(String imdbId) {
         UriComponentsBuilder movieBuilder = UriComponentsBuilder.fromHttpUrl(url + "find/")
                 .path(imdbId)
                 .queryParam("external_source", "imdb_id")
@@ -46,15 +46,14 @@ public class ExternalIdServiceImpl implements ExternalIdService {
                 // and try again
                 return this.getTmdbIdByImdbId(imdbId);
             }
-            return 0;
+            return 0L;
         }
 
-        Integer tmdbId = null;
+        Long tmdbId = 0L;
         try {
             tmdbId = response.getBody().getMovieResultWrapperList().get(0).getId();
         } catch (Exception e) {
             logger.error("Could not get movie: {}", e.getMessage());
-            return 0;
         }
 
         return tmdbId;

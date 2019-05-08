@@ -19,7 +19,7 @@ import java.util.List;
 public class TVCrewWrapper {
 
     @JsonProperty("id")
-    private Integer id;
+    private Long id;
 
     @JsonProperty("department")
     private String department;
@@ -40,7 +40,7 @@ public class TVCrewWrapper {
     private String overview;
 
     @JsonProperty("vote_count")
-    private Integer voteCount;
+    private Long voteCount;
 
     @JsonProperty("popularity")
     private Float popularity;
@@ -59,7 +59,7 @@ public class TVCrewWrapper {
     private LocalDate firstAirDate;
 
     @JsonProperty("genre_ids")
-    private List<Integer> genreIds = new ArrayList<>();
+    private List<Long> genreIds = new ArrayList<>();
 
     @JsonProperty("backdrop_path")
     @JsonDeserialize(using = TmdbPosterPathDeserializer.class)

@@ -8,6 +8,6 @@ import org.springframework.lang.Nullable;
 import java.util.Optional;
 
 public interface TmdbMovieService {
-    Optional<MovieDetailsWrapper> getMovieDetails(Integer tmdbId, Language language);
-    Optional<MovieSearchWrapper> searchForMovies(String query, @Nullable Integer page, @Nullable Integer year, Language language);
+    Optional<MovieDetailsWrapper> getMovieDetails(Long tmdbId, Language language);
+    Optional<MovieSearchWrapper> searchForMovies(String query, @Nullable Integer page, @Nullable Long year, Language language);
 }

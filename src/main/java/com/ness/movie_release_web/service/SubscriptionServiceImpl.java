@@ -27,7 +27,7 @@ public class SubscriptionServiceImpl implements SubscriptionService {
     private TVSeriesService tvSeriesService;
 
     @Override
-    public void subscribeToMovie(Integer tmdbId, String login) {
+    public void subscribeToMovie(Long tmdbId, String login) {
         User user = userService.findByLogin(login);
 
         if (filmService.isExistsByTmdbIdAndUser(tmdbId, user))
@@ -40,9 +40,9 @@ public class SubscriptionServiceImpl implements SubscriptionService {
 
         MovieDetailsWrapper movieDetailsWrapper = optionalMovieDetails.get();
 
-        Optional<Film> filmOpt = filmService.findById(tmdbId.longValue());
+        Optional<Film> filmOpt = filmService.findById(tmdbId);
 
-        Film film = filmOpt.orElse(new Film(movieDetailsWrapper.getId().longValue(), movieDetailsWrapper.getTitle(), "",
+        Film film = filmOpt.orElse(new Film(movieDetailsWrapper.getId(), movieDetailsWrapper.getTitle(), "",
                 movieDetailsWrapper.getStatus(), movieDetailsWrapper.getReleaseDate(),
                 movieDetailsWrapper.getVoteAverage().floatValue(), new ArrayList<>()));
         film.getUsers().add(user);
@@ -51,7 +51,7 @@ public class SubscriptionServiceImpl implements SubscriptionService {
     }
 
     @Override
-    public void unsubscribeFromMovie(Integer tmdbId, String login) {
+    public void unsubscribeFromMovie(Long tmdbId, String login) {
         User user = userService.findByLogin(login);
 
         Optional<Film> film = filmService.getByTmdbIdAndUser(tmdbId, user);
@@ -62,11 +62,11 @@ public class SubscriptionServiceImpl implements SubscriptionService {
     }
 
     @Override
-    public void subscribeToSeries(Integer tmdbId, String login) {
+    public void subscribeToSeries(Long tmdbId, String login) {
 
         User user = userService.findByLogin(login);
 
-        if (userTVSeriesRepository.existsById(UserTVSeriesPK.wrap(user.getId(), tmdbId.longValue()))) {
+        if (userTVSeriesRepository.existsById(UserTVSeriesPK.wrap(user.getId(), tmdbId))) {
             throw new ResponseStatusException(HttpStatus.CONFLICT);
         }
 
@@ -79,32 +79,32 @@ public class SubscriptionServiceImpl implements SubscriptionService {
         TVDetailsWrapper tvDetails = tvDetailsOptional.get();
         TVDetailsWrapper tvDetailsRu = tvDetailsOptionalRu.get();
 
-        Optional<TVSeries> one = tvSeriesService.findById(tmdbId.longValue());
+        Optional<TVSeries> one = tvSeriesService.findById(tmdbId);
 
         UserTVSeries userTVSeries = new UserTVSeries();
         userTVSeries.setTvSeries(one.orElse(new TVSeries(
-                tmdbId.longValue(),
+                tmdbId,
                 tvDetails.getName(),
                 tvDetailsRu.getName(),
                 tvDetails.getFirstAirDate(),
                 tvDetails.getLastAirDate(),
                 tvDetails.getVoteAverage(),
-                0,
-                0,
+                0L,
+                0L,
                 tvDetails.getStatus()
         )));
         userTVSeries.setUser(user);
-        userTVSeries.setCurrentSeason(0);
-        userTVSeries.setCurrentEpisode(0);
+        userTVSeries.setCurrentSeason(0L);
+        userTVSeries.setCurrentEpisode(0L);
 
         userTVSeriesRepository.save(userTVSeries);
     }
 
     @Override
-    public void unsubscribeFromSeries(Integer tmdbId, String login) {
+    public void unsubscribeFromSeries(Long tmdbId, String login) {
         User user = userService.findByLogin(login);
 
-        Optional<UserTVSeries> userTVSeries = userTVSeriesRepository.findById(UserTVSeriesPK.wrap(user.getId(), tmdbId.longValue()));
+        Optional<UserTVSeries> userTVSeries = userTVSeriesRepository.findById(UserTVSeriesPK.wrap(user.getId(), tmdbId));
 
         if (!userTVSeries.isPresent()) {
             throw new ResponseStatusException(HttpStatus.CONFLICT);

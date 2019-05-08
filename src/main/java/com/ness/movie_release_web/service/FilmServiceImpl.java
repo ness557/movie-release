@@ -61,13 +61,13 @@ public class FilmServiceImpl implements FilmService {
     }
 
     @Override
-    public Optional<Film> getByTmdbIdAndUser(Integer tmdbId, User user) {
-        return repository.findByIdAndUsers(tmdbId.longValue(), user);
+    public Optional<Film> getByTmdbIdAndUser(Long tmdbId, User user) {
+        return repository.findByIdAndUsers(tmdbId, user);
     }
 
     @Override
-    public boolean isExistsByTmdbIdAndUser(Integer tmdbId, User user) {
-        return repository.existsByIdAndUsers(tmdbId.longValue(), user);
+    public boolean isExistsByTmdbIdAndUser(Long tmdbId, User user) {
+        return repository.existsByIdAndUsers(tmdbId, user);
     }
 
     @Override
@@ -84,7 +84,7 @@ public class FilmServiceImpl implements FilmService {
 
         log.info("Updating film db...");
         repository.findAll().forEach(f -> {
-            Integer tmdbId = f.getId().intValue();
+            Long tmdbId = f.getId();
             Optional<MovieDetailsWrapper> movieDetails = tmdbMovieService.getMovieDetails(tmdbId, Language.en);
 
             if (!movieDetails.isPresent()) {

@@ -29,7 +29,7 @@ public class TVDetailsWrapper {
     private String backdropPath;
 
     @JsonProperty("episode_run_time")
-    private List<Integer> episodeRunTime = new ArrayList<>();
+    private List<Long> episodeRunTime = new ArrayList<>();
 
     @JsonDeserialize(using = TmdbMovieReleaseDateDeserializer.class)
     @JsonProperty("first_air_date")
@@ -42,7 +42,7 @@ public class TVDetailsWrapper {
     private String homepage;
 
     @JsonProperty("id")
-    private Integer id;
+    private Long id;
 
     @JsonProperty("in_production")
     private Boolean inProduction;
@@ -67,10 +67,10 @@ public class TVDetailsWrapper {
     private List<ProductionCompanyWrapper> networks = new ArrayList<>();
 
     @JsonProperty("number_of_episodes")
-    private Integer numberOfEpisodes;
+    private Long numberOfEpisodes;
 
     @JsonProperty("number_of_seasons")
-    private Integer numberOfSeasons;
+    private Long numberOfSeasons;
 
     @JsonProperty("origin_country")
     private List<String> originCountry = new ArrayList<>();
@@ -107,7 +107,7 @@ public class TVDetailsWrapper {
     private Float voteAverage;
 
     @JsonProperty("vote_count")
-    private Integer voteCount;
+    private Long voteCount;
 
     @JsonProperty("videos")
     private Videos videos;
@@ -117,7 +117,7 @@ public class TVDetailsWrapper {
 
     public static TVDetailsWrapper of(TVSeries tvSeries, Language language) {
         TVDetailsWrapper wrapper = new TVDetailsWrapper();
-        wrapper.setId(tvSeries.getId().intValue());
+        wrapper.setId(tvSeries.getId());
         switch (language) {
             case ru:
                 wrapper.setName(tvSeries.getNameRu());

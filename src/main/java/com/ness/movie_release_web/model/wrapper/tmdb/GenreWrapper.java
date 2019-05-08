@@ -12,7 +12,7 @@ import lombok.*;
 public class GenreWrapper {
 
     @JsonProperty("id")
-    private Integer id;
+    private Long id;
     @JsonProperty("name")
     private String name;
 

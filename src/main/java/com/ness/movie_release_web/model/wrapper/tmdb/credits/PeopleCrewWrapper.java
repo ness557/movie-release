@@ -16,7 +16,7 @@ public class PeopleCrewWrapper {
 
 
     @JsonProperty("id")
-    private Integer id;
+    private Long id;
 
     @JsonProperty("credit_id")
     private String creditId;

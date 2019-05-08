@@ -12,7 +12,9 @@ import org.springframework.web.client.HttpStatusCodeException;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
 
 import static java.lang.Thread.sleep;
 
@@ -30,7 +32,7 @@ public class CompanyServiceImpl extends Cacheable<ProductionCompanyWrapper> impl
 
 
     @Override
-    public List<ProductionCompanyWrapper> getCompanies(List<Integer> ids, Language language) {
+    public List<ProductionCompanyWrapper> getCompanies(List<Long> ids, Language language) {
 
         List<ProductionCompanyWrapper> result = new ArrayList<>();
         ids.forEach(id -> getCompany(id, language).ifPresent(result::add));
@@ -38,7 +40,7 @@ public class CompanyServiceImpl extends Cacheable<ProductionCompanyWrapper> impl
     }
 
     @Override
-    public Optional<ProductionCompanyWrapper> getCompany(Integer id, Language language) {
+    public Optional<ProductionCompanyWrapper> getCompany(Long id, Language language) {
 
         Optional<ProductionCompanyWrapper> fromCache = getFromCache(id, language);
         if (fromCache.isPresent()) {

@@ -64,7 +64,7 @@ public class NetworkServiceImpl implements NetworkService {
     }
 
     @Override
-    public List<ProductionCompanyWrapper> getNetworks(List<Integer> ids) {
+    public List<ProductionCompanyWrapper> getNetworks(List<Long> ids) {
         return networks.stream().filter(n -> ids.contains(n.getId())).collect(toList());
     }
 

@@ -36,10 +36,10 @@ public class TVSeries {
     private Float voteAverage;
 
     @Column(name = "last_season_number")
-    private Integer lastSeasonNumber;
+    private Long lastSeasonNumber;
 
     @Column(name = "last_episode_number")
-    private Integer lastEpisodeNumber;
+    private Long lastEpisodeNumber;
 
     @Enumerated
     private Status status;

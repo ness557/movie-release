@@ -17,16 +17,16 @@ import java.util.List;
 @EqualsAndHashCode
 public class MovieWrapper {
     @JsonProperty("id")
-    private Integer id;
+    private Long id;
 
     @JsonProperty("video")
     private Boolean video;
 
     @JsonProperty("vote_count")
-    private Integer voteCount;
+    private Long voteCount;
 
     @JsonProperty("vote_average")
-    private Integer voteAverage;
+    private Long voteAverage;
 
     @JsonProperty("title")
     private String title;
@@ -45,7 +45,7 @@ public class MovieWrapper {
     private String originalTitle;
 
     @JsonProperty("genre_ids")
-    private List<Integer> genreIds = null;
+    private List<Long> genreIds = null;
 
     @JsonDeserialize(using = TmdbPosterPathDeserializer.class)
     @JsonProperty("backdrop_path")

@@ -8,7 +8,7 @@ import java.util.List;
 import java.util.Optional;
 
 public interface CompanyService {
-    List<ProductionCompanyWrapper> getCompanies(List<Integer> ids, Language language);
-    Optional<ProductionCompanyWrapper> getCompany(Integer id, Language language);
+    List<ProductionCompanyWrapper> getCompanies(List<Long> ids, Language language);
+    Optional<ProductionCompanyWrapper> getCompany(Long id, Language language);
     Optional<CompanySearchWrapper> search(String query, Integer page, Language language);
 }

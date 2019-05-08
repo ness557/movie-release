@@ -7,7 +7,7 @@ import java.util.List;
 
 public interface TmdbDatesService {
     List<ReleaseDate> getReleaseDates(String imdbId, ReleaseType... releaseTypes);
-    List<ReleaseDate> getReleaseDates(Integer tmdbId, ReleaseType... releaseTypes);
+    List<ReleaseDate> getReleaseDates(Long tmdbId, ReleaseType... releaseTypes);
     List<ReleaseDate> getReleaseDates(String imdbId);
-    List<ReleaseDate> getReleaseDates(Integer tmdbId);
+    List<ReleaseDate> getReleaseDates(Long tmdbId);
 }

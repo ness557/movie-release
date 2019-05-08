@@ -9,10 +9,10 @@ import com.ness.movie_release_web.model.wrapper.tmdb.tvSeries.search.TVSearchWra
 import java.util.Optional;
 
 public interface TmdbTVSeriesService {
-    Optional<TVDetailsWrapper> getTVDetails(Integer tmdbId, Language language);
+    Optional<TVDetailsWrapper> getTVDetails(Long tmdbId, Language language);
 
-    Optional<SeasonWrapper> getSeasonDetails(Integer tmdbId, Integer season, Language language);
-    Optional<EpisodeWrapper> getEpisodeDetails(Integer tmdbId, Integer season, Integer episode, Language language);
+    Optional<SeasonWrapper> getSeasonDetails(Long tmdbId, Long season, Language language);
+    Optional<EpisodeWrapper> getEpisodeDetails(Long tmdbId, Long season, Long episode, Language language);
 
-    Optional<TVSearchWrapper> search(String query, Integer page, Integer year, Language language);
+    Optional<TVSearchWrapper> search(String query, Integer page, Long year, Language language);
 }

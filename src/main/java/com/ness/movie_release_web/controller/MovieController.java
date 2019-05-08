@@ -37,7 +37,7 @@ import static java.util.stream.Collectors.toMap;
 
 @Controller
 @RequestMapping("/movie")
-@SessionAttributes(names = { "query", "year", "language", "mode" }, types = { String.class, Integer.class,
+@SessionAttributes(names = { "query", "year", "language", "mode" }, types = { String.class, Long.class,
         Language.class, Mode.class })
 @AllArgsConstructor
 public class MovieController {
@@ -53,7 +53,7 @@ public class MovieController {
     private SubscriptionService subscriptionService;
 
     @GetMapping("/{tmdbId}")
-    public String getFilm(@PathVariable("tmdbId") Integer tmdbId,
+    public String getFilm(@PathVariable("tmdbId") Long tmdbId,
             @CookieValue(value = "language", defaultValue = "en") Language language,
             @CookieValue(value = "mode", defaultValue = "movie") Mode mode, Principal principal, Model model) {
 
@@ -76,19 +76,19 @@ public class MovieController {
 
     @PostMapping("/subscribe")
     @ResponseStatus(value = HttpStatus.OK)
-    public void subscribe(@RequestParam(value = "tmdbId") Integer tmdbId, Principal principal) {
+    public void subscribe(@RequestParam(value = "tmdbId") Long tmdbId, Principal principal) {
         subscriptionService.subscribeToMovie(tmdbId, principal.getName());
     }
 
     @PostMapping("/unSubscribe")
     @ResponseStatus(value = HttpStatus.OK)
-    public void unSubscribe(@RequestParam(value = "tmdbId") Integer tmdbId, Principal principal) {
+    public void unSubscribe(@RequestParam(value = "tmdbId") Long tmdbId, Principal principal) {
         subscriptionService.unsubscribeFromMovie(tmdbId, principal.getName());
     }
 
     @GetMapping("/search")
     public String search(@RequestParam("query") String query,
-            @RequestParam(required = false, name = "year") Integer year,
+            @RequestParam(required = false, name = "year") Long year,
             @RequestParam(required = false, name = "page") Integer page,
             @CookieValue(value = "language", defaultValue = "en") Language language,
             @CookieValue(value = "mode", defaultValue = "movie") Mode mode, Principal principal, Model model) {
@@ -124,7 +124,7 @@ public class MovieController {
     @GetMapping("/api/search")
     @ResponseBody
     public ResponseEntity<MovieSearchWrapper> searchApi(@RequestParam("query") String query,
-            @RequestParam(required = false, name = "year") Integer year,
+            @RequestParam(required = false, name = "year") Long year,
             @RequestParam(required = false, name = "page") Integer page,
             @CookieValue(value = "language", defaultValue = "en") Language language) {
 
@@ -181,7 +181,7 @@ public class MovieController {
         if (viewMode) {
             tmdbFilms = films.stream().map(f -> MovieDetailsWrapper.of(f, language)).collect(toList());
         } else {
-            tmdbFilms = films.stream().map(f -> movieService.getMovieDetails(f.getId().intValue(), language))
+            tmdbFilms = films.stream().map(f -> movieService.getMovieDetails(f.getId(), language))
                     .filter(Optional::isPresent).map(Optional::get).collect(toList());
         }
 

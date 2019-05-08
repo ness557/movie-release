@@ -26,7 +26,7 @@ public class TmdbTVSeriesServiceImpl extends Cacheable<TVDetailsWrapper> impleme
 
     private RestTemplate restTemplate = new RestTemplate();
 
-    private Map<Integer, Map<Integer, Map<Language, SeasonWrapper>>> seasonCache = new WeakHashMap<>();
+    private Map<Long, Map<Long, Map<Language, SeasonWrapper>>> seasonCache = new WeakHashMap<>();
 
     @Value("${tmdbapi.apikey}")
     private String apikey;
@@ -35,7 +35,7 @@ public class TmdbTVSeriesServiceImpl extends Cacheable<TVDetailsWrapper> impleme
     private String url;
 
     @Override
-    public Optional<TVDetailsWrapper> getTVDetails(Integer tmdbId, Language language) {
+    public Optional<TVDetailsWrapper> getTVDetails(Long tmdbId, Language language) {
 
         Optional<TVDetailsWrapper> fromCache = getFromCache(tmdbId, language);
         if (fromCache.isPresent()) {
@@ -74,7 +74,7 @@ public class TmdbTVSeriesServiceImpl extends Cacheable<TVDetailsWrapper> impleme
     }
 
     @Override
-    public Optional<SeasonWrapper> getSeasonDetails(Integer tmdbId, Integer season, Language language) {
+    public Optional<SeasonWrapper> getSeasonDetails(Long tmdbId, Long season, Language language) {
 
         Optional<SeasonWrapper> seasonFromCache = getSeasonFromCache(tmdbId, season, language);
         if (seasonFromCache.isPresent()) {
@@ -114,7 +114,7 @@ public class TmdbTVSeriesServiceImpl extends Cacheable<TVDetailsWrapper> impleme
     }
 
     @Override
-    public Optional<EpisodeWrapper> getEpisodeDetails(Integer tmdbId, Integer season, Integer episode, Language language) {
+    public Optional<EpisodeWrapper> getEpisodeDetails(Long tmdbId, Long season, Long episode, Language language) {
         UriComponentsBuilder UrlBuilder = UriComponentsBuilder.fromHttpUrl(url + "tv/")
                 .path(tmdbId.toString())
                 .path("/season/")
@@ -147,7 +147,7 @@ public class TmdbTVSeriesServiceImpl extends Cacheable<TVDetailsWrapper> impleme
     }
 
     @Override
-    public Optional<TVSearchWrapper> search(String query, Integer page, Integer year, Language language) {
+    public Optional<TVSearchWrapper> search(String query, Integer page, Long year, Language language) {
         UriComponentsBuilder urlBuilder = UriComponentsBuilder.fromHttpUrl(url + "search/tv")
                 .queryParam("api_key", apikey)
                 .queryParam("language", language.name())
@@ -180,14 +180,14 @@ public class TmdbTVSeriesServiceImpl extends Cacheable<TVDetailsWrapper> impleme
     }
 
 
-    private Optional<SeasonWrapper> getSeasonFromCache(Integer id, Integer seasonNum, Language language){
-        Map<Integer, Map<Language, SeasonWrapper>> seriesMap = seasonCache.computeIfAbsent(id, k -> new HashMap<>());
+    private Optional<SeasonWrapper> getSeasonFromCache(Long id, Long seasonNum, Language language){
+        Map<Long, Map<Language, SeasonWrapper>> seriesMap = seasonCache.computeIfAbsent(id, k -> new HashMap<>());
         Map<Language, SeasonWrapper> languageSeasonMap = seriesMap.computeIfAbsent(seasonNum, k -> new WeakHashMap<>());
         return Optional.ofNullable(languageSeasonMap.get(language));
     }
 
-    private void putSeasonToCache(Integer id, SeasonWrapper object, Language language){
-        Map<Integer, Map<Language, SeasonWrapper>> seriesMap = seasonCache.computeIfAbsent(id, k -> new HashMap<>());
+    private void putSeasonToCache(Long id, SeasonWrapper object, Language language){
+        Map<Long, Map<Language, SeasonWrapper>> seriesMap = seasonCache.computeIfAbsent(id, k -> new HashMap<>());
         Map<Language, SeasonWrapper> languageSeasonMap = seriesMap.computeIfAbsent(object.getSeasonNumber(), k -> new WeakHashMap<>());
         languageSeasonMap.put(language, object);
     }

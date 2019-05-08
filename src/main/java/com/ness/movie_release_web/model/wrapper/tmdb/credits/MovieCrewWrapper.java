@@ -19,7 +19,7 @@ import java.util.List;
 public class MovieCrewWrapper {
 
     @JsonProperty("id")
-    private Integer id;
+    private Long id;
 
     @JsonProperty("department")
     private String department;
@@ -37,7 +37,7 @@ public class MovieCrewWrapper {
     private String overview;
 
     @JsonProperty("vote_count")
-    private Integer voteCount;
+    private Long voteCount;
 
     @JsonProperty("popularity")
     private Float popularity;
@@ -56,7 +56,7 @@ public class MovieCrewWrapper {
     private LocalDate releaseDate;
 
     @JsonProperty("genre_ids")
-    private List<Integer> genreIds = new ArrayList<>();
+    private List<Long> genreIds = new ArrayList<>();
 
     @JsonProperty("backdrop_path")
     @JsonDeserialize(using = TmdbPosterPathDeserializer.class)

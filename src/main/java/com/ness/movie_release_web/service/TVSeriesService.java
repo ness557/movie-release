@@ -13,9 +13,9 @@ import java.util.Optional;
 
 public interface TVSeriesService {
 
-    Boolean isExistsByTmdbIdAndUserId(Integer tmdbId, Long userId);
+    Boolean isExistsByTmdbIdAndUserId(Long tmdbId, Long userId);
 
-    Optional<UserTVSeries> getByTmdbIdAndUserId(Integer tmdbId, Long userId);
+    Optional<UserTVSeries> getByTmdbIdAndUserId(Long tmdbId, Long userId);
 
     Page<UserTVSeries> getByUserAndTVStatusesAndWatchStatusesWithOrderAndPages(List<Status> tvStatuses,
                                                                                List<WatchStatus> watchStatuses,
@@ -26,11 +26,11 @@ public interface TVSeriesService {
 
     List<UserTVSeries> getAllUserTVSeries();
 
-    void setSeasonAndEpisode(Integer tmdbId, User user, Integer seasonNum, Integer episodeNum);
+    void setSeasonAndEpisode(Long tmdbId, User user, Long seasonNum, Long episodeNum);
 
-    Long spentTotalMinutesToSeries(Integer tmdbId, User user, Integer currentSeason, Integer currentEpisode);
+    Long spentTotalMinutesToSeries(Long tmdbId, User user, Long currentSeason, Long currentEpisode);
 
-    Long spentTotalMinutesToSeriesSeason(Integer tmdbId, Integer season, User user, Integer currentSeason, Integer currentEpisode);
+    Long spentTotalMinutesToSeriesSeason(Long tmdbId, Long season, User user, Long currentSeason, Long currentEpisode);
 
     void updateDB();
 

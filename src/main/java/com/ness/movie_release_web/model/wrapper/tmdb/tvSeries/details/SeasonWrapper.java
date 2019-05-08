@@ -32,12 +32,12 @@ public class SeasonWrapper {
     private String overview;
 
     @JsonProperty("id")
-    private Integer id;
+    private Long id;
 
     @JsonDeserialize(using = TmdbPosterPathDeserializer.class)
     @JsonProperty("poster_path")
     private String posterPath;
 
     @JsonProperty("season_number")
-    private Integer seasonNumber;
+    private Long seasonNumber;
 }

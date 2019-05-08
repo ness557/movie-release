@@ -17,9 +17,9 @@ public class MovieSearchWrapper {
     @JsonProperty("page")
     private Integer page;
     @JsonProperty("total_results")
-    private Integer totalResults;
+    private Long totalResults;
     @JsonProperty("total_pages")
-    private Integer totalPages;
+    private Long totalPages;
     @JsonProperty("results")
     private List<MovieWrapper> results = new ArrayList<>();
 }

@@ -23,7 +23,7 @@ public class TVWrapper {
     private LocalDate firstAirDate;
 
     @JsonProperty("id")
-    private Integer id;
+    private Long id;
 
     @JsonProperty("name")
     private String name;
@@ -51,5 +51,5 @@ public class TVWrapper {
     private Float voteAverage;
 
     @JsonProperty("vote_count")
-    private Integer voteCount;
+    private Long voteCount;
 }

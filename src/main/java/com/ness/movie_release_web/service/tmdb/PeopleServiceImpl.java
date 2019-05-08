@@ -32,7 +32,7 @@ public class PeopleServiceImpl implements PeopleService {
     private String url;
 
     @Override
-    public List<PeopleWrapper> getPeopleList(List<Integer> people, Language language) {
+    public List<PeopleWrapper> getPeopleList(List<Long> people, Language language) {
 
         List<PeopleWrapper> result = new ArrayList<>();
         people.forEach(id -> getDetails(id, language).ifPresent(result::add));
@@ -40,7 +40,7 @@ public class PeopleServiceImpl implements PeopleService {
     }
 
     @Override
-    public Optional<PeopleWrapper> getDetails(Integer id, Language language) {
+    public Optional<PeopleWrapper> getDetails(Long id, Language language) {
 
         UriComponentsBuilder UrlBuilder = UriComponentsBuilder.fromHttpUrl(url + "person/")
                 .path(id.toString())

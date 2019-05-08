@@ -21,8 +21,8 @@ public interface FilmService {
 
     List<Film> getAll();
 
-    Optional<Film> getByTmdbIdAndUser(Integer tmdbId, User user);
-    boolean isExistsByTmdbIdAndUser(Integer tmdbId, User user);
+    Optional<Film> getByTmdbIdAndUser(Long tmdbId, User user);
+    boolean isExistsByTmdbIdAndUser(Long tmdbId, User user);
 
     Page<Film> getByUserAndStatusWithOrderbyAndPages(List<Status> statuses,
                                                   MovieSortBy sortBy,

@@ -17,7 +17,7 @@ public class MovieCreditsWrapper {
     @JsonProperty("cast")
     private List<MovieCastWrapper> casts = new ArrayList<>();
     @JsonProperty("id")
-    private Integer id;
+    private Long id;
     @JsonProperty("crew")
     private List<MovieCrewWrapper> crews = new ArrayList<>();
 }

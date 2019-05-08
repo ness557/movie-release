@@ -22,13 +22,13 @@ public class MovieCastWrapper {
     private Float popularity;
 
     @JsonProperty("vote_count")
-    private Integer voteCount;
+    private Long voteCount;
 
     @JsonProperty("vote_average")
-    private Integer voteAverage;
+    private Long voteAverage;
 
     @JsonProperty("genre_ids")
-    private List<Integer> genreIds = new ArrayList<>();
+    private List<Long> genreIds = new ArrayList<>();
 
     @JsonProperty("title")
     private String title;
@@ -42,7 +42,7 @@ public class MovieCastWrapper {
     private String posterPath;
 
     @JsonProperty("id")
-    private Integer id;
+    private Long id;
 
     @JsonProperty("original_language")
     private String originalLanguage;

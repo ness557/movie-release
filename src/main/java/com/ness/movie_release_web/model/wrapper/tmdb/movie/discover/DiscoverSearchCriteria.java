@@ -23,13 +23,13 @@ import static org.apache.commons.lang3.StringUtils.trim;
 @EqualsAndHashCode
 public class DiscoverSearchCriteria {
 
-    private List<Integer> genres = emptyList();
+    private List<Long> genres = emptyList();
     private Boolean genresAnd = false;
-    private List<Integer> networks = emptyList();
+    private List<Long> networks = emptyList();
     private Boolean networksAnd = false;
-    private List<Integer> people = emptyList();
+    private List<Long> people = emptyList();
     private Boolean peopleAnd = false;
-    private List<Integer> companies = emptyList();
+    private List<Long> companies = emptyList();
     private Boolean companiesAnd = false;
     private List<ReleaseType> releaseTypes = emptyList();
     private Boolean releaseTypeAnd = false;

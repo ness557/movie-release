@@ -45,7 +45,7 @@ public class MovieDetailsWrapper {
     private Object belongsToCollection;
 
     @JsonProperty("budget")
-    private Integer budget;
+    private Long budget;
 
     @JsonProperty("genres")
     private Set<GenreWrapper> genreWrappers = new HashSet<>();
@@ -54,7 +54,7 @@ public class MovieDetailsWrapper {
     private String homepage;
 
     @JsonProperty("id")
-    private Integer id;
+    private Long id;
 
     @JsonProperty("imdb_id")
     private String imdbId;
@@ -86,10 +86,10 @@ public class MovieDetailsWrapper {
     private LocalDate releaseDate; //not needed
 
     @JsonProperty("revenue")
-    private Integer revenue;
+    private Long revenue;
 
     @JsonProperty("runtime")
-    private Integer runtime; // minutes used
+    private Long runtime; // minutes used
 
     @JsonProperty("spoken_languages")
     private List<SpokenLanguageWrapper> spokenLanguageWrappers = new ArrayList<>();
@@ -110,7 +110,7 @@ public class MovieDetailsWrapper {
     private Double voteAverage;
 
     @JsonProperty("vote_count")
-    private Integer voteCount;
+    private Long voteCount;
 
     @JsonProperty("credits")
     private PeopleCreditsWrapper credits = new PeopleCreditsWrapper();
@@ -122,7 +122,7 @@ public class MovieDetailsWrapper {
 
     public static MovieDetailsWrapper of(Film film, Language language) {
         MovieDetailsWrapper wrapper = new MovieDetailsWrapper();
-        wrapper.setId(film.getId().intValue());
+        wrapper.setId(film.getId());
         switch (language) {
             case ru:
                 wrapper.setTitle(film.getNameRu());

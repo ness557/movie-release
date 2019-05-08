@@ -42,7 +42,7 @@ import static java.util.stream.Collectors.toMap;
 @Controller
 @RequestMapping("/series")
 @SessionAttributes(names = {"query", "year", "language", "mode"},
-        types = {String.class, Integer.class, Language.class, Mode.class})
+        types = {String.class, Long.class, Language.class, Mode.class})
 @AllArgsConstructor
 public class TVSeriesController {
 
@@ -56,7 +56,7 @@ public class TVSeriesController {
     private SubscriptionService subscriptionService;
 
     @GetMapping("/{tmdbId}")
-    public String getFilm(@PathVariable("tmdbId") Integer tmdbId,
+    public String getFilm(@PathVariable("tmdbId") Long tmdbId,
                           @CookieValue(value = "language", defaultValue = "en") Language language,
                           @CookieValue(value = "mode", defaultValue = "movie") Mode mode,
                           Principal principal,
@@ -80,8 +80,8 @@ public class TVSeriesController {
             UserTVSeries userTVSeries = userTVSeriesOptional.get();
             model.addAttribute("subscribed", true);
 
-            Integer currentSeasonNum = userTVSeries.getCurrentSeason();
-            Integer currentEpisodeNum = userTVSeries.getCurrentEpisode();
+            Long currentSeasonNum = userTVSeries.getCurrentSeason();
+            Long currentEpisodeNum = userTVSeries.getCurrentEpisode();
             EpisodeWrapper lastEpisodeToAir = tvDetailsWrapper.getLastEpisodeToAir();
 
             model.addAttribute("currentSeason", currentSeasonNum);
@@ -119,9 +119,9 @@ public class TVSeriesController {
     }
 
     @GetMapping("/{tmdbId}/season/{seasonNumber}")
-    public String getSeason(@PathVariable("tmdbId") Integer tmdbId,
-                            @PathVariable("seasonNumber") Integer seasonNumber,
-                            @RequestParam(value = "episodeToOpen", required = false) Integer episodeToOpen,
+    public String getSeason(@PathVariable("tmdbId") Long tmdbId,
+                            @PathVariable("seasonNumber") Long seasonNumber,
+                            @RequestParam(value = "episodeToOpen", required = false) Long episodeToOpen,
                             @CookieValue(value = "language", defaultValue = "en") Language language,
                             @CookieValue(value = "mode", defaultValue = "movie") Mode mode,
                             Principal principal,
@@ -173,21 +173,21 @@ public class TVSeriesController {
 
     @PostMapping("/subscribe")
     @ResponseStatus(value = HttpStatus.OK)
-    public void subscribe(@RequestParam(value = "tmdbId") Integer tmdbId,
+    public void subscribe(@RequestParam(value = "tmdbId") Long tmdbId,
                                     Principal principal) {
         subscriptionService.subscribeToSeries(tmdbId, principal.getName());
     }
 
     @PostMapping("/unSubscribe")
     @ResponseStatus(value = HttpStatus.OK)
-    public void unSubscribe(@RequestParam(value = "tmdbId") Integer tmdbId,
+    public void unSubscribe(@RequestParam(value = "tmdbId") Long tmdbId,
                                       Principal principal) {
         subscriptionService.unsubscribeFromSeries(tmdbId, principal.getName());
     }
 
     @GetMapping("/search")
     public String search(@RequestParam("query") String query,
-                         @RequestParam(required = false, name = "year") Integer year,
+                         @RequestParam(required = false, name = "year") Long year,
                          @RequestParam(required = false, name = "page") Integer page,
                          @CookieValue(value = "language", defaultValue = "en") Language language,
                          @CookieValue(value = "mode", defaultValue = "movie") Mode mode,
@@ -231,7 +231,7 @@ public class TVSeriesController {
     @GetMapping("/api/search")
     @ResponseBody
     public ResponseEntity<TVSearchWrapper> searchApi(@RequestParam("query") String query,
-                         @RequestParam(required = false, name = "year") Integer year,
+                         @RequestParam(required = false, name = "year") Long year,
                          @RequestParam(required = false, name = "page") Integer page,
                          @CookieValue(value = "language", defaultValue = "en") Language language){
 
@@ -298,7 +298,7 @@ public class TVSeriesController {
                     .map(s -> TVDetailsWrapper.of(s, language)).collect(toList());
         } else {
             subscriptions = series.stream()
-                    .map(f -> tmdbSeriesService.getTVDetails(f.getId().getTvSeriesId().intValue(), language))
+                    .map(f -> tmdbSeriesService.getTVDetails(f.getId().getTvSeriesId(), language))
                     .filter(Optional::isPresent)
                     .map(Optional::get)
                     .collect(toList());
@@ -369,9 +369,9 @@ public class TVSeriesController {
 
     @PostMapping("/setSeasonAndEpisode")
     @ResponseStatus(value = HttpStatus.OK)
-    public void setCurrentSeasonAndEpisode(@RequestParam(value = "tmdbId") Integer tmdbId,
-                                                     @RequestParam(value = "season") Integer season,
-                                                     @RequestParam(value = "episode") Integer episode,
+    public void setCurrentSeasonAndEpisode(@RequestParam(value = "tmdbId") Long tmdbId,
+                                                     @RequestParam(value = "season") Long season,
+                                                     @RequestParam(value = "episode") Long episode,
                                                      Principal principal) {
 
         User user = userService.findByLogin(principal.getName());

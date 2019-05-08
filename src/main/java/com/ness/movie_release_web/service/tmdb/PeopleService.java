@@ -8,7 +8,7 @@ import java.util.Optional;
 
 public interface PeopleService {
 
-    Optional<PeopleWrapper> getDetails(Integer id, Language language);
+    Optional<PeopleWrapper> getDetails(Long id, Language language);
     List<PeopleWrapper> search(String query);
-    List<PeopleWrapper> getPeopleList(List<Integer> people, Language language);
+    List<PeopleWrapper> getPeopleList(List<Long> people, Language language);
 }

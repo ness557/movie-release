@@ -28,8 +28,8 @@ public class UserTVSeries {
     private TVSeries tvSeries;
 
     @Column(name = "current_season_number")
-    private Integer currentSeason;
+    private Long currentSeason;
 
     @Column(name = "current_episode_number")
-    private Integer currentEpisode;
+    private Long currentEpisode;
 }

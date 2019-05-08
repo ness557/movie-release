@@ -22,10 +22,10 @@ public class MovieResultWrapper {
     private String backdropPath;
 
     @JsonProperty("genre_ids")
-    private List<Integer> genreIds = null;
+    private List<Long> genreIds = null;
 
     @JsonProperty("id")
-    private Integer id;
+    private Long id;
 
     @JsonProperty("original_language")
     private String originalLanguage;
@@ -56,5 +56,5 @@ public class MovieResultWrapper {
     private Double voteAverage;
 
     @JsonProperty("vote_count")
-    private Integer voteCount;
+    private Long voteCount;
 }
