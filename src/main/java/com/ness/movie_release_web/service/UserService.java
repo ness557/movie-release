@@ -2,6 +2,8 @@ package com.ness.movie_release_web.service;
 
 import com.ness.movie_release_web.model.User;
 
+import java.util.Optional;
+
 public interface UserService {
 
     void save(User user);
@@ -12,4 +14,5 @@ public interface UserService {
     boolean isExists(String login);
     boolean existsByIdNotAndLogin(Long id, String login);
     User findByTelegramId(String telegramId);
+    Optional<User> findByTelegramIdOrEmail(String telegramId, String email);
 }

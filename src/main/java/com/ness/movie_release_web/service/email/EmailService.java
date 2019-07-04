@@ -11,4 +11,5 @@ public interface EmailService {
     void sendMovieNotify(User user, MovieDetailsDto movie, ReleaseDate releaseDate);
     void sendEpisodeNotify(User user, EpisodeDto episode, TVDetailsDto show);
     void sendSeasonNotify(User user, SeasonDto season, TVDetailsDto show);
+    void sendResetLink(String resetLink, String email);
 }

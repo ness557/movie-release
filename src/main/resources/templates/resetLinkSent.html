@@ -1,0 +1,21 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="embeded/header.html :: header(~{::title})">
+    <title th:text="#{lang.recovery_link_sent}"></title>
+</head>
+<body>
+<nav th:insert="embeded/navbar.html"></nav>
+
+<div class="container" style="height: 35%; color: #C9C9C9; font-size: 20px">
+    <div class="row" style="height: 100%;">
+        <div class="col-xl-12" style="text-align: center; position: relative">
+            <span style="bottom: 0; left: 0; right: 0"
+                  th:text="#{lang.password_reset_link_sent_by} + ' ' + ${receiverService}
+                    + ' ' + #{lang.to_address} + ' ' + ${receiverAddress}"></span>
+        </div>
+    </div>
+</div>
+
+<footer th:insert="embeded/footer.html"></footer>
+</body>
+</html>

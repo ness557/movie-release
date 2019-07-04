@@ -29,11 +29,13 @@ public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
                 .sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED)
                 .and()
             .authorizeRequests()
-                .antMatchers("/", "/home", "/register", "/login", "/register")
+                .antMatchers("/", "/home", "/login", "/register",
+                        "/resetPassword", "/recoverPassword/**")
                 .permitAll()
                 .antMatchers("/movie/**", "/company/**",
                         "/network/**", "/series/**", "/people/**",
-                        "/userInfo", "/changePassword", "/setLanguage", "/setMode")
+                        "/userInfo", "/setLanguage", "/setMode",
+                        "/changePassword")
                 .hasAnyRole("USER")
                 .antMatchers("/admin/update_db")
                 .hasAnyRole("ADMIN")

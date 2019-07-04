@@ -2,7 +2,7 @@ package com.ness.movie_release_web.service;
 
 import com.ness.movie_release_web.model.User;
 import com.ness.movie_release_web.service.google.recapcha.RecaptchaService;
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Service;
@@ -11,15 +11,14 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
-import static org.apache.commons.lang3.StringUtils.isEmpty;
 
 @Service
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class RegistrationServiceImpl implements RegistrationService {
 
-    private UserService userService;
-    private MessageSource messageSource;
-    private RecaptchaService recaptchaService;
+    private final UserService userService;
+    private final MessageSource messageSource;
+    private final RecaptchaService recaptchaService;
 
     /**
      * Validates user before registration.
@@ -73,7 +72,6 @@ public class RegistrationServiceImpl implements RegistrationService {
         user.setTelegramId(StringUtils.lowerCase(user.getTelegramId()));
         userService.save(user);
     }
-
 
     private void validateUser(User user, Locale locale, List<String> errors) {
 

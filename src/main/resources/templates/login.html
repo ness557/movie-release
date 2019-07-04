@@ -52,7 +52,12 @@
                 </div>
                 <div class="row">
                     <div class="col" style="text-align: left;">
-                        <a href="/register" class="sign-up-link" th:text="#{lang.sign_up}">Sign up</a>
+                        <div class="row">
+                            <div class="col"><a href="/register" class="sign-up-link" th:text="#{lang.sign_up}">Sign up</a></div>
+                        </div>
+                        <div class="row">
+                            <div class="col"><a href="/resetPassword" class="sign-up-link" th:text="#{lang.forgot_password}">Forgot password?</a></div>
+                        </div>
                     </div>
                     <div class="col" style="text-align: right;">
                         <input type="submit" id="submitButton" class="btn btn-warning" style="padding:7px 34px;"

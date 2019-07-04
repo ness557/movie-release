@@ -22,6 +22,7 @@ import javax.mail.internet.MimeMessage;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.time.format.DateTimeFormatter;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -161,6 +162,27 @@ public class EmailServiceImpl implements EmailService {
 
             mailSender.send(message);
             logger.info("Email sent to {} with season {} of tv show {}", user.getEmail(), season.toString(), show.toString());
+        } catch (IOException | MessagingException | TemplateException e) {
+            logger.error("Could not sent email: {}", e.getMessage());
+        }
+    }
+
+    @Override
+    public void sendResetLink(String resetLink, String email) {
+        try {
+            MimeMessage message = mailSender.createMimeMessage();
+            MimeMessageHelper helper = new MimeMessageHelper(message,
+                    MimeMessageHelper.MULTIPART_MODE_MIXED_RELATED,
+                    StandardCharsets.UTF_8.name());
+
+            String subject = "Movie release password recovery";
+            Map<String, String> params = Collections.singletonMap("resetLink", resetLink);
+
+            helper.setSubject(subject);
+            helper.setTo(email);
+            helper.setText(processTemplateIntoString(freemarkerConfig.getTemplate("passwordRecovery.ftl"), params), true);
+
+            mailSender.send(message);
         } catch (IOException | MessagingException | TemplateException e) {
             logger.error("Could not sent email: {}", e.getMessage());
         }

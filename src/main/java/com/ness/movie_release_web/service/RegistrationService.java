@@ -4,6 +4,7 @@ import com.ness.movie_release_web.model.User;
 
 import java.util.List;
 import java.util.Locale;
+import java.util.Optional;
 
 public interface RegistrationService {
 
@@ -11,5 +12,4 @@ public interface RegistrationService {
     List<String> validateEdit(User user, Locale locale);
     void registerUser(User user);
     void editUserInfo(User user);
-    List<String> changePassword(User user, String oldPassword, String newPassword);
 }

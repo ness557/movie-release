@@ -53,6 +53,20 @@ public class TelegramNotificationBotImpl extends TelegramLongPollingBot implemen
         }
     }
 
+    public void sendNotify(String resultText, Long chatId) {
+        SendMessage message = new SendMessage();
+        try {
+            execute(message.setChatId(chatId)
+                    .setText(resultText)
+                    .setParseMode(ParseMode.MARKDOWN));
+
+            logger.info("Password restore message sent={} ", message.toString());
+        } catch (TelegramApiException e) {
+            logger.error("Could not sent telegram message: {}", e.getMessage());
+            e.printStackTrace();
+        }
+    }
+
     @Override
     public void onUpdateReceived(Update update) {
         Message message = update.getMessage();

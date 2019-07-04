@@ -23,5 +23,5 @@ public class PasswordChangeDto {
     private String oldPassword;
 
     @MatchPassword(message = "{lang.passwords_not_match}")
-    private PasswordDto passwordDto;
+    private PasswordDto password;
 }
