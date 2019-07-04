@@ -1,6 +1,6 @@
 package com.ness.movie_release_web.service;
 
-import com.ness.movie_release_web.model.wrapper.tmdb.Language;
+import com.ness.movie_release_web.model.dto.tmdb.Language;
 
 import org.springframework.web.servlet.LocaleResolver;
 

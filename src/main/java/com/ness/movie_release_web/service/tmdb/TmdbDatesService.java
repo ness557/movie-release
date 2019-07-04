@@ -1,7 +1,7 @@
 package com.ness.movie_release_web.service.tmdb;
 
-import com.ness.movie_release_web.model.wrapper.tmdb.releaseDates.ReleaseDate;
-import com.ness.movie_release_web.model.wrapper.tmdb.releaseDates.ReleaseType;
+import com.ness.movie_release_web.model.dto.tmdb.releaseDates.ReleaseDate;
+import com.ness.movie_release_web.model.dto.tmdb.releaseDates.ReleaseType;
 
 import java.util.List;
 

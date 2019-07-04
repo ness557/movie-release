@@ -1,8 +1,8 @@
 package com.ness.movie_release_web.controller;
 
-import com.ness.movie_release_web.model.wrapper.tmdb.Language;
-import com.ness.movie_release_web.model.wrapper.tmdb.Mode;
-import com.ness.movie_release_web.model.wrapper.tmdb.people.PeopleWrapper;
+import com.ness.movie_release_web.model.dto.tmdb.Language;
+import com.ness.movie_release_web.model.dto.tmdb.Mode;
+import com.ness.movie_release_web.model.dto.tmdb.people.PeopleDto;
 import com.ness.movie_release_web.service.tmdb.PeopleService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -24,7 +24,7 @@ public class PeopleController {
     private PeopleService peopleService;
 
     @GetMapping("/search")
-    public ResponseEntity<List<PeopleWrapper>> search(@RequestParam(value = "query") String query) {
+    public ResponseEntity<List<PeopleDto>> search(@RequestParam(value = "query") String query) {
 
         return ResponseEntity.ok(peopleService.search(query));
     }
@@ -39,7 +39,7 @@ public class PeopleController {
         model.addAttribute("language", language);
         model.addAttribute("mode", mode);
 
-        Optional<PeopleWrapper> peopleOpt = peopleService.getDetails(id, language);
+        Optional<PeopleDto> peopleOpt = peopleService.getDetails(id, language);
         if (!peopleOpt.isPresent()) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND);
         }

@@ -36,8 +36,8 @@
                             <span th:errors="*{login}" class="error"></span><br>
                         </th:block>
 
-                        <th:block th:if="${#fields.hasErrors('encPassword')}">
-                            <span th:errors="*{encPassword}" class="error"/><br>
+                        <th:block th:if="${#fields.hasErrors('password')}">
+                            <span th:errors="*{password}" class="error"/><br>
                         </th:block>
 
                         <th:block th:if="${#fields.hasErrors('email')}">
@@ -60,11 +60,13 @@
 
                 <input type="hidden" th:field="*{id}"/>
                 <input type="hidden" th:field="*{telegramChatId}"/>
+                <input type="hidden" th:field="*{role}"/>
 
                 <div class="row">
                     <div class="col-10 col-sm-10 col-md-10 col-lg-10 col-xl-10 form-group">
                         <div class="icon-addon addon-lg">
-                            <input type="text" th:placeholder="#{lang.login_input_placeholder}" class="form-control" th:field="*{login}"/>
+                            <input type="text" th:placeholder="#{lang.login_input_placeholder}" class="form-control"
+                                   th:field="*{login}"/>
                             <img th:src="@{/img/user-dark.png}" class="glyphicon glyphicon-search">
                         </div>
                     </div>
@@ -82,7 +84,7 @@
                     <div class="col-10 col-sm-10 col-md-10 col-lg-10 col-xl-10 form-group">
                         <div class="icon-addon addon-lg">
                             <select th:field="*{language}" class="form-control" style="height: 46px">
-                                <option th:each="lang : ${T(com.ness.movie_release_web.model.wrapper.tmdb.Language).values()}"
+                                <option th:each="lang : ${T(com.ness.movie_release_web.model.dto.tmdb.Language).values()}"
                                         th:value="${lang}"
                                         th:text="#{'lang.' + ${lang.value}}"
                                         th:selected="${lang == language}">
@@ -93,49 +95,54 @@
                     </div>
                 </div>
 
-
-                <div class="row">
-                    <div class="col-10 col-sm-10 col-md-10 col-lg-10 col-xl-10 form-group">
-                        <div class="icon-addon addon-lg">
-                            <input type="password" th:placeholder="#{lang.password_input_placeholder}" class="form-control"
-                                   th:field="*{encPassword}"/>
-                            <img th:src="@{/img/password-dark.png}" class="glyphicon glyphicon-search">
+                <th:block th:if="${user.id == null}">
+                    <div class="row">
+                        <div class="col-10 col-sm-10 col-md-10 col-lg-10 col-xl-10 form-group">
+                            <div class="icon-addon addon-lg">
+                                <input type="password" th:placeholder="#{lang.password_input_placeholder}"
+                                       class="form-control"
+                                       th:field="*{password.password}"/>
+                                <img th:src="@{/img/password-dark.png}" class="glyphicon glyphicon-search">
+                            </div>
                         </div>
-                    </div>
 
-                    <th:block th:if="${#fields.hasErrors('encPassword')}">
-                        <div class="col-2 col-sm-2 col-md-2 col-lg-2 col-xl-2"
-                             style="text-align: left; margin-left: -13px; margin-top: 10px">
-                            <img class="glyphicon" th:src="@{/img/error.png}"/>
-
-                        </div>
-                    </th:block>
-                </div>
-
-
-                <div class="row">
-                    <div class="col-10 col-sm-10 col-md-10 col-lg-10 col-xl-10 form-group">
-                        <div class="icon-addon addon-lg">
-                            <input type="password" th:placeholder="#{lang.password_confirm_input_placeholder}" class="form-control"
-                                   th:field="*{matchPassword}"/>
-                            <img th:src="@{/img/password-dark.png}" class="glyphicon glyphicon-search">
-                        </div>
-                    </div>
-
-                    <th:block th:if="${errors != null}">
-                        <th:block th:if="${#lists.contains(errors, 'Passwords does not match')}">
+                        <th:block th:if="${#fields.hasErrors('password')}">
                             <div class="col-2 col-sm-2 col-md-2 col-lg-2 col-xl-2"
                                  style="text-align: left; margin-left: -13px; margin-top: 10px">
                                 <img class="glyphicon" th:src="@{/img/error.png}"/>
+
                             </div>
                         </th:block>
-                    </th:block>
-                </div>
+                    </div>
+
+
+                    <div class="row">
+                        <div class="col-10 col-sm-10 col-md-10 col-lg-10 col-xl-10 form-group">
+                            <div class="icon-addon addon-lg">
+                                <input type="password" th:placeholder="#{lang.password_confirm_input_placeholder}"
+                                       class="form-control"
+                                       th:field="*{password.matchPassword}"/>
+                                <img th:src="@{/img/password-dark.png}" class="glyphicon glyphicon-search">
+                            </div>
+                        </div>
+
+                        <th:block th:if="${errors != null}">
+                            <th:block th:if="${#lists.contains(errors, 'Passwords does not match')}">
+                                <div class="col-2 col-sm-2 col-md-2 col-lg-2 col-xl-2"
+                                     style="text-align: left; margin-left: -13px; margin-top: 10px">
+                                    <img class="glyphicon" th:src="@{/img/error.png}"/>
+                                </div>
+                            </th:block>
+                        </th:block>
+                    </div>
+
+                </th:block>
 
                 <div class="row">
                     <div class="col-10 col-sm-10 col-md-10 col-lg-10 col-xl-10 form-group">
                         <div class="icon-addon addon-lg">
-                            <input type="text" th:placeholder="#{lang.email_input_placeholder}" class="form-control" th:field="*{email}"/>
+                            <input type="text" th:placeholder="#{lang.email_input_placeholder}" class="form-control"
+                                   th:field="*{email}"/>
                             <img th:src="@{/img/email-dark.png}" class="glyphicon glyphicon-search">
                         </div>
                     </div>
@@ -152,7 +159,8 @@
                 <div class="row">
                     <div class="col-10 col-sm-10 col-md-10 col-lg-10 col-xl-10 form-group">
                         <div class="icon-addon addon-lg">
-                            <input type="text" th:placeholder="#{lang.telegram_input_placeholder}" class="form-control" th:field="*{telegramId}"/>
+                            <input type="text" th:placeholder="#{lang.telegram_input_placeholder}" class="form-control"
+                                   th:field="*{telegramId}"/>
                             <img th:src="@{/img/telegram-dark.png}" class="glyphicon glyphicon-search">
                         </div>
                     </div>
@@ -180,7 +188,8 @@
                                         <input type="radio" class="option-input radio"
                                                th:field="*{telegramNotify}" th:value="true"/>
                                     </div>
-                                    <div class="col-9 col-sm-9 col-md-9 col-lg-9 col-xl-9" style="padding: 0" th:text="#{lang.via_telegram}">
+                                    <div class="col-9 col-sm-9 col-md-9 col-lg-9 col-xl-9" style="padding: 0"
+                                         th:text="#{lang.via_telegram}">
                                     </div>
 
                                 </div>
@@ -192,7 +201,8 @@
                                         <input type="radio" class="option-input radio"
                                                th:field="*{telegramNotify}" th:value="false"/>
                                     </div>
-                                    <div class="col-8 col-sm-8 col-md-8 col-lg-8 col-xl-8" style="padding: 0" th:text="#{lang.via_email}">
+                                    <div class="col-8 col-sm-8 col-md-8 col-lg-8 col-xl-8" style="padding: 0"
+                                         th:text="#{lang.via_email}">
                                     </div>
                                 </div>
                             </div>
@@ -208,12 +218,15 @@
                     </div>
                 </th:block>
 
-                <div class="row">
-                    <div class="col-10 col-sm-10 col-md-10 col-lg-10 col-xl-10 form-group">
-                        <div class="g-recaptcha" th:data-sitekey="${@environment.getProperty('google.recaptcha.site')}"
-                             data-callback="enableButton" data-theme="light" data-size="normal"></div>
+                <th:block sec:authorize="isAnonymous()">
+                    <div class="row">
+                        <div class="col-10 col-sm-10 col-md-10 col-lg-10 col-xl-10 form-group">
+                            <div class="g-recaptcha"
+                                 th:data-sitekey="${@environment.getProperty('google.recaptcha.site')}"
+                                 data-callback="enableButton" data-theme="light" data-size="normal"></div>
+                        </div>
                     </div>
-                </div>
+                </th:block>
 
                 <div class="row">
                     <div class="col-10 col-sm-10 col-md-10 col-lg-10 col-xl-10 form-group">
@@ -240,14 +253,5 @@
 </div>
 
 <footer th:insert="embeded/footer.html"></footer>
-<script>
-    $(document).ready(function () {
-        $('#submitButton').attr("disabled", "disabled");
-    });
-
-    function enableButton() {
-        $('#submitButton').removeAttr("disabled");
-    }
-</script>
 </body>
 </html>

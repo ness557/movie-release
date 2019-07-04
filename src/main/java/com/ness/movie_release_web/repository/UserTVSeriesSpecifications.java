@@ -2,8 +2,8 @@ package com.ness.movie_release_web.repository;
 
 import com.ness.movie_release_web.model.User;
 import com.ness.movie_release_web.model.UserTVSeries;
-import com.ness.movie_release_web.model.wrapper.tmdb.tvSeries.WatchStatus;
-import com.ness.movie_release_web.model.wrapper.tmdb.tvSeries.details.Status;
+import com.ness.movie_release_web.model.dto.tmdb.tvSeries.WatchStatus;
+import com.ness.movie_release_web.model.dto.tmdb.tvSeries.details.Status;
 import org.springframework.data.jpa.domain.Specification;
 
 import javax.persistence.criteria.Join;
@@ -22,7 +22,7 @@ public class UserTVSeriesSpecifications {
             Join<Object, Object> tvSeriesJoin = root.join("tvSeries");
             Join<Object, Object> userJoin = root.join("user");
 
-            List<Predicate> watchPredicates = new ArrayList<Predicate>();
+            List<Predicate> watchPredicates = new ArrayList<>();
 
             if (watchStatuses.contains(WatchStatus.NOT_STARTED))
                 watchPredicates.add(

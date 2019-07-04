@@ -1,8 +1,8 @@
 package com.ness.movie_release_web.service.tmdb;
 
-import com.ness.movie_release_web.model.wrapper.tmdb.Language;
-import com.ness.movie_release_web.model.wrapper.tmdb.ProductionCompanyWrapper;
-import com.ness.movie_release_web.model.wrapper.tmdb.company.search.CompanySearchWrapper;
+import com.ness.movie_release_web.model.dto.tmdb.Language;
+import com.ness.movie_release_web.model.dto.tmdb.ProductionCompanyDto;
+import com.ness.movie_release_web.model.dto.tmdb.company.search.CompanySearchDto;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -19,7 +19,7 @@ import java.util.Optional;
 import static java.lang.Thread.sleep;
 
 @Service
-public class CompanyServiceImpl extends Cacheable<ProductionCompanyWrapper> implements CompanyService {
+public class CompanyServiceImpl extends Cacheable<ProductionCompanyDto> implements CompanyService {
 
     private RestTemplate restTemplate = new RestTemplate();
     private Logger logger = LoggerFactory.getLogger(this.getClass());
@@ -32,17 +32,17 @@ public class CompanyServiceImpl extends Cacheable<ProductionCompanyWrapper> impl
 
 
     @Override
-    public List<ProductionCompanyWrapper> getCompanies(List<Long> ids, Language language) {
+    public List<ProductionCompanyDto> getCompanies(List<Long> ids, Language language) {
 
-        List<ProductionCompanyWrapper> result = new ArrayList<>();
+        List<ProductionCompanyDto> result = new ArrayList<>();
         ids.forEach(id -> getCompany(id, language).ifPresent(result::add));
         return result;
     }
 
     @Override
-    public Optional<ProductionCompanyWrapper> getCompany(Long id, Language language) {
+    public Optional<ProductionCompanyDto> getCompany(Long id, Language language) {
 
-        Optional<ProductionCompanyWrapper> fromCache = getFromCache(id, language);
+        Optional<ProductionCompanyDto> fromCache = getFromCache(id, language);
         if (fromCache.isPresent()) {
             return fromCache;
         }
@@ -52,9 +52,9 @@ public class CompanyServiceImpl extends Cacheable<ProductionCompanyWrapper> impl
                 .queryParam("api_key", apikey)
                 .queryParam("language", language);
 
-        ResponseEntity<ProductionCompanyWrapper> response = null;
+        ResponseEntity<ProductionCompanyDto> response;
         try {
-            response = restTemplate.getForEntity(movieBuilder.toUriString(), ProductionCompanyWrapper.class);
+            response = restTemplate.getForEntity(movieBuilder.toUriString(), ProductionCompanyDto.class);
         } catch (HttpStatusCodeException e) {
             logger.error("Could not get companies: {}", e.getStatusCode().value());
 
@@ -77,16 +77,16 @@ public class CompanyServiceImpl extends Cacheable<ProductionCompanyWrapper> impl
     }
 
     @Override
-    public Optional<CompanySearchWrapper> search(String query, Integer page, Language language) {
+    public Optional<CompanySearchDto> search(String query, Integer page, Language language) {
         UriComponentsBuilder movieBuilder = UriComponentsBuilder.fromHttpUrl(url + "search/company")
                 .queryParam("query", query)
                 .queryParam("page", page)
                 .queryParam("api_key", apikey)
                 .queryParam("language", language);
 
-        ResponseEntity<CompanySearchWrapper> response = null;
+        ResponseEntity<CompanySearchDto> response;
         try {
-            response = restTemplate.getForEntity(movieBuilder.toUriString(), CompanySearchWrapper.class);
+            response = restTemplate.getForEntity(movieBuilder.toUriString(), CompanySearchDto.class);
         } catch (HttpStatusCodeException e) {
             logger.error("Could not get companies: {}", e.getStatusCode().value());
 

@@ -1,8 +1,8 @@
 package com.ness.movie_release_web.service.tmdb;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.ness.movie_release_web.model.wrapper.tmdb.Language;
-import com.ness.movie_release_web.model.wrapper.tmdb.people.PeopleWrapper;
+import com.ness.movie_release_web.model.dto.tmdb.Language;
+import com.ness.movie_release_web.model.dto.tmdb.people.PeopleDto;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -13,6 +13,7 @@ import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -32,15 +33,15 @@ public class PeopleServiceImpl implements PeopleService {
     private String url;
 
     @Override
-    public List<PeopleWrapper> getPeopleList(List<Long> people, Language language) {
+    public List<PeopleDto> getPeopleList(List<Long> people, Language language) {
 
-        List<PeopleWrapper> result = new ArrayList<>();
+        List<PeopleDto> result = new ArrayList<>();
         people.forEach(id -> getDetails(id, language).ifPresent(result::add));
         return result;
     }
 
     @Override
-    public Optional<PeopleWrapper> getDetails(Long id, Language language) {
+    public Optional<PeopleDto> getDetails(Long id, Language language) {
 
         UriComponentsBuilder UrlBuilder = UriComponentsBuilder.fromHttpUrl(url + "person/")
                 .path(id.toString())
@@ -49,9 +50,9 @@ public class PeopleServiceImpl implements PeopleService {
                 .queryParam("append_to_response", "credits,tv_credits");
 
 
-        ResponseEntity<PeopleWrapper> response;
+        ResponseEntity<PeopleDto> response;
         try {
-            response = restTemplate.getForEntity(UrlBuilder.toUriString(), PeopleWrapper.class);
+            response = restTemplate.getForEntity(UrlBuilder.toUriString(), PeopleDto.class);
         } catch (HttpStatusCodeException e) {
             log.error("Could not get people details by id: {}, status: {}", id, e.getStatusCode().value());
 
@@ -73,7 +74,7 @@ public class PeopleServiceImpl implements PeopleService {
     }
 
     @Override
-    public List<PeopleWrapper> search(String query) {
+    public List<PeopleDto> search(String query) {
 
         UriComponentsBuilder UrlBuilder = UriComponentsBuilder.fromHttpUrl(url + "search/person")
                 .queryParam("query", query)
@@ -100,12 +101,12 @@ public class PeopleServiceImpl implements PeopleService {
             return emptyList();
         }
 
-        return response.getBody().getResults();
+        return Optional.ofNullable(response.getBody()).map(SearchResult::getResults).orElse(Collections.emptyList());
     }
 }
 
 @Getter
 class SearchResult {
     @JsonProperty("results")
-    private List<PeopleWrapper> results = new ArrayList<>();
+    private List<PeopleDto> results = new ArrayList<>();
 }

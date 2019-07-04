@@ -7,7 +7,9 @@ import java.util.Locale;
 
 public interface RegistrationService {
 
-    List<String> validate(User user, Locale locale, String recaptchaResponse, String ip);
+    List<String> validateRegistration(User user, Locale locale, String recaptchaResponse, String ip);
+    List<String> validateEdit(User user, Locale locale);
     void registerUser(User user);
-    void editUser(User user, String login);
+    void editUserInfo(User user);
+    List<String> changePassword(User user, String oldPassword, String newPassword);
 }

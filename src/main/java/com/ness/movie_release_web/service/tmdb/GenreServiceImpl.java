@@ -1,8 +1,8 @@
 package com.ness.movie_release_web.service.tmdb;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.ness.movie_release_web.model.wrapper.tmdb.Language;
-import com.ness.movie_release_web.model.wrapper.tmdb.GenreWrapper;
+import com.ness.movie_release_web.model.dto.tmdb.Language;
+import com.ness.movie_release_web.model.dto.tmdb.GenreDto;
 import lombok.Getter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -14,7 +14,9 @@ import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 
 import static java.lang.Thread.sleep;
 import static java.util.Collections.emptyList;
@@ -32,13 +34,13 @@ public class GenreServiceImpl implements GenreService {
     private String url;
 
     @Override
-    public List<GenreWrapper> getMovieGenres(Language language) {
+    public List<GenreDto> getMovieGenres(Language language) {
 
         UriComponentsBuilder movieBuilder = UriComponentsBuilder.fromHttpUrl(url + "genre/movie/list")
                 .queryParam("api_key", apikey)
                 .queryParam("language", language);
 
-        ResponseEntity<GenreList> response = null;
+        ResponseEntity<GenreList> response;
         try {
             response = restTemplate.getForEntity(movieBuilder.toUriString(), GenreList.class);
         } catch (HttpStatusCodeException e) {
@@ -57,16 +59,16 @@ public class GenreServiceImpl implements GenreService {
             return emptyList();
         }
 
-        return response.getBody().getGenreWrappers();
+        return Optional.ofNullable(response.getBody()).map(GenreList::getGenres).orElse(Collections.emptyList());
     }
 
     @Override
-    public List<GenreWrapper> getTVGenres(Language language) {
+    public List<GenreDto> getTVGenres(Language language) {
         UriComponentsBuilder movieBuilder = UriComponentsBuilder.fromHttpUrl(url + "genre/tv/list")
                 .queryParam("api_key", apikey)
                 .queryParam("language", language);
 
-        ResponseEntity<GenreList> response = null;
+        ResponseEntity<GenreList> response;
         try {
             response = restTemplate.getForEntity(movieBuilder.toUriString(), GenreList.class);
         } catch (HttpStatusCodeException e) {
@@ -85,12 +87,12 @@ public class GenreServiceImpl implements GenreService {
             return emptyList();
         }
 
-        return response.getBody().getGenreWrappers();
+        return Optional.ofNullable(response.getBody()).map(GenreList::getGenres).orElse(Collections.emptyList());
     }
 }
 
 @Getter
 class GenreList{
     @JsonProperty("genres")
-    private List<GenreWrapper> genreWrappers = new ArrayList<>();
+    private List<GenreDto> genres = new ArrayList<>();
 }

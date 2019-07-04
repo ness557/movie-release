@@ -2,7 +2,7 @@ package com.ness.movie_release_web.service.tmdb;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.ness.movie_release_web.model.wrapper.tmdb.ProductionCompanyWrapper;
+import com.ness.movie_release_web.model.dto.tmdb.ProductionCompanyDto;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.IOUtils;
 import org.springframework.stereotype.Service;
@@ -26,7 +26,7 @@ import static java.util.stream.Collectors.toList;
 @Slf4j
 public class NetworkServiceImpl implements NetworkService {
 
-    List<ProductionCompanyWrapper> networks = new ArrayList<>();
+    List<ProductionCompanyDto> networks = new ArrayList<>();
 
     @PostConstruct
     private void init() throws IOException {
@@ -46,13 +46,13 @@ public class NetworkServiceImpl implements NetworkService {
         data = "[" + data + "]";
 
 
-        List<ProductionCompanyWrapper> result = mapper.readValue(data, new TypeReference<List<ProductionCompanyWrapper>>() {});
+        List<ProductionCompanyDto> result = mapper.readValue(data, new TypeReference<List<ProductionCompanyDto>>() {});
         if(!result.isEmpty())
             networks = result;
     }
 
     @Override
-    public List<ProductionCompanyWrapper> getNetworks() {
+    public List<ProductionCompanyDto> getNetworks() {
         if(networks.isEmpty()) {
             try {
                 init();
@@ -64,12 +64,12 @@ public class NetworkServiceImpl implements NetworkService {
     }
 
     @Override
-    public List<ProductionCompanyWrapper> getNetworks(List<Long> ids) {
+    public List<ProductionCompanyDto> getNetworks(List<Long> ids) {
         return networks.stream().filter(n -> ids.contains(n.getId())).collect(toList());
     }
 
     @Override
-    public List<ProductionCompanyWrapper> search(String query) {
+    public List<ProductionCompanyDto> search(String query) {
         return networks.stream().filter(Objects::nonNull).filter(n -> n.getName().toLowerCase().contains(query.toLowerCase())).collect(toList());
     }
 }

@@ -1,6 +1,6 @@
 package com.ness.movie_release_web.service.tmdb;
 
-import com.ness.movie_release_web.model.wrapper.tmdb.Language;
+import com.ness.movie_release_web.model.dto.tmdb.Language;
 
 import java.util.HashMap;
 import java.util.Map;

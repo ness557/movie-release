@@ -1,8 +1,8 @@
 package com.ness.movie_release_web.service.tmdb;
 
-import com.ness.movie_release_web.model.wrapper.tmdb.movie.discover.DiscoverSearchCriteria;
-import com.ness.movie_release_web.model.wrapper.tmdb.movie.search.MovieSearchWrapper;
-import com.ness.movie_release_web.model.wrapper.tmdb.tvSeries.search.TVSearchWrapper;
+import com.ness.movie_release_web.model.dto.tmdb.movie.discover.DiscoverSearchCriteria;
+import com.ness.movie_release_web.model.dto.tmdb.movie.search.MovieSearchDto;
+import com.ness.movie_release_web.model.dto.tmdb.tvSeries.search.TVSearchDto;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -32,7 +32,7 @@ public class DiscoverServiceImpl implements DiscoverService {
     private String url;
 
     @Override
-    public Optional<MovieSearchWrapper> discoverMovie(DiscoverSearchCriteria criteria) {
+    public Optional<MovieSearchDto> discoverMovie(DiscoverSearchCriteria criteria) {
 
         UriComponentsBuilder movieBuilder = UriComponentsBuilder.fromHttpUrl(url + "discover/movie")
                 .queryParam("api_key", apikey)
@@ -66,9 +66,9 @@ public class DiscoverServiceImpl implements DiscoverService {
             movieBuilder.queryParam("with_people",
                     StringUtils.join(criteria.getPeople(), criteria.getPeopleAnd() ? "," : "|"));
 
-        ResponseEntity<MovieSearchWrapper> response = null;
+        ResponseEntity<MovieSearchDto> response;
         try {
-            response = restTemplate.getForEntity(movieBuilder.build(false).toUriString(), MovieSearchWrapper.class);
+            response = restTemplate.getForEntity(movieBuilder.build(false).toUriString(), MovieSearchDto.class);
         } catch (HttpStatusCodeException e) {
             logger.error("Could not discover for movies: {}", e.getStatusCode().value());
 
@@ -89,7 +89,7 @@ public class DiscoverServiceImpl implements DiscoverService {
     }
 
     @Override
-    public Optional<TVSearchWrapper> discoverSeries(DiscoverSearchCriteria criteria) {
+    public Optional<TVSearchDto> discoverSeries(DiscoverSearchCriteria criteria) {
         UriComponentsBuilder movieBuilder = UriComponentsBuilder.fromHttpUrl(url + "discover/tv")
                 .queryParam("api_key", apikey)
                 .queryParam("sort_by", criteria.getSortBy().getSearchString())
@@ -118,9 +118,9 @@ public class DiscoverServiceImpl implements DiscoverService {
             movieBuilder.queryParam("with_companies",
                     StringUtils.join(criteria.getCompanies(), criteria.getCompaniesAnd() ? "," : "|"));
 
-        ResponseEntity<TVSearchWrapper> response;
+        ResponseEntity<TVSearchDto> response;
         try {
-            response = restTemplate.getForEntity(movieBuilder.build(false).toUriString(), TVSearchWrapper.class);
+            response = restTemplate.getForEntity(movieBuilder.build(false).toUriString(), TVSearchDto.class);
         } catch (HttpStatusCodeException e) {
             logger.error("Could not discover for series: {}", e.getStatusCode().value());
 

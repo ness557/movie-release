@@ -2,7 +2,7 @@ package com.ness.movie_release_web.controller;
 
 import java.util.List;
 
-import com.ness.movie_release_web.model.wrapper.tmdb.ProductionCompanyWrapper;
+import com.ness.movie_release_web.model.dto.tmdb.ProductionCompanyDto;
 import com.ness.movie_release_web.service.tmdb.NetworkService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -19,7 +19,7 @@ public class NetworkController {
     private NetworkService networkService;
 
     @GetMapping("/search")
-    public ResponseEntity<List<ProductionCompanyWrapper>> search(@RequestParam(value = "query") String query){
+    public ResponseEntity<List<ProductionCompanyDto>> search(@RequestParam(value = "query") String query){
 
         return ResponseEntity.ok(networkService.search(query));
     }

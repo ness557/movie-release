@@ -1,9 +1,9 @@
 package com.ness.movie_release_web.service.tmdb;
 
-import com.ness.movie_release_web.model.wrapper.tmdb.releaseDates.ReleaseDate;
-import com.ness.movie_release_web.model.wrapper.tmdb.releaseDates.ReleaseDateResultListWrapper;
-import com.ness.movie_release_web.model.wrapper.tmdb.releaseDates.ReleaseDateResultWrapper;
-import com.ness.movie_release_web.model.wrapper.tmdb.releaseDates.ReleaseType;
+import com.ness.movie_release_web.model.dto.tmdb.releaseDates.ReleaseDate;
+import com.ness.movie_release_web.model.dto.tmdb.releaseDates.ReleaseDateResultListDto;
+import com.ness.movie_release_web.model.dto.tmdb.releaseDates.ReleaseDateResultDto;
+import com.ness.movie_release_web.model.dto.tmdb.releaseDates.ReleaseType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,8 +16,10 @@ import org.springframework.web.util.UriComponentsBuilder;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Function;
 import java.util.function.Predicate;
@@ -50,7 +52,7 @@ public class TmdbDatesServiceImpl implements TmdbDatesService {
         }
 
         Long tmdbId = externalIdService.getTmdbIdByImdbId(imdbId);
-        List<ReleaseDateResultWrapper> releaseDates = getReleaseDatesByTmdbId(tmdbId);
+        List<ReleaseDateResultDto> releaseDates = getReleaseDatesByTmdbId(tmdbId);
 
         return distinctAndFilterReleadeDates(releaseDates, releaseTypes);
     }
@@ -59,7 +61,7 @@ public class TmdbDatesServiceImpl implements TmdbDatesService {
     public List<ReleaseDate> getReleaseDates(String imdbId) {
 
         Long tmdbId = externalIdService.getTmdbIdByImdbId(imdbId);
-        List<ReleaseDateResultWrapper> releaseDates = getReleaseDatesByTmdbId(tmdbId);
+        List<ReleaseDateResultDto> releaseDates = getReleaseDatesByTmdbId(tmdbId);
 
         return distinctReleaseDates(releaseDates);
     }
@@ -71,7 +73,7 @@ public class TmdbDatesServiceImpl implements TmdbDatesService {
             return emptyList();
         }
 
-        List<ReleaseDateResultWrapper> releaseDates = getReleaseDatesByTmdbId(tmdbId);
+        List<ReleaseDateResultDto> releaseDates = getReleaseDatesByTmdbId(tmdbId);
 
         return distinctAndFilterReleadeDates(releaseDates, releaseTypes);
     }
@@ -79,12 +81,12 @@ public class TmdbDatesServiceImpl implements TmdbDatesService {
 
     public List<ReleaseDate> getReleaseDates(Long tmdbId) {
 
-        List<ReleaseDateResultWrapper> releaseDates = getReleaseDatesByTmdbId(tmdbId);
+        List<ReleaseDateResultDto> releaseDates = getReleaseDatesByTmdbId(tmdbId);
 
         return distinctReleaseDates(releaseDates);
     }
 
-    private List<ReleaseDate> distinctReleaseDates(List<ReleaseDateResultWrapper> releaseDates) {
+    private List<ReleaseDate> distinctReleaseDates(List<ReleaseDateResultDto> releaseDates) {
         List<ReleaseDate> result = new ArrayList<>();
 
         releaseDates.forEach(e -> result.addAll(e.getReleaseDates()));
@@ -92,7 +94,7 @@ public class TmdbDatesServiceImpl implements TmdbDatesService {
         return result.stream().sorted().filter(distinctByKey(ReleaseDate::getReleaseType)).collect(toList());
     }
 
-    private List<ReleaseDate> distinctAndFilterReleadeDates(List<ReleaseDateResultWrapper> releaseDates, ReleaseType[] releaseTypes) {
+    private List<ReleaseDate> distinctAndFilterReleadeDates(List<ReleaseDateResultDto> releaseDates, ReleaseType[] releaseTypes) {
         List<ReleaseDate> result = new ArrayList<>();
 
         releaseDates.forEach(e -> {
@@ -108,13 +110,13 @@ public class TmdbDatesServiceImpl implements TmdbDatesService {
         return result.stream().sorted().filter(distinctByKey(ReleaseDate::getReleaseType)).collect(toList());
     }
 
-    private List<ReleaseDateResultWrapper> getReleaseDatesByTmdbId(Long tmdbId) {
+    private List<ReleaseDateResultDto> getReleaseDatesByTmdbId(Long tmdbId) {
         UriComponentsBuilder releasesBuilder = UriComponentsBuilder.fromHttpUrl(url + "movie/")
                 .path(tmdbId.toString()).path("/release_dates")
                 .queryParam("api_key", apikey);
-        ResponseEntity<ReleaseDateResultListWrapper> releaseResponse = null;
+        ResponseEntity<ReleaseDateResultListDto> releaseResponse;
         try {
-            releaseResponse = restTemplate.getForEntity(releasesBuilder.toUriString(), ReleaseDateResultListWrapper.class);
+            releaseResponse = restTemplate.getForEntity(releasesBuilder.toUriString(), ReleaseDateResultListDto.class);
         } catch (HttpStatusCodeException e) {
             logger.error("Could not get release dates: {}", e.getMessage());
 
@@ -131,8 +133,7 @@ public class TmdbDatesServiceImpl implements TmdbDatesService {
 
             return emptyList();
         }
-
-        return releaseResponse.getBody().getReleaseDates();
+        return Optional.ofNullable(releaseResponse.getBody()).map(ReleaseDateResultListDto::getReleaseDates).orElse(Collections.emptyList());
     }
 
     private static <T> Predicate<T> distinctByKey(Function<? super T, ?> ke) {

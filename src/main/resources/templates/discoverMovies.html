@@ -23,7 +23,7 @@
 
                     <div class="row">
                         <div class="col col-centered">
-                            <label th:text="#{lang.genres} + ':'" style="padding: 10px 0px 5px 5px"></label>
+                            <label th:text="#{lang.genres} + ':'" style="padding: 10px 0 5px 5px"></label>
                             <select class="form-control selectpicker" th:field="*{genres}" multiple
                                     data-live-search="true">
                                 <option th:each="genre : ${genres}"
@@ -36,7 +36,7 @@
                     </div>
 
 
-                    <div class="row" style="padding: 12px 10px 0px 10px">
+                    <div class="row" style="padding: 12px 10px 0 10px">
                         <div class="col-3"></div>
                         <div class="col-4">
                             <input type="radio" class="option-input radio" th:field="*{genresAnd}"
@@ -58,7 +58,7 @@
 
                             <select class="form-control selectpicker" th:field="*{releaseTypes}" multiple
                                     data-live-search="true">
-                                <option th:each="release : ${T(com.ness.movie_release_web.model.wrapper.tmdb.releaseDates.ReleaseType).values()}"
+                                <option th:each="release : ${T(com.ness.movie_release_web.model.dto.tmdb.releaseDates.ReleaseType).values()}"
                                         th:if="${release.ordinal() != 0}"
                                         th:value="${release}"
                                         th:text="#{'lang.release.' + ${release.name()}}"
@@ -155,7 +155,7 @@
                         <div class="col col-centered">
                             <label th:text="#{lang.sort_by} + ':'"></label>
                             <select th:field="*{sortBy}" class="form-control selectpicker">
-                                <option th:each="sort : ${T(com.ness.movie_release_web.model.wrapper.tmdb.movie.discover.SortBy).values()}"
+                                <option th:each="sort : ${T(com.ness.movie_release_web.model.dto.tmdb.movie.discover.SortBy).values()}"
                                         th:value="${sort}"
                                         th:text="#{'lang.sort.' + ${sort.getType()}} + ' ' + #{'lang.order.' + ${sort.getOrder().name()}}"
                                         th:selected="${criteria.getSortBy().equals(sort)}">

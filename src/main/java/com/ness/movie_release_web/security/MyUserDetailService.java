@@ -1,6 +1,5 @@
 package com.ness.movie_release_web.security;
 
-import com.ness.movie_release_web.model.wrapper.UserWrapper;
 import com.ness.movie_release_web.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.GrantedAuthority;
@@ -28,7 +27,7 @@ public class MyUserDetailService implements UserDetailsService {
             throw new UsernameNotFoundException("No such user: " + username);
         }
 
-        UserWrapper user = UserWrapper.wrap(service.findByLogin(username));
+        com.ness.movie_release_web.model.User user = service.findByLogin(username);
 
         Set<GrantedAuthority> authoritySet = new HashSet<>();
         Arrays.stream(user.getRole().split(";")).forEach(e -> authoritySet.add(new SimpleGrantedAuthority(e)));

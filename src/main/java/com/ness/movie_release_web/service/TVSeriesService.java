@@ -3,8 +3,8 @@ package com.ness.movie_release_web.service;
 import com.ness.movie_release_web.model.TVSeries;
 import com.ness.movie_release_web.model.User;
 import com.ness.movie_release_web.model.UserTVSeries;
-import com.ness.movie_release_web.model.wrapper.tmdb.tvSeries.WatchStatus;
-import com.ness.movie_release_web.model.wrapper.tmdb.tvSeries.details.Status;
+import com.ness.movie_release_web.model.dto.tmdb.tvSeries.WatchStatus;
+import com.ness.movie_release_web.model.dto.tmdb.tvSeries.details.Status;
 import com.ness.movie_release_web.repository.TVSeriesSortBy;
 import org.springframework.data.domain.Page;
 

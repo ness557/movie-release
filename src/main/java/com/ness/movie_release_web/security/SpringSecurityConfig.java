@@ -20,7 +20,6 @@ public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
     @Qualifier("myUserDetailService")
     private UserDetailsService userDetailsService;
 
-
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         //@formatter:off
@@ -34,7 +33,7 @@ public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
                 .permitAll()
                 .antMatchers("/movie/**", "/company/**",
                         "/network/**", "/series/**", "/people/**",
-                        "/userInfo", "/setLanguage", "/setMode")
+                        "/userInfo", "/changePassword", "/setLanguage", "/setMode")
                 .hasAnyRole("USER")
                 .antMatchers("/admin/update_db")
                 .hasAnyRole("ADMIN")

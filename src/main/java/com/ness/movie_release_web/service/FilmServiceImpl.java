@@ -2,9 +2,9 @@ package com.ness.movie_release_web.service;
 
 import com.ness.movie_release_web.model.Film;
 import com.ness.movie_release_web.model.User;
-import com.ness.movie_release_web.model.wrapper.tmdb.Language;
-import com.ness.movie_release_web.model.wrapper.tmdb.movie.details.MovieDetailsWrapper;
-import com.ness.movie_release_web.model.wrapper.tmdb.movie.details.Status;
+import com.ness.movie_release_web.model.dto.tmdb.Language;
+import com.ness.movie_release_web.model.dto.tmdb.movie.details.MovieDetailsDto;
+import com.ness.movie_release_web.model.dto.tmdb.movie.details.Status;
 import com.ness.movie_release_web.repository.FilmRepository;
 import com.ness.movie_release_web.repository.MovieSortBy;
 import com.ness.movie_release_web.service.tmdb.TmdbMovieService;
@@ -85,19 +85,19 @@ public class FilmServiceImpl implements FilmService {
         log.info("Updating film db...");
         repository.findAll().forEach(f -> {
             Long tmdbId = f.getId();
-            Optional<MovieDetailsWrapper> movieDetails = tmdbMovieService.getMovieDetails(tmdbId, Language.en);
+            Optional<MovieDetailsDto> movieDetails = tmdbMovieService.getMovieDetails(tmdbId, Language.en);
 
             if (!movieDetails.isPresent()) {
                 return;
             }
 
-            MovieDetailsWrapper movieDetailsWrapper = movieDetails.get();
-            f.setReleaseDate(movieDetailsWrapper.getReleaseDate());
-            f.setVoteAverage(movieDetailsWrapper.getVoteAverage().floatValue());
-            f.setNameEn(movieDetailsWrapper.getTitle());
-            f.setStatus(movieDetailsWrapper.getStatus());
+            MovieDetailsDto movieDetailsDto = movieDetails.get();
+            f.setReleaseDate(movieDetailsDto.getReleaseDate());
+            f.setVoteAverage(movieDetailsDto.getVoteAverage().floatValue());
+            f.setNameEn(movieDetailsDto.getTitle());
+            f.setStatus(movieDetailsDto.getStatus());
 
-            Optional<MovieDetailsWrapper> movieDetailsRuOpt = tmdbMovieService.getMovieDetails(tmdbId, Language.ru);
+            Optional<MovieDetailsDto> movieDetailsRuOpt = tmdbMovieService.getMovieDetails(tmdbId, Language.ru);
             movieDetailsRuOpt.ifPresent(movieDetailsRu -> f.setNameRu(movieDetailsRu.getTitle()));
 
             repository.save(f);

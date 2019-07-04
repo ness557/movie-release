@@ -51,12 +51,6 @@
                     </div>
                 </div>
                 <div class="row">
-                    <div class="col form-group">
-                        <div class="g-recaptcha" th:data-sitekey="${@environment.getProperty('google.recaptcha.site')}"
-                             data-callback="enableButton" data-theme="light" data-size="normal"></div>
-                    </div>
-                </div>
-                <div class="row">
                     <div class="col" style="text-align: left;">
                         <a href="/register" class="sign-up-link" th:text="#{lang.sign_up}">Sign up</a>
                     </div>
@@ -69,17 +63,6 @@
         </div>
     </div>
 </div>
-
-<script th:inline="javascript">
-
-    $(document).ready(function () {
-        $('#submitButton').attr("disabled", "disabled");
-    });
-
-    function enableButton() {
-        $('#submitButton').removeAttr("disabled");
-    }
-</script>
 
 <footer th:insert="embeded/footer.html"></footer>
 </body>

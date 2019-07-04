@@ -1,6 +1,6 @@
 package com.ness.movie_release_web.service.tmdb;
 
-import com.ness.movie_release_web.model.wrapper.tmdb.externalId.MovieResultListWrapper;
+import com.ness.movie_release_web.model.dto.tmdb.externalId.MovieResultListDto;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -30,9 +30,9 @@ public class ExternalIdServiceImpl implements ExternalIdService {
                 .path(imdbId)
                 .queryParam("external_source", "imdb_id")
                 .queryParam("api_key", apikey);
-        ResponseEntity<MovieResultListWrapper> response = null;
+        ResponseEntity<MovieResultListDto> response = null;
         try {
-            response = restTemplate.getForEntity(movieBuilder.toUriString(), MovieResultListWrapper.class);
+            response = restTemplate.getForEntity(movieBuilder.toUriString(), MovieResultListDto.class);
         } catch (HttpStatusCodeException e) {
             logger.error("Could not get movie: {}", e.getStatusCode().value());
 
@@ -51,7 +51,7 @@ public class ExternalIdServiceImpl implements ExternalIdService {
 
         Long tmdbId = 0L;
         try {
-            tmdbId = response.getBody().getMovieResultWrapperList().get(0).getId();
+            tmdbId = response.getBody().getMovieResultList().get(0).getId();
         } catch (Exception e) {
             logger.error("Could not get movie: {}", e.getMessage());
         }

@@ -1,0 +1,18 @@
+package com.ness.movie_release_web.model.dto.tmdb.movie.details;
+
+import com.fasterxml.jackson.annotation.JsonProperty;
+import lombok.*;
+
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
+@ToString
+@EqualsAndHashCode
+public class ProductionCountryDto {
+
+    @JsonProperty("iso_3166_1")
+    private String iso31661;
+    @JsonProperty("name")
+    private String name;
+}

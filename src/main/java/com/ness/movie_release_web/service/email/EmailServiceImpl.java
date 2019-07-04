@@ -1,11 +1,11 @@
 package com.ness.movie_release_web.service.email;
 
 import com.ness.movie_release_web.model.User;
-import com.ness.movie_release_web.model.wrapper.tmdb.movie.details.MovieDetailsWrapper;
-import com.ness.movie_release_web.model.wrapper.tmdb.releaseDates.ReleaseDate;
-import com.ness.movie_release_web.model.wrapper.tmdb.tvSeries.details.EpisodeWrapper;
-import com.ness.movie_release_web.model.wrapper.tmdb.tvSeries.details.SeasonWrapper;
-import com.ness.movie_release_web.model.wrapper.tmdb.tvSeries.details.TVDetailsWrapper;
+import com.ness.movie_release_web.model.dto.tmdb.movie.details.MovieDetailsDto;
+import com.ness.movie_release_web.model.dto.tmdb.releaseDates.ReleaseDate;
+import com.ness.movie_release_web.model.dto.tmdb.tvSeries.details.EpisodeDto;
+import com.ness.movie_release_web.model.dto.tmdb.tvSeries.details.SeasonDto;
+import com.ness.movie_release_web.model.dto.tmdb.tvSeries.details.TVDetailsDto;
 import freemarker.template.Configuration;
 import freemarker.template.TemplateException;
 import org.slf4j.Logger;
@@ -45,7 +45,7 @@ public class EmailServiceImpl implements EmailService {
     private Logger logger = LoggerFactory.getLogger(this.getClass());
 
     @Override
-    public void sendMovieNotify(User user, MovieDetailsWrapper movie, ReleaseDate releaseDate) {
+    public void sendMovieNotify(User user, MovieDetailsDto movie, ReleaseDate releaseDate) {
 
         try {
             MimeMessage message = mailSender.createMimeMessage();
@@ -86,7 +86,7 @@ public class EmailServiceImpl implements EmailService {
     }
 
     @Override
-    public void sendEpisodeNotify(User user, EpisodeWrapper episode, TVDetailsWrapper show) {
+    public void sendEpisodeNotify(User user, EpisodeDto episode, TVDetailsDto show) {
 
         try {
             MimeMessage message = mailSender.createMimeMessage();
@@ -128,7 +128,7 @@ public class EmailServiceImpl implements EmailService {
     }
 
     @Override
-    public void sendSeasonNotify(User user, SeasonWrapper season, TVDetailsWrapper show) {
+    public void sendSeasonNotify(User user, SeasonDto season, TVDetailsDto show) {
         try {
             MimeMessage message = mailSender.createMimeMessage();
             MimeMessageHelper helper = new MimeMessageHelper(message,

@@ -1,18 +1,18 @@
 package com.ness.movie_release_web.model;
 
 import lombok.*;
-import org.springframework.lang.Nullable;
 
 import javax.persistence.*;
-import javax.validation.constraints.Email;
-import javax.validation.constraints.NotEmpty;
-import javax.validation.constraints.Pattern;
 
-import com.ness.movie_release_web.model.wrapper.tmdb.Language;
+import com.ness.movie_release_web.model.dto.tmdb.Language;
+import lombok.experimental.Accessors;
 
 @Entity
 @Table(name = "uzer")
-@Getter @Setter @NoArgsConstructor @AllArgsConstructor
+@Getter
+@Setter
+@NoArgsConstructor
+@Accessors(chain = true)
 @ToString
 @EqualsAndHashCode
 public class User {
@@ -24,22 +24,15 @@ public class User {
     @Column(name = "role")
     private String role;
 
-    @NotEmpty(message = "{lang.login_error_msg}")
     @Column(name = "login", unique = true)
     private String login;
 
-    @NotEmpty(message = "{lang.password_error_msg}")
     @Column(name = "encr_pass")
     private String encPassword;
 
-    @Transient
-    private String matchPassword;
-
-    @Pattern(regexp = "^$|@\\w*", message = "{lang.telegram_error_msg}")
     @Column(name = "telegram_id")
     private String telegramId;
 
-    @Email(message = "{lang.email_error_msg}")
     @Column(name = "email")
     private String email;
 
@@ -47,7 +40,6 @@ public class User {
     private boolean isTelegramNotify;
 
     @Column(name = "telegram_chat_id")
-    @Nullable
     private Long telegramChatId;
 
     @Enumerated

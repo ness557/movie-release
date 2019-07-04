@@ -1,9 +1,9 @@
 package com.ness.movie_release_web.service;
 
 import com.ness.movie_release_web.model.*;
-import com.ness.movie_release_web.model.wrapper.tmdb.Language;
-import com.ness.movie_release_web.model.wrapper.tmdb.movie.details.MovieDetailsWrapper;
-import com.ness.movie_release_web.model.wrapper.tmdb.tvSeries.details.TVDetailsWrapper;
+import com.ness.movie_release_web.model.dto.tmdb.Language;
+import com.ness.movie_release_web.model.dto.tmdb.movie.details.MovieDetailsDto;
+import com.ness.movie_release_web.model.dto.tmdb.tvSeries.details.TVDetailsDto;
 import com.ness.movie_release_web.repository.UserTVSeriesRepository;
 import com.ness.movie_release_web.service.tmdb.TmdbMovieService;
 import com.ness.movie_release_web.service.tmdb.TmdbTVSeriesService;
@@ -33,18 +33,18 @@ public class SubscriptionServiceImpl implements SubscriptionService {
         if (filmService.isExistsByTmdbIdAndUser(tmdbId, user))
             throw new ResponseStatusException(HttpStatus.CONFLICT);
 
-        Optional<MovieDetailsWrapper> optionalMovieDetails = tmdbMovieService.getMovieDetails(tmdbId, Language.en);
+        Optional<MovieDetailsDto> optionalMovieDetails = tmdbMovieService.getMovieDetails(tmdbId, Language.en);
 
         if (!optionalMovieDetails.isPresent())
             throw new ResponseStatusException(HttpStatus.CONFLICT);
 
-        MovieDetailsWrapper movieDetailsWrapper = optionalMovieDetails.get();
+        MovieDetailsDto movieDetailsDto = optionalMovieDetails.get();
 
         Optional<Film> filmOpt = filmService.findById(tmdbId);
 
-        Film film = filmOpt.orElse(new Film(movieDetailsWrapper.getId(), movieDetailsWrapper.getTitle(), "",
-                movieDetailsWrapper.getStatus(), movieDetailsWrapper.getReleaseDate(),
-                movieDetailsWrapper.getVoteAverage().floatValue(), new ArrayList<>()));
+        Film film = filmOpt.orElse(new Film(movieDetailsDto.getId(), movieDetailsDto.getTitle(), "",
+                movieDetailsDto.getStatus(), movieDetailsDto.getReleaseDate(),
+                movieDetailsDto.getVoteAverage().floatValue(), new ArrayList<>()));
         film.getUsers().add(user);
 
         filmService.save(film);
@@ -70,14 +70,14 @@ public class SubscriptionServiceImpl implements SubscriptionService {
             throw new ResponseStatusException(HttpStatus.CONFLICT);
         }
 
-        Optional<TVDetailsWrapper> tvDetailsOptional = tmdbTVSeriesService.getTVDetails(tmdbId, Language.en);
-        Optional<TVDetailsWrapper> tvDetailsOptionalRu = tmdbTVSeriesService.getTVDetails(tmdbId, Language.ru);
+        Optional<TVDetailsDto> tvDetailsOptional = tmdbTVSeriesService.getTVDetails(tmdbId, Language.en);
+        Optional<TVDetailsDto> tvDetailsOptionalRu = tmdbTVSeriesService.getTVDetails(tmdbId, Language.ru);
 
         if (!tvDetailsOptional.isPresent() || !tvDetailsOptionalRu.isPresent())
             throw new ResponseStatusException(HttpStatus.CONFLICT);
 
-        TVDetailsWrapper tvDetails = tvDetailsOptional.get();
-        TVDetailsWrapper tvDetailsRu = tvDetailsOptionalRu.get();
+        TVDetailsDto tvDetails = tvDetailsOptional.get();
+        TVDetailsDto tvDetailsRu = tvDetailsOptionalRu.get();
 
         Optional<TVSeries> one = tvSeriesService.findById(tmdbId);
 

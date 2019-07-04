@@ -31,28 +31,28 @@ public class RegistrationServiceImpl implements RegistrationService {
      * @return localized list of errors
      */
     @Override
-    public List<String> validate(User user, Locale locale, String recaptchaResponse, String ip) {
+    public List<String> validateRegistration(User user, Locale locale, String recaptchaResponse, String ip) {
         List<String> errors = new ArrayList<>();
 
-        if (!user.getEncPassword().equals(user.getMatchPassword()))
-            errors.add(messageSource.getMessage("lang.passwords_not_match", new Object[]{}, locale));
-
-        if (user.getEmail().isEmpty() && !user.isTelegramNotify())
-            errors.add(messageSource.getMessage("lang.empty_email", new Object[]{}, locale));
-
-        if (user.getTelegramId().isEmpty() && user.isTelegramNotify())
-            errors.add(messageSource.getMessage("lang.empty_telegram_id", new Object[]{}, locale));
-
-        if (user.getId() == null) {
-            if (userService.isExists(user.getLogin()))
-                errors.add(messageSource.getMessage("lang.user_exists", new Object[]{}, locale));
-        } else {
-            if (userService.existsByIdNotAndLogin(user.getId(), user.getLogin()))
-                errors.add(messageSource.getMessage("lang.login_used", new Object[]{}, locale));
-        }
+        validateUser(user, locale, errors);
 
         if (!recaptchaService.verifyRecaptcha(ip, recaptchaResponse))
             errors.add(messageSource.getMessage("lang.recaptcha_error", new Object[]{}, locale));
+
+        return errors;
+    }
+
+    /**
+     * Validates user before editing account.
+     *
+     * @param user              user model
+     * @param locale            current user locale
+     * @return localized list of errors
+     */
+    @Override
+    public List<String> validateEdit(User user, Locale locale) {
+        List<String> errors = new ArrayList<>();
+        validateUser(user, locale, errors);
 
         return errors;
     }
@@ -66,15 +66,23 @@ public class RegistrationServiceImpl implements RegistrationService {
     }
 
     @Override
-    public void editUser(User user, String login) {
-        User fromDB = userService.findByLogin(login);
+    public void editUserInfo(User user) {
+        User fromDB = userService.get(user.getId());
 
-        if (fromDB != null && !isEmpty(fromDB.getRole())) {
-            user.setRole(fromDB.getRole());
-        }
-
+        user.setEncPassword(fromDB.getEncPassword());
         user.setTelegramId(StringUtils.lowerCase(user.getTelegramId()));
-        userService.saveWithPassEncryption(user);
+        userService.save(user);
     }
 
+
+    private void validateUser(User user, Locale locale, List<String> errors) {
+
+        if (user.getId() == null) {
+            if (userService.isExists(user.getLogin()))
+                errors.add(messageSource.getMessage("lang.user_exists", new Object[]{}, locale));
+        } else {
+            if (userService.existsByIdNotAndLogin(user.getId(), user.getLogin()))
+                errors.add(messageSource.getMessage("lang.login_used", new Object[]{}, locale));
+        }
+    }
 }

@@ -1,18 +1,18 @@
 package com.ness.movie_release_web.service.tmdb;
 
-import com.ness.movie_release_web.model.wrapper.tmdb.Language;
-import com.ness.movie_release_web.model.wrapper.tmdb.tvSeries.details.EpisodeWrapper;
-import com.ness.movie_release_web.model.wrapper.tmdb.tvSeries.details.SeasonWrapper;
-import com.ness.movie_release_web.model.wrapper.tmdb.tvSeries.details.TVDetailsWrapper;
-import com.ness.movie_release_web.model.wrapper.tmdb.tvSeries.search.TVSearchWrapper;
+import com.ness.movie_release_web.model.dto.tmdb.Language;
+import com.ness.movie_release_web.model.dto.tmdb.tvSeries.details.EpisodeDto;
+import com.ness.movie_release_web.model.dto.tmdb.tvSeries.details.SeasonDto;
+import com.ness.movie_release_web.model.dto.tmdb.tvSeries.details.TVDetailsDto;
+import com.ness.movie_release_web.model.dto.tmdb.tvSeries.search.TVSearchDto;
 
 import java.util.Optional;
 
 public interface TmdbTVSeriesService {
-    Optional<TVDetailsWrapper> getTVDetails(Long tmdbId, Language language);
+    Optional<TVDetailsDto> getTVDetails(Long tmdbId, Language language);
 
-    Optional<SeasonWrapper> getSeasonDetails(Long tmdbId, Long season, Language language);
-    Optional<EpisodeWrapper> getEpisodeDetails(Long tmdbId, Long season, Long episode, Language language);
+    Optional<SeasonDto> getSeasonDetails(Long tmdbId, Long season, Language language);
+    Optional<EpisodeDto> getEpisodeDetails(Long tmdbId, Long season, Long episode, Language language);
 
-    Optional<TVSearchWrapper> search(String query, Integer page, Long year, Language language);
+    Optional<TVSearchDto> search(String query, Integer page, Long year, Language language);
 }

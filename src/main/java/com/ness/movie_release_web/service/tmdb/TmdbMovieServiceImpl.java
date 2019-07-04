@@ -1,9 +1,9 @@
 package com.ness.movie_release_web.service.tmdb;
 
-import com.ness.movie_release_web.model.wrapper.tmdb.Language;
-import com.ness.movie_release_web.model.wrapper.tmdb.movie.details.MovieDetailsWrapper;
-import com.ness.movie_release_web.model.wrapper.tmdb.movie.search.MovieSearchWrapper;
-import com.ness.movie_release_web.model.wrapper.tmdb.releaseDates.ReleaseDate;
+import com.ness.movie_release_web.model.dto.tmdb.Language;
+import com.ness.movie_release_web.model.dto.tmdb.movie.details.MovieDetailsDto;
+import com.ness.movie_release_web.model.dto.tmdb.movie.search.MovieSearchDto;
+import com.ness.movie_release_web.model.dto.tmdb.releaseDates.ReleaseDate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,7 +20,7 @@ import java.util.Optional;
 import static java.lang.Thread.sleep;
 
 @Service
-public class TmdbMovieServiceImpl extends Cacheable<MovieDetailsWrapper> implements TmdbMovieService {
+public class TmdbMovieServiceImpl extends Cacheable<MovieDetailsDto> implements TmdbMovieService {
 
     private RestTemplate restTemplate = new RestTemplate();
     private Logger logger = LoggerFactory.getLogger(this.getClass());
@@ -35,9 +35,9 @@ public class TmdbMovieServiceImpl extends Cacheable<MovieDetailsWrapper> impleme
     private TmdbDatesService releaseDatesService;
 
     @Override
-    public Optional<MovieDetailsWrapper> getMovieDetails(Long tmdbId, Language language) {
+    public Optional<MovieDetailsDto> getMovieDetails(Long tmdbId, Language language) {
 
-        Optional<MovieDetailsWrapper> fromCache = getFromCache(tmdbId, language);
+        Optional<MovieDetailsDto> fromCache = getFromCache(tmdbId, language);
         if (fromCache.isPresent()) {
             return fromCache;
         }
@@ -48,9 +48,9 @@ public class TmdbMovieServiceImpl extends Cacheable<MovieDetailsWrapper> impleme
                 .queryParam("append_to_response", "credits,videos")
                 .queryParam("language", language.name());
 
-        ResponseEntity<MovieDetailsWrapper> response = null;
+        ResponseEntity<MovieDetailsDto> response;
         try {
-            response = restTemplate.getForEntity(movieUrlBuilder.toUriString(), MovieDetailsWrapper.class);
+            response = restTemplate.getForEntity(movieUrlBuilder.toUriString(), MovieDetailsDto.class);
         } catch (HttpStatusCodeException e) {
             logger.error("Could not get movie by id: {}, status: {}", tmdbId, e.getStatusCode().value());
 
@@ -68,7 +68,7 @@ public class TmdbMovieServiceImpl extends Cacheable<MovieDetailsWrapper> impleme
             return Optional.empty();
         }
 
-        MovieDetailsWrapper result = response.getBody();
+        MovieDetailsDto result = response.getBody();
 
         if (result != null) {
 
@@ -82,7 +82,7 @@ public class TmdbMovieServiceImpl extends Cacheable<MovieDetailsWrapper> impleme
     }
 
     @Override
-    public Optional<MovieSearchWrapper> searchForMovies(String query, Integer page, Long year, Language language) {
+    public Optional<MovieSearchDto> searchForMovies(String query, Integer page, Long year, Language language) {
         UriComponentsBuilder searchUrlBuilder = UriComponentsBuilder.fromHttpUrl(url + "search/movie/")
                 .queryParam("api_key", apikey)
                 .queryParam("language", language.name())
@@ -92,11 +92,11 @@ public class TmdbMovieServiceImpl extends Cacheable<MovieDetailsWrapper> impleme
         if (year != null)
             searchUrlBuilder.queryParam("year", year);
 
-        ResponseEntity<MovieSearchWrapper> response = null;
+        ResponseEntity<MovieSearchDto> response;
         try {
-            response = restTemplate.getForEntity(searchUrlBuilder.build(false).toUriString(), MovieSearchWrapper.class);
+            response = restTemplate.getForEntity(searchUrlBuilder.build(false).toUriString(), MovieSearchDto.class);
         } catch (HttpStatusCodeException e) {
-            logger.error("Could not search for movie: {}, status: ", query, e.getStatusCode().value());
+            logger.error("Could not search for movie: {}, status: {}", query, e.getStatusCode().value());
 
             if (e.getStatusCode().value() == 429) {
                 try {

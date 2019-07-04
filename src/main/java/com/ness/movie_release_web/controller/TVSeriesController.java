@@ -2,16 +2,16 @@ package com.ness.movie_release_web.controller;
 
 import com.ness.movie_release_web.model.User;
 import com.ness.movie_release_web.model.UserTVSeries;
-import com.ness.movie_release_web.model.wrapper.tmdb.Language;
-import com.ness.movie_release_web.model.wrapper.tmdb.Mode;
-import com.ness.movie_release_web.model.wrapper.tmdb.movie.discover.DiscoverSearchCriteria;
-import com.ness.movie_release_web.model.wrapper.tmdb.tvSeries.WatchStatus;
-import com.ness.movie_release_web.model.wrapper.tmdb.tvSeries.details.EpisodeWrapper;
-import com.ness.movie_release_web.model.wrapper.tmdb.tvSeries.details.SeasonWrapper;
-import com.ness.movie_release_web.model.wrapper.tmdb.tvSeries.details.Status;
-import com.ness.movie_release_web.model.wrapper.tmdb.tvSeries.details.TVDetailsWrapper;
-import com.ness.movie_release_web.model.wrapper.tmdb.tvSeries.search.TVSearchWrapper;
-import com.ness.movie_release_web.model.wrapper.tmdb.tvSeries.search.TVWrapper;
+import com.ness.movie_release_web.model.dto.tmdb.Language;
+import com.ness.movie_release_web.model.dto.tmdb.Mode;
+import com.ness.movie_release_web.model.dto.tmdb.movie.discover.DiscoverSearchCriteria;
+import com.ness.movie_release_web.model.dto.tmdb.tvSeries.WatchStatus;
+import com.ness.movie_release_web.model.dto.tmdb.tvSeries.details.EpisodeDto;
+import com.ness.movie_release_web.model.dto.tmdb.tvSeries.details.SeasonDto;
+import com.ness.movie_release_web.model.dto.tmdb.tvSeries.details.Status;
+import com.ness.movie_release_web.model.dto.tmdb.tvSeries.details.TVDetailsDto;
+import com.ness.movie_release_web.model.dto.tmdb.tvSeries.search.TVSearchDto;
+import com.ness.movie_release_web.model.dto.tmdb.tvSeries.search.TVDto;
 import com.ness.movie_release_web.repository.TVSeriesSortBy;
 import com.ness.movie_release_web.service.SubscriptionService;
 import com.ness.movie_release_web.service.TVSeriesService;
@@ -67,13 +67,13 @@ public class TVSeriesController {
         model.addAttribute("mode", mode);
         model.addAttribute("subscribed", false);
 
-        Optional<TVDetailsWrapper> tvDetails = tmdbSeriesService.getTVDetails(tmdbId, language);
+        Optional<TVDetailsDto> tvDetails = tmdbSeriesService.getTVDetails(tmdbId, language);
         if (!tvDetails.isPresent())
             throw new ResponseStatusException(HttpStatus.NOT_FOUND);
 
-        TVDetailsWrapper tvDetailsWrapper = tvDetails.get();
+        TVDetailsDto tvDetailsDto = tvDetails.get();
 
-        model.addAttribute("series", tvDetailsWrapper);
+        model.addAttribute("series", tvDetailsDto);
 
         Optional<UserTVSeries> userTVSeriesOptional = dbSeriesService.getByTmdbIdAndUserId(tmdbId, user.getId());
         if (userTVSeriesOptional.isPresent()) {
@@ -82,20 +82,20 @@ public class TVSeriesController {
 
             Long currentSeasonNum = userTVSeries.getCurrentSeason();
             Long currentEpisodeNum = userTVSeries.getCurrentEpisode();
-            EpisodeWrapper lastEpisodeToAir = tvDetailsWrapper.getLastEpisodeToAir();
+            EpisodeDto lastEpisodeToAir = tvDetailsDto.getLastEpisodeToAir();
 
             model.addAttribute("currentSeason", currentSeasonNum);
             model.addAttribute("seasonWatched", false);
 
             if(currentSeasonNum > 0){
-                Optional<SeasonWrapper> seasonDetailsOpt = tmdbSeriesService.getSeasonDetails(tmdbId, currentSeasonNum, language);
+                Optional<SeasonDto> seasonDetailsOpt = tmdbSeriesService.getSeasonDetails(tmdbId, currentSeasonNum, language);
                 if (!seasonDetailsOpt.isPresent())
                     throw new ResponseStatusException(HttpStatus.NOT_FOUND);
 
 
-                SeasonWrapper seasonWrapper = seasonDetailsOpt.get();
+                SeasonDto seasonDto = seasonDetailsOpt.get();
 
-                model.addAttribute("seasonWatched", seasonWrapper.getEpisodes().stream().noneMatch(e -> e.getEpisodeNumber() > currentEpisodeNum));
+                model.addAttribute("seasonWatched", seasonDto.getEpisodes().stream().noneMatch(e -> e.getEpisodeNumber() > currentEpisodeNum));
             }
 
             model.addAttribute("lastEpisodeWatched", false);
@@ -136,19 +136,19 @@ public class TVSeriesController {
         model.addAttribute("episodeToOpen", episodeToOpen != null ? episodeToOpen : 0);
 
 
-        Optional<TVDetailsWrapper> series = tmdbSeriesService.getTVDetails(tmdbId, language);
+        Optional<TVDetailsDto> series = tmdbSeriesService.getTVDetails(tmdbId, language);
         if (!series.isPresent())
             throw new ResponseStatusException(HttpStatus.NOT_FOUND);
 
-        Optional<SeasonWrapper> season = tmdbSeriesService.getSeasonDetails(tmdbId, seasonNumber, language);
+        Optional<SeasonDto> season = tmdbSeriesService.getSeasonDetails(tmdbId, seasonNumber, language);
         if (!season.isPresent())
             throw new ResponseStatusException(HttpStatus.NOT_FOUND);
 
-        TVDetailsWrapper seriesWrapper = series.get();
-        SeasonWrapper seasonWrapper = season.get();
+        TVDetailsDto seriesDto = series.get();
+        SeasonDto seasonDto = season.get();
 
-        model.addAttribute("series", seriesWrapper);
-        model.addAttribute("season", seasonWrapper);
+        model.addAttribute("series", seriesDto);
+        model.addAttribute("season", seasonDto);
 
         Optional<UserTVSeries> userTVSeriesOptional = dbSeriesService.getByTmdbIdAndUserId(tmdbId, user.getId());
         if (userTVSeriesOptional.isPresent()) {
@@ -205,15 +205,15 @@ public class TVSeriesController {
         model.addAttribute("language", language);
         model.addAttribute("mode", mode);
 
-        Optional<TVSearchWrapper> optionalSearchResult = tmdbSeriesService.search(query, page, year, language);
+        Optional<TVSearchDto> optionalSearchResult = tmdbSeriesService.search(query, page, year, language);
 
         if (!optionalSearchResult.isPresent()) {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR);
         }
 
-        TVSearchWrapper searchWrapper = optionalSearchResult.get();
+        TVSearchDto searchDto = optionalSearchResult.get();
 
-        Map<TVWrapper, Boolean> filmsWithSubFlags = searchWrapper.getResults().stream()
+        Map<TVDto, Boolean> filmsWithSubFlags = searchDto.getResults().stream()
                 .collect(toMap(
                         f -> f,
                         f -> dbSeriesService.isExistsByTmdbIdAndUserId(f.getId(), user.getId()),
@@ -222,7 +222,7 @@ public class TVSeriesController {
 
         model.addAttribute("series", filmsWithSubFlags);
 
-        model.addAttribute("pageCount", searchWrapper.getTotalPages());
+        model.addAttribute("pageCount", searchDto.getTotalPages());
         model.addAttribute("page", page);
 
         return "seriesSearchResult";
@@ -230,12 +230,12 @@ public class TVSeriesController {
 
     @GetMapping("/api/search")
     @ResponseBody
-    public ResponseEntity<TVSearchWrapper> searchApi(@RequestParam("query") String query,
-                         @RequestParam(required = false, name = "year") Long year,
-                         @RequestParam(required = false, name = "page") Integer page,
-                         @CookieValue(value = "language", defaultValue = "en") Language language){
+    public ResponseEntity<TVSearchDto> searchApi(@RequestParam("query") String query,
+                                                 @RequestParam(required = false, name = "year") Long year,
+                                                 @RequestParam(required = false, name = "page") Integer page,
+                                                 @CookieValue(value = "language", defaultValue = "en") Language language){
 
-        Optional<TVSearchWrapper> optionalSearchResult = tmdbSeriesService.search(query, page, year, language);
+        Optional<TVSearchDto> optionalSearchResult = tmdbSeriesService.search(query, page, year, language);
         if (!optionalSearchResult.isPresent()) {
             throw new ResponseStatusException(HttpStatus.NO_CONTENT);
         }
@@ -290,12 +290,12 @@ public class TVSeriesController {
         Page<UserTVSeries> userTVSeries = dbSeriesService.getByUserAndTVStatusesAndWatchStatusesWithOrderAndPages(tvStatuses, watchStatuses, sortBy, user, page - 1, size);
         List<UserTVSeries> series = userTVSeries.getContent();
 
-        List<TVDetailsWrapper> subscriptions = null;
+        List<TVDetailsDto> subscriptions;
 
         if (viewMode){
             subscriptions = series.stream()
                     .map(UserTVSeries::getTvSeries)
-                    .map(s -> TVDetailsWrapper.of(s, language)).collect(toList());
+                    .map(s -> TVDetailsDto.of(s, language)).collect(toList());
         } else {
             subscriptions = series.stream()
                     .map(f -> tmdbSeriesService.getTVDetails(f.getId().getTvSeriesId(), language))
@@ -336,20 +336,20 @@ public class TVSeriesController {
         criteria.setPage(page);
         criteria.setLanguage(language);
 
-        Optional<TVSearchWrapper> optionalMovieSearch = discoverService.discoverSeries(criteria);
+        Optional<TVSearchDto> optionalMovieSearch = discoverService.discoverSeries(criteria);
 
         if (optionalMovieSearch.isPresent()) {
 
-            TVSearchWrapper movieSearchWrapper = optionalMovieSearch.get();
+            TVSearchDto movieSearchDto = optionalMovieSearch.get();
 
-            Map<TVWrapper, Boolean> filmsWithSubFlags = movieSearchWrapper.getResults().stream()
+            Map<TVDto, Boolean> filmsWithSubFlags = movieSearchDto.getResults().stream()
                     .collect(toMap(f -> f,
                             f -> dbSeriesService.isExistsByTmdbIdAndUserId(f.getId(), user.getId()),
                             (f1, f2) -> f1,
                             LinkedHashMap::new));
             model.addAttribute("series", filmsWithSubFlags);
 
-            model.addAttribute("pageCount", movieSearchWrapper.getTotalPages() > 1000 ? 1000 : movieSearchWrapper.getTotalPages());
+            model.addAttribute("pageCount", movieSearchDto.getTotalPages() > 1000 ? 1000 : movieSearchDto.getTotalPages());
             model.addAttribute("page", page);
         }
 
@@ -361,7 +361,7 @@ public class TVSeriesController {
         model.addAttribute("networks", networkService.getNetworks(criteria.getNetworks()));
         model.addAttribute("criteria", criteria);
 
-        // adding genreWrappers to form
+        // adding genres to form
         model.addAttribute("genres", genreService.getTVGenres(language));
 
         return "discoverSeries";

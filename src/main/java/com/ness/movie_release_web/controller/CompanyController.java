@@ -1,7 +1,7 @@
 package com.ness.movie_release_web.controller;
 
-import com.ness.movie_release_web.model.wrapper.tmdb.Language;
-import com.ness.movie_release_web.model.wrapper.tmdb.company.search.CompanySearchWrapper;
+import com.ness.movie_release_web.model.dto.tmdb.Language;
+import com.ness.movie_release_web.model.dto.tmdb.company.search.CompanySearchDto;
 import com.ness.movie_release_web.service.tmdb.CompanyService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -19,12 +19,12 @@ public class CompanyController {
     private CompanyService companyService;
 
     @GetMapping("/search")
-    public ResponseEntity<CompanySearchWrapper> search(@RequestParam(value = "query") String query,
-                                @CookieValue(value = "language", defaultValue = "en") Language language,
-                                @RequestParam(value = "page", required = false) Integer page){
+    public ResponseEntity<CompanySearchDto> search(@RequestParam(value = "query") String query,
+                                                   @CookieValue(value = "language", defaultValue = "en") Language language,
+                                                   @RequestParam(value = "page", required = false) Integer page){
         if (page == null)
             page = 1;
 
-        return ResponseEntity.ok(companyService.search(query, page, language).orElse(new CompanySearchWrapper()));
+        return ResponseEntity.ok(companyService.search(query, page, language).orElse(new CompanySearchDto()));
     }
 }

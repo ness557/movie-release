@@ -1,11 +1,11 @@
 package com.ness.movie_release_web.service.tmdb;
 
-import com.ness.movie_release_web.model.wrapper.tmdb.ProductionCompanyWrapper;
+import com.ness.movie_release_web.model.dto.tmdb.ProductionCompanyDto;
 
 import java.util.List;
 
 public interface NetworkService {
-    List<ProductionCompanyWrapper> getNetworks();
-    List<ProductionCompanyWrapper> getNetworks(List<Long> ids);
-    List<ProductionCompanyWrapper> search(String query);
+    List<ProductionCompanyDto> getNetworks();
+    List<ProductionCompanyDto> getNetworks(List<Long> ids);
+    List<ProductionCompanyDto> search(String query);
 }
