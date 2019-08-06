@@ -5,6 +5,8 @@ import com.ness.movie_release_web.model.dto.tmdb.tvSeries.details.EpisodeDto;
 import com.ness.movie_release_web.model.dto.tmdb.tvSeries.details.SeasonDto;
 import com.ness.movie_release_web.model.dto.tmdb.tvSeries.details.TVDetailsDto;
 import com.ness.movie_release_web.model.dto.tmdb.tvSeries.search.TVSearchDto;
+import com.ness.movie_release_web.service.tmdb.cache.CacheProvider;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
@@ -13,20 +15,19 @@ import org.springframework.web.client.HttpStatusCodeException;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 
-import java.util.HashMap;
-import java.util.Map;
 import java.util.Optional;
-import java.util.WeakHashMap;
 
 import static java.lang.Thread.sleep;
 
 @Service
 @Slf4j
-public class TmdbTVSeriesServiceImpl extends Cacheable<TVDetailsDto> implements TmdbTVSeriesService {
+@RequiredArgsConstructor
+public class TmdbTVSeriesServiceImpl implements TmdbTVSeriesService {
 
     private RestTemplate restTemplate = new RestTemplate();
 
-    private Map<Long, Map<Long, Map<Language, SeasonDto>>> seasonCache = new WeakHashMap<>();
+    private final CacheProvider<TVDetailsDto> cacheProvider;
+    private final CacheProvider<SeasonDto> seasonCacheProvider;
 
     @Value("${tmdbapi.apikey}")
     private String apikey;
@@ -37,7 +38,7 @@ public class TmdbTVSeriesServiceImpl extends Cacheable<TVDetailsDto> implements 
     @Override
     public Optional<TVDetailsDto> getTVDetails(Long tmdbId, Language language) {
 
-        Optional<TVDetailsDto> fromCache = getFromCache(tmdbId, language);
+        Optional<TVDetailsDto> fromCache = cacheProvider.getFromCache(tmdbId, language);
         if (fromCache.isPresent()) {
             return fromCache;
         }
@@ -68,18 +69,13 @@ public class TmdbTVSeriesServiceImpl extends Cacheable<TVDetailsDto> implements 
             return Optional.empty();
         }
 
-        putToCache(tmdbId, response.getBody(), language);
+        cacheProvider.putToCache(tmdbId, response.getBody(), language);
 
         return Optional.ofNullable(response.getBody());
     }
 
     @Override
     public Optional<SeasonDto> getSeasonDetails(Long tmdbId, Long season, Language language) {
-
-        Optional<SeasonDto> seasonFromCache = getSeasonFromCache(tmdbId, season, language);
-        if (seasonFromCache.isPresent()) {
-            return seasonFromCache;
-        }
 
         UriComponentsBuilder UrlBuilder = UriComponentsBuilder.fromHttpUrl(url + "tv/")
                 .path(tmdbId.toString())
@@ -107,9 +103,6 @@ public class TmdbTVSeriesServiceImpl extends Cacheable<TVDetailsDto> implements 
             }
             return Optional.empty();
         }
-
-        if (response.getBody() != null)
-            putSeasonToCache(tmdbId, response.getBody(), language);
 
         return Optional.ofNullable(response.getBody());
     }
@@ -178,18 +171,5 @@ public class TmdbTVSeriesServiceImpl extends Cacheable<TVDetailsDto> implements 
             return Optional.empty();
         }
         return Optional.ofNullable(response.getBody());
-    }
-
-
-    private Optional<SeasonDto> getSeasonFromCache(Long id, Long seasonNum, Language language) {
-        Map<Long, Map<Language, SeasonDto>> seriesMap = seasonCache.computeIfAbsent(id, k -> new HashMap<>());
-        Map<Language, SeasonDto> languageSeasonMap = seriesMap.computeIfAbsent(seasonNum, k -> new WeakHashMap<>());
-        return Optional.ofNullable(languageSeasonMap.get(language));
-    }
-
-    private void putSeasonToCache(Long id, SeasonDto object, Language language) {
-        Map<Long, Map<Language, SeasonDto>> seriesMap = seasonCache.computeIfAbsent(id, k -> new HashMap<>());
-        Map<Language, SeasonDto> languageSeasonMap = seriesMap.computeIfAbsent(object.getSeasonNumber(), k -> new WeakHashMap<>());
-        languageSeasonMap.put(language, object);
     }
 }

@@ -4,6 +4,8 @@ import com.ness.movie_release_web.model.dto.tmdb.Language;
 import com.ness.movie_release_web.model.dto.tmdb.movie.details.MovieDetailsDto;
 import com.ness.movie_release_web.model.dto.tmdb.movie.search.MovieSearchDto;
 import com.ness.movie_release_web.model.dto.tmdb.releaseDates.ReleaseDate;
+import com.ness.movie_release_web.service.tmdb.cache.CacheProvider;
+import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,10 +22,14 @@ import java.util.Optional;
 import static java.lang.Thread.sleep;
 
 @Service
-public class TmdbMovieServiceImpl extends Cacheable<MovieDetailsDto> implements TmdbMovieService {
+@RequiredArgsConstructor
+public class TmdbMovieServiceImpl implements TmdbMovieService {
 
     private RestTemplate restTemplate = new RestTemplate();
     private Logger logger = LoggerFactory.getLogger(this.getClass());
+
+    private final CacheProvider<MovieDetailsDto> cacheProvider;
+    private final TmdbDatesService releaseDatesService;
 
     @Value("${tmdbapi.apikey}")
     private String apikey;
@@ -31,13 +37,10 @@ public class TmdbMovieServiceImpl extends Cacheable<MovieDetailsDto> implements 
     @Value("${tmdbapi.url}")
     private String url;
 
-    @Autowired
-    private TmdbDatesService releaseDatesService;
-
     @Override
     public Optional<MovieDetailsDto> getMovieDetails(Long tmdbId, Language language) {
 
-        Optional<MovieDetailsDto> fromCache = getFromCache(tmdbId, language);
+        Optional<MovieDetailsDto> fromCache = cacheProvider.getFromCache(tmdbId, language);
         if (fromCache.isPresent()) {
             return fromCache;
         }
@@ -76,7 +79,7 @@ public class TmdbMovieServiceImpl extends Cacheable<MovieDetailsDto> implements 
             result.setReleaseDates(releaseDates);
         }
 
-        putToCache(tmdbId, response.getBody(), language);
+        cacheProvider.putToCache(tmdbId, response.getBody(), language);
 
         return Optional.ofNullable(result);
     }

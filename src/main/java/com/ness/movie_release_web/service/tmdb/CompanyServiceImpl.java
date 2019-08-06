@@ -3,6 +3,8 @@ package com.ness.movie_release_web.service.tmdb;
 import com.ness.movie_release_web.model.dto.tmdb.Language;
 import com.ness.movie_release_web.model.dto.tmdb.ProductionCompanyDto;
 import com.ness.movie_release_web.model.dto.tmdb.company.search.CompanySearchDto;
+import com.ness.movie_release_web.service.tmdb.cache.CacheProvider;
+import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -19,10 +21,13 @@ import java.util.Optional;
 import static java.lang.Thread.sleep;
 
 @Service
-public class CompanyServiceImpl extends Cacheable<ProductionCompanyDto> implements CompanyService {
+@RequiredArgsConstructor
+public class CompanyServiceImpl implements CompanyService {
 
     private RestTemplate restTemplate = new RestTemplate();
     private Logger logger = LoggerFactory.getLogger(this.getClass());
+
+    private final CacheProvider<ProductionCompanyDto> cacheProvider;
 
     @Value("${tmdbapi.apikey}")
     private String apikey;
@@ -42,7 +47,7 @@ public class CompanyServiceImpl extends Cacheable<ProductionCompanyDto> implemen
     @Override
     public Optional<ProductionCompanyDto> getCompany(Long id, Language language) {
 
-        Optional<ProductionCompanyDto> fromCache = getFromCache(id, language);
+        Optional<ProductionCompanyDto> fromCache = cacheProvider.getFromCache(id, language);
         if (fromCache.isPresent()) {
             return fromCache;
         }
@@ -71,7 +76,7 @@ public class CompanyServiceImpl extends Cacheable<ProductionCompanyDto> implemen
             return Optional.empty();
         }
 
-        putToCache(id, response.getBody(), language);
+        cacheProvider.putToCache(id, response.getBody(), language);
 
         return Optional.ofNullable(response.getBody());
     }
