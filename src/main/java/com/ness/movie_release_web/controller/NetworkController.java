@@ -4,6 +4,7 @@ import java.util.List;
 
 import com.ness.movie_release_web.model.dto.tmdb.ProductionCompanyDto;
 import com.ness.movie_release_web.service.tmdb.NetworkService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -13,10 +14,10 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 @Controller
 @RequestMapping("/network")
+@RequiredArgsConstructor
 public class NetworkController {
 
-    @Autowired
-    private NetworkService networkService;
+    private final NetworkService networkService;
 
     @GetMapping("/search")
     public ResponseEntity<List<ProductionCompanyDto>> search(@RequestParam(value = "query") String query){

@@ -14,7 +14,7 @@ import com.ness.movie_release_web.service.FilmService;
 import com.ness.movie_release_web.service.SubscriptionService;
 import com.ness.movie_release_web.service.UserService;
 import com.ness.movie_release_web.service.tmdb.*;
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
@@ -31,7 +31,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
-import static java.util.Collections.emptyList;
 import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toMap;
 
@@ -39,18 +38,18 @@ import static java.util.stream.Collectors.toMap;
 @RequestMapping("/movie")
 @SessionAttributes(names = { "query", "year", "language", "mode" }, types = { String.class, Long.class,
         Language.class, Mode.class })
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class MovieController {
 
-    private TmdbMovieServiceImpl movieService;
-    private FilmService filmService;
-    private UserService userService;
-    private TmdbDatesService tmdbDatesService;
-    private DiscoverService discoverService;
-    private GenreService genreService;
-    private CompanyService companyService;
-    private PeopleService peopleService;
-    private SubscriptionService subscriptionService;
+    private final TmdbMovieServiceImpl movieService;
+    private final FilmService filmService;
+    private final UserService userService;
+    private final TmdbDatesService tmdbDatesService;
+    private final DiscoverService discoverService;
+    private final GenreService genreService;
+    private final CompanyService companyService;
+    private final PeopleService peopleService;
+    private final SubscriptionService subscriptionService;
 
     @GetMapping("/{tmdbId}")
     public String getFilm(@PathVariable("tmdbId") Long tmdbId,
@@ -112,9 +111,7 @@ public class MovieController {
 
         MovieSearchDto movieSearchDto = optionalMovieSearch.get();
 
-        Map<MovieDto, Boolean> filmsWithSubFlags = movieSearchDto.getResults().stream().collect(toMap(f -> f,
-                f -> filmService.isExistsByTmdbIdAndUser(f.getId(), user), (f1, f2) -> f1, LinkedHashMap::new));
-        model.addAttribute("films", filmsWithSubFlags);
+        model.addAttribute("films", toDtoMap(movieSearchDto, user));
 
         model.addAttribute("pageCount", movieSearchDto.getTotalPages());
         model.addAttribute("page", page);
@@ -137,20 +134,13 @@ public class MovieController {
     }
 
     @GetMapping("/subscriptions")
-    public String getSubs(@RequestParam(value = "page", required = false) Integer page,
-            @RequestParam(value = "statuses", required = false) List<Status> statuses,
+    public String getSubs(@RequestParam(value = "page", required = false, defaultValue = "1") Integer page,
+            @RequestParam(value = "statuses", required = false, defaultValue = "") List<Status> statuses,
             @RequestParam(value = "sortBy", required = false) MovieSortBy sortBy,
             @CookieValue(value = "subsMode", defaultValue = "false") String subsMode,
             @CookieValue(value = "language", defaultValue = "en") Language language,
             @CookieValue(value = "mode", defaultValue = "movie") Mode mode, HttpServletResponse response,
             Principal principal, Model model) {
-
-        if (page == null)
-            page = 1;
-
-        if (statuses == null) {
-            statuses = emptyList();
-        }
 
         Boolean viewMode = Boolean.valueOf(subsMode);
 
@@ -219,10 +209,7 @@ public class MovieController {
 
             MovieSearchDto movieSearchDto = optionalMovieSearch.get();
 
-            Map<MovieDto, Boolean> filmsWithSubFlags = movieSearchDto.getResults().stream()
-                    .collect(toMap(f -> f, f -> filmService.isExistsByTmdbIdAndUser(f.getId(), user), (f1, f2) -> f1,
-                            LinkedHashMap::new));
-            model.addAttribute("films", filmsWithSubFlags);
+            model.addAttribute("films", toDtoMap(movieSearchDto, user));
 
             model.addAttribute("pageCount",
                     movieSearchDto.getTotalPages() > 1000 ? 1000 : movieSearchDto.getTotalPages());
@@ -241,5 +228,11 @@ public class MovieController {
         model.addAttribute("genres", genreService.getMovieGenres(language));
 
         return "discoverMovies";
+    }
+
+    private Map<MovieDto, Boolean> toDtoMap(MovieSearchDto movieSearchDto, User user) {
+        return movieSearchDto.getResults().stream()
+                .collect(toMap(f -> f, f -> filmService.isExistsByTmdbIdAndUser(f.getId(), user), (f1, f2) -> f1,
+                        LinkedHashMap::new));
     }
 }

@@ -87,7 +87,7 @@ public class TVSeriesController {
             model.addAttribute("currentSeason", currentSeasonNum);
             model.addAttribute("seasonWatched", false);
 
-            if(currentSeasonNum > 0){
+            if (currentSeasonNum > 0) {
                 Optional<SeasonDto> seasonDetailsOpt = tmdbSeriesService.getSeasonDetails(tmdbId, currentSeasonNum, language);
                 if (!seasonDetailsOpt.isPresent())
                     throw new ResponseStatusException(HttpStatus.NOT_FOUND);
@@ -100,7 +100,7 @@ public class TVSeriesController {
 
             model.addAttribute("lastEpisodeWatched", false);
 
-            if(lastEpisodeToAir != null) {
+            if (lastEpisodeToAir != null) {
                 model.addAttribute("lastEpisodeWatched",
                         lastEpisodeToAir.getSeasonNumber() < currentSeasonNum ||
                                 (lastEpisodeToAir.getSeasonNumber().equals(currentSeasonNum) && lastEpisodeToAir.getEpisodeNumber() <= currentEpisodeNum));
@@ -121,7 +121,7 @@ public class TVSeriesController {
     @GetMapping("/{tmdbId}/season/{seasonNumber}")
     public String getSeason(@PathVariable("tmdbId") Long tmdbId,
                             @PathVariable("seasonNumber") Long seasonNumber,
-                            @RequestParam(value = "episodeToOpen", required = false) Long episodeToOpen,
+                            @RequestParam(value = "episodeToOpen", required = false, defaultValue = "0") Long episodeToOpen,
                             @CookieValue(value = "language", defaultValue = "en") Language language,
                             @CookieValue(value = "mode", defaultValue = "movie") Mode mode,
                             Principal principal,
@@ -133,7 +133,7 @@ public class TVSeriesController {
 
 //        default values
         model.addAttribute("subscribed", false);
-        model.addAttribute("episodeToOpen", episodeToOpen != null ? episodeToOpen : 0);
+        model.addAttribute("episodeToOpen", episodeToOpen);
 
 
         Optional<TVDetailsDto> series = tmdbSeriesService.getTVDetails(tmdbId, language);
@@ -174,14 +174,14 @@ public class TVSeriesController {
     @PostMapping("/subscribe")
     @ResponseStatus(value = HttpStatus.OK)
     public void subscribe(@RequestParam(value = "tmdbId") Long tmdbId,
-                                    Principal principal) {
+                          Principal principal) {
         subscriptionService.subscribeToSeries(tmdbId, principal.getName());
     }
 
     @PostMapping("/unSubscribe")
     @ResponseStatus(value = HttpStatus.OK)
     public void unSubscribe(@RequestParam(value = "tmdbId") Long tmdbId,
-                                      Principal principal) {
+                            Principal principal) {
         subscriptionService.unsubscribeFromSeries(tmdbId, principal.getName());
     }
 
@@ -213,12 +213,7 @@ public class TVSeriesController {
 
         TVSearchDto searchDto = optionalSearchResult.get();
 
-        Map<TVDto, Boolean> filmsWithSubFlags = searchDto.getResults().stream()
-                .collect(toMap(
-                        f -> f,
-                        f -> dbSeriesService.isExistsByTmdbIdAndUserId(f.getId(), user.getId()),
-                        (f1, f2) -> f1,
-                        LinkedHashMap::new));
+        Map<TVDto, Boolean> filmsWithSubFlags = getDtoMap(searchDto, user);
 
         model.addAttribute("series", filmsWithSubFlags);
 
@@ -233,7 +228,7 @@ public class TVSeriesController {
     public ResponseEntity<TVSearchDto> searchApi(@RequestParam("query") String query,
                                                  @RequestParam(required = false, name = "year") Long year,
                                                  @RequestParam(required = false, name = "page") Integer page,
-                                                 @CookieValue(value = "language", defaultValue = "en") Language language){
+                                                 @CookieValue(value = "language", defaultValue = "en") Language language) {
 
         Optional<TVSearchDto> optionalSearchResult = tmdbSeriesService.search(query, page, year, language);
         if (!optionalSearchResult.isPresent()) {
@@ -244,33 +239,22 @@ public class TVSeriesController {
     }
 
     @GetMapping("/subscriptions")
-    public String getSubs(@RequestParam(value = "page", required = false) Integer page,
-                          @RequestParam(value = "statuses", required = false) List<Status> tvStatuses,
+    public String getSubs(@RequestParam(value = "page", required = false, defaultValue = "1") Integer page,
+                          @RequestParam(value = "statuses", required = false, defaultValue = "") List<Status> tvStatuses,
                           @RequestParam(value = "sortBy", required = false) TVSeriesSortBy sortBy,
-                          @RequestParam(value = "watch_status", required = false) List<WatchStatus> watchStatuses,
-                          @CookieValue(value = "subsMode", defaultValue = "false") String subsMode, 
+                          @RequestParam(value = "watch_status", required = false, defaultValue = "") List<WatchStatus> watchStatuses,
+                          @CookieValue(value = "subsMode", defaultValue = "false") String subsMode,
                           @CookieValue(value = "language", defaultValue = "en") Language language,
                           @CookieValue(value = "mode", defaultValue = "movie") Mode mode,
                           HttpServletResponse response,
                           Principal principal,
                           Model model) {
 
-        if (page == null)
-            page = 1;
-
-        if (tvStatuses == null) {
-            tvStatuses = emptyList();
-        }
-
-        if (watchStatuses == null) {
-            watchStatuses = emptyList();
-        }
-
         Boolean viewMode = Boolean.valueOf(subsMode);
 
         User user = userService.findByLogin(principal.getName());
 
-        if(sortBy == null){
+        if (sortBy == null) {
             switch (language) {
                 case en:
                     sortBy = TVSeriesSortBy.NameEn_asc;
@@ -292,7 +276,7 @@ public class TVSeriesController {
 
         List<TVDetailsDto> subscriptions;
 
-        if (viewMode){
+        if (viewMode) {
             subscriptions = series.stream()
                     .map(UserTVSeries::getTvSeries)
                     .map(s -> TVDetailsDto.of(s, language)).collect(toList());
@@ -321,16 +305,13 @@ public class TVSeriesController {
 
     @GetMapping("/discover")
     public String discover(@ModelAttribute("criteria") DiscoverSearchCriteria criteria,
-                           @RequestParam(value = "page", required = false) Integer page,
+                           @RequestParam(value = "page", required = false, defaultValue = "1") Integer page,
                            @CookieValue(value = "language", defaultValue = "en") Language language,
                            @CookieValue(value = "mode", defaultValue = "movie") Mode mode,
                            Principal principal,
                            Model model) {
 
         User user = userService.findByLogin(principal.getName());
-
-        if (page == null)
-            page = 1;
 
         // assigning values for service
         criteria.setPage(page);
@@ -342,11 +323,7 @@ public class TVSeriesController {
 
             TVSearchDto movieSearchDto = optionalMovieSearch.get();
 
-            Map<TVDto, Boolean> filmsWithSubFlags = movieSearchDto.getResults().stream()
-                    .collect(toMap(f -> f,
-                            f -> dbSeriesService.isExistsByTmdbIdAndUserId(f.getId(), user.getId()),
-                            (f1, f2) -> f1,
-                            LinkedHashMap::new));
+            Map<TVDto, Boolean> filmsWithSubFlags = getDtoMap(movieSearchDto, user);
             model.addAttribute("series", filmsWithSubFlags);
 
             model.addAttribute("pageCount", movieSearchDto.getTotalPages() > 1000 ? 1000 : movieSearchDto.getTotalPages());
@@ -370,12 +347,21 @@ public class TVSeriesController {
     @PostMapping("/setSeasonAndEpisode")
     @ResponseStatus(value = HttpStatus.OK)
     public void setCurrentSeasonAndEpisode(@RequestParam(value = "tmdbId") Long tmdbId,
-                                                     @RequestParam(value = "season") Long season,
-                                                     @RequestParam(value = "episode") Long episode,
-                                                     Principal principal) {
+                                           @RequestParam(value = "season") Long season,
+                                           @RequestParam(value = "episode") Long episode,
+                                           Principal principal) {
 
         User user = userService.findByLogin(principal.getName());
 
         dbSeriesService.setSeasonAndEpisode(tmdbId, user, season, episode);
+    }
+
+    private LinkedHashMap<TVDto, Boolean> getDtoMap(TVSearchDto searchDto, User user) {
+        return searchDto.getResults().stream()
+                .collect(toMap(
+                        f -> f,
+                        f -> dbSeriesService.isExistsByTmdbIdAndUserId(f.getId(), user.getId()),
+                        (f1, f2) -> f1,
+                        LinkedHashMap::new));
     }
 }

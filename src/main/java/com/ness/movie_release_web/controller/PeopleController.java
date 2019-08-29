@@ -4,6 +4,7 @@ import com.ness.movie_release_web.model.dto.tmdb.Language;
 import com.ness.movie_release_web.model.dto.tmdb.Mode;
 import com.ness.movie_release_web.model.dto.tmdb.people.PeopleDto;
 import com.ness.movie_release_web.service.tmdb.PeopleService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -18,10 +19,10 @@ import java.util.Optional;
 
 @Controller
 @RequestMapping("/people")
+@RequiredArgsConstructor
 public class PeopleController {
 
-    @Autowired
-    private PeopleService peopleService;
+    private final PeopleService peopleService;
 
     @GetMapping("/search")
     public ResponseEntity<List<PeopleDto>> search(@RequestParam(value = "query") String query) {
