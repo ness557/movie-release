@@ -242,14 +242,11 @@ public class TVSeriesController {
                           @RequestParam(value = "statuses", required = false, defaultValue = "") List<Status> tvStatuses,
                           @RequestParam(value = "sortBy", required = false) TVSeriesSortBy sortBy,
                           @RequestParam(value = "watch_status", required = false, defaultValue = "") List<WatchStatus> watchStatuses,
-                          @CookieValue(value = "viewMode", defaultValue = "false") String viewMode,
+                          @CookieValue(value = "viewMode", required = false, defaultValue = "false") Boolean viewMode,
                           @CookieValue(value = "language", defaultValue = "en") Language language,
                           @CookieValue(value = "mode", defaultValue = "movie") Mode mode,
-                          HttpServletResponse response,
                           Principal principal,
                           Model model) {
-
-        Boolean viewMode = Boolean.valueOf(viewMode);
 
         User user = userService.findByLogin(principal.getName());
 
