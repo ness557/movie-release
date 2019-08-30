@@ -43,7 +43,7 @@
                     <div id="collapseFilter" style="padding: 15px 20px;">
 
                         <th:block
-                                th:each="status : ${T(com.ness.movie_release_web.model.tmdb.tvSeries.details.Status).values()}">
+                                th:each="status : ${T(com.ness.movie_release_web.dto.tmdb.tvSeries.details.Status).values()}">
                             <div class="row">
                                 <div class="col-1">
                                     <input type="checkbox" class="option-input" th:id="${status.name()}"
@@ -68,7 +68,7 @@
                     <div id="collapseFilter2" style="padding: 15px 20px;">
 
                         <th:block
-                                th:each="status : ${T(com.ness.movie_release_web.model.tmdb.tvSeries.WatchStatus).values()}">
+                                th:each="status : ${T(com.ness.movie_release_web.dto.tmdb.tvSeries.WatchStatus).values()}">
                             <div class="row">
                                 <div class="col-1">
                                     <input type="checkbox" class="option-input" name="watch_status" th:value="${status}"

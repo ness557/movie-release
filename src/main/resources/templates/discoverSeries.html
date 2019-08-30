@@ -122,7 +122,7 @@
                         <div class="col col-centered">
                             <label th:text="#{lang.sort_by} + ':'"></label>
                             <select th:field="*{sortBy}" class="form-control selectpicker">
-                                <option th:each="sort : ${T(com.ness.movie_release_web.model.tmdb.movie.discover.SortBy).values()}"
+                                <option th:each="sort : ${T(com.ness.movie_release_web.dto.tmdb.movie.discover.SortBy).values()}"
                                         th:value="${sort}"
                                         th:text="#{'lang.sort.' + ${sort.getType()}} + ' ' + #{'lang.order.' + ${sort.getOrder().name()}}"
                                         th:selected="${criteria.getSortBy().equals(sort)}">
