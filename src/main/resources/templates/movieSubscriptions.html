@@ -108,7 +108,7 @@
     <div th:replace="embeded/subscriptions.html :: movie_subscriptions_list"></div>
 </th:block>
 
-<div class="container" th:if="${films.isEmpty()}" style="height: 35%; color: #C9C9C9; font-size: 20px">
+<div class="container" th:if="${movies.isEmpty()}" style="height: 35%; color: #C9C9C9; font-size: 20px">
     <div class="row" style="height: 100%;">
         <div class="col-xl-12" style="text-align: center; position: relative">
             <span style="bottom: 0; left: 0; right: 0" th:text="#{lang.subs.no_subs}"></span>

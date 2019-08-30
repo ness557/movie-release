@@ -1,8 +1,6 @@
 package com.ness.movie_release_web.configuration;
 
-import com.ness.movie_release_web.service.CookieLocaleResolver;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

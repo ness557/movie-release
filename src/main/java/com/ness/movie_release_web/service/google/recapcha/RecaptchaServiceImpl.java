@@ -1,5 +1,6 @@
 package com.ness.movie_release_web.service.google.recapcha;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -12,16 +13,15 @@ import java.util.Map;
 
 @Slf4j
 @Service
+@RequiredArgsConstructor
 public class RecaptchaServiceImpl implements  RecaptchaService{
 
+    private static final String GOOGLE_RECAPTCHA_VERIFY_URL = "https://www.google.com/recaptcha/api/siteverify";
+
     @Value("${google.recaptcha.secret}")
-    String recaptchaSecret;
+    private String recaptchaSecret;
 
-    private static final String GOOGLE_RECAPTCHA_VERIFY_URL =
-            "https://www.google.com/recaptcha/api/siteverify";
-
-    @Autowired
-    RestTemplateBuilder restTemplateBuilder;
+    private final RestTemplateBuilder restTemplateBuilder;
 
     public Boolean verifyRecaptcha(String ip, String recaptchaResponse) {
 

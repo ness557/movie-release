@@ -2,8 +2,8 @@ package com.ness.movie_release_web.repository;
 
 import com.ness.movie_release_web.model.User;
 import com.ness.movie_release_web.model.UserTVSeries;
-import com.ness.movie_release_web.model.dto.tmdb.tvSeries.WatchStatus;
-import com.ness.movie_release_web.model.dto.tmdb.tvSeries.details.Status;
+import com.ness.movie_release_web.dto.tmdb.tvSeries.WatchStatus;
+import com.ness.movie_release_web.dto.tmdb.tvSeries.details.Status;
 import org.springframework.data.jpa.domain.Specification;
 
 import javax.persistence.criteria.Join;

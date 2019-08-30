@@ -1,13 +1,14 @@
 package com.ness.movie_release_web.service;
 
 import com.ness.movie_release_web.model.*;
-import com.ness.movie_release_web.model.dto.tmdb.Language;
-import com.ness.movie_release_web.model.dto.tmdb.movie.details.MovieDetailsDto;
-import com.ness.movie_release_web.model.dto.tmdb.tvSeries.details.TVDetailsDto;
+import com.ness.movie_release_web.dto.Language;
+import com.ness.movie_release_web.dto.tmdb.movie.details.TmdbMovieDetailsDto;
+import com.ness.movie_release_web.dto.tmdb.tvSeries.details.TmdbTVDetailsDto;
+import com.ness.movie_release_web.repository.FilmRepository;
 import com.ness.movie_release_web.repository.UserTVSeriesRepository;
 import com.ness.movie_release_web.service.tmdb.TmdbMovieService;
 import com.ness.movie_release_web.service.tmdb.TmdbTVSeriesService;
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
@@ -16,48 +17,48 @@ import java.util.ArrayList;
 import java.util.Optional;
 
 @Service
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class SubscriptionServiceImpl implements SubscriptionService {
 
-    private TmdbMovieService tmdbMovieService;
-    private FilmService filmService;
-    private UserService userService;
-    private UserTVSeriesRepository userTVSeriesRepository;
-    private TmdbTVSeriesService tmdbTVSeriesService;
-    private TVSeriesService tvSeriesService;
+    private final TmdbMovieService tmdbMovieService;
+    private final FilmRepository movieRepository;
+    private final UserService userService;
+    private final UserTVSeriesRepository userTVSeriesRepository;
+    private final TmdbTVSeriesService tmdbTVSeriesService;
+    private final TVSeriesService tvSeriesService;
 
     @Override
     public void subscribeToMovie(Long tmdbId, String login) {
         User user = userService.findByLogin(login);
 
-        if (filmService.isExistsByTmdbIdAndUser(tmdbId, user))
+        if (movieRepository.existsByIdAndUsers(tmdbId, user))
             throw new ResponseStatusException(HttpStatus.CONFLICT);
 
-        Optional<MovieDetailsDto> optionalMovieDetails = tmdbMovieService.getMovieDetails(tmdbId, Language.en);
+        Optional<TmdbMovieDetailsDto> optionalMovieDetails = tmdbMovieService.getMovieDetails(tmdbId, Language.en);
 
         if (!optionalMovieDetails.isPresent())
             throw new ResponseStatusException(HttpStatus.CONFLICT);
 
-        MovieDetailsDto movieDetailsDto = optionalMovieDetails.get();
+        TmdbMovieDetailsDto tmdbMovieDetailsDto = optionalMovieDetails.get();
 
-        Optional<Film> filmOpt = filmService.findById(tmdbId);
+        Optional<Film> filmOpt = movieRepository.findById(tmdbId);
 
-        Film film = filmOpt.orElse(new Film(movieDetailsDto.getId(), movieDetailsDto.getTitle(), "",
-                movieDetailsDto.getStatus(), movieDetailsDto.getReleaseDate(),
-                movieDetailsDto.getVoteAverage().floatValue(), new ArrayList<>()));
+        Film film = filmOpt.orElse(new Film(tmdbMovieDetailsDto.getId(), tmdbMovieDetailsDto.getTitle(), "",
+                tmdbMovieDetailsDto.getStatus(), tmdbMovieDetailsDto.getReleaseDate(),
+                tmdbMovieDetailsDto.getVoteAverage().floatValue(), new ArrayList<>()));
         film.getUsers().add(user);
 
-        filmService.save(film);
+        movieRepository.save(film);
     }
 
     @Override
     public void unsubscribeFromMovie(Long tmdbId, String login) {
         User user = userService.findByLogin(login);
 
-        Optional<Film> film = filmService.getByTmdbIdAndUser(tmdbId, user);
+        Optional<Film> film = movieRepository.findByIdAndUsers(tmdbId, user);
         film.ifPresent(f -> {
             f.getUsers().remove(user);
-            filmService.save(f);
+            movieRepository.save(f);
         });
     }
 
@@ -70,14 +71,14 @@ public class SubscriptionServiceImpl implements SubscriptionService {
             throw new ResponseStatusException(HttpStatus.CONFLICT);
         }
 
-        Optional<TVDetailsDto> tvDetailsOptional = tmdbTVSeriesService.getTVDetails(tmdbId, Language.en);
-        Optional<TVDetailsDto> tvDetailsOptionalRu = tmdbTVSeriesService.getTVDetails(tmdbId, Language.ru);
+        Optional<TmdbTVDetailsDto> tvDetailsOptional = tmdbTVSeriesService.getTVDetails(tmdbId, Language.en);
+        Optional<TmdbTVDetailsDto> tvDetailsOptionalRu = tmdbTVSeriesService.getTVDetails(tmdbId, Language.ru);
 
         if (!tvDetailsOptional.isPresent() || !tvDetailsOptionalRu.isPresent())
             throw new ResponseStatusException(HttpStatus.CONFLICT);
 
-        TVDetailsDto tvDetails = tvDetailsOptional.get();
-        TVDetailsDto tvDetailsRu = tvDetailsOptionalRu.get();
+        TmdbTVDetailsDto tvDetails = tvDetailsOptional.get();
+        TmdbTVDetailsDto tvDetailsRu = tvDetailsOptionalRu.get();
 
         Optional<TVSeries> one = tvSeriesService.findById(tmdbId);
 

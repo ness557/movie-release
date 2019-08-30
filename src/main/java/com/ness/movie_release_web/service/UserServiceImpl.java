@@ -2,6 +2,7 @@ package com.ness.movie_release_web.service;
 
 import com.ness.movie_release_web.model.User;
 import com.ness.movie_release_web.repository.UserRepository;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -9,13 +10,11 @@ import org.springframework.stereotype.Service;
 import java.util.Optional;
 
 @Service
+@RequiredArgsConstructor
 public class UserServiceImpl implements UserService {
 
-    @Autowired
-    private UserRepository repository;
-
-    @Autowired
-    private PasswordEncoder passwordEncoder;
+    private final UserRepository repository;
+    private final PasswordEncoder passwordEncoder;
 
     @Override
     public void save(User user) {

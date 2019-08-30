@@ -1,13 +1,13 @@
 package com.ness.movie_release_web.service.tmdb;
 
-import com.ness.movie_release_web.model.dto.tmdb.releaseDates.ReleaseDate;
-import com.ness.movie_release_web.model.dto.tmdb.releaseDates.ReleaseType;
+import com.ness.movie_release_web.dto.tmdb.releaseDates.TmdbReleaseDate;
+import com.ness.movie_release_web.dto.tmdb.releaseDates.ReleaseType;
 
 import java.util.List;
 
 public interface TmdbDatesService {
-    List<ReleaseDate> getReleaseDates(String imdbId, ReleaseType... releaseTypes);
-    List<ReleaseDate> getReleaseDates(Long tmdbId, ReleaseType... releaseTypes);
-    List<ReleaseDate> getReleaseDates(String imdbId);
-    List<ReleaseDate> getReleaseDates(Long tmdbId);
+    List<TmdbReleaseDate> getReleaseDates(String imdbId, ReleaseType... releaseTypes);
+    List<TmdbReleaseDate> getReleaseDates(Long tmdbId, ReleaseType... releaseTypes);
+    List<TmdbReleaseDate> getReleaseDates(String imdbId);
+    List<TmdbReleaseDate> getReleaseDates(Long tmdbId);
 }

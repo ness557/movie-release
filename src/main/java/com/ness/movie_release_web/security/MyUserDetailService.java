@@ -1,6 +1,8 @@
 package com.ness.movie_release_web.security;
 
+import com.ness.movie_release_web.repository.UserRepository;
 import com.ness.movie_release_web.service.UserService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -14,20 +16,20 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 
-@Service("myUserDetailService")
+@Service
+@RequiredArgsConstructor
 public class MyUserDetailService implements UserDetailsService {
 
-    @Autowired
-    private UserService service;
+    private final UserRepository userRepository;
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
 
-        if (!service.isExists(username)) {
+        if (!userRepository.existsByLogin(username)) {
             throw new UsernameNotFoundException("No such user: " + username);
         }
 
-        com.ness.movie_release_web.model.User user = service.findByLogin(username);
+        com.ness.movie_release_web.model.User user = userRepository.findByLogin(username);
 
         Set<GrantedAuthority> authoritySet = new HashSet<>();
         Arrays.stream(user.getRole().split(";")).forEach(e -> authoritySet.add(new SimpleGrantedAuthority(e)));

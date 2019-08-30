@@ -1,6 +1,6 @@
 package com.ness.movie_release_web.model;
 
-import com.ness.movie_release_web.model.dto.tmdb.tvSeries.details.Status;
+import com.ness.movie_release_web.dto.tmdb.tvSeries.details.Status;
 import lombok.*;
 
 import javax.persistence.*;

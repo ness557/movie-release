@@ -24,7 +24,7 @@ public class TmdbReleaseDateDateDeserializer extends StdDeserializer<LocalDate> 
 
     @Override
     public LocalDate deserialize(JsonParser jp, DeserializationContext context)
-            throws IOException, JsonProcessingException {
+            throws IOException {
 
         JsonNode node = jp.getCodec().readTree(jp);
         String value = node.textValue();

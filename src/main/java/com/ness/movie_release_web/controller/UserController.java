@@ -1,12 +1,12 @@
 package com.ness.movie_release_web.controller;
 
 import com.ness.movie_release_web.model.User;
-import com.ness.movie_release_web.model.dto.PasswordDto;
-import com.ness.movie_release_web.model.dto.UserDto;
-import com.ness.movie_release_web.model.dto.UserMapper;
-import com.ness.movie_release_web.model.dto.tmdb.Language;
-import com.ness.movie_release_web.model.dto.tmdb.Mode;
-import com.ness.movie_release_web.model.dto.tmdb.PasswordChangeDto;
+import com.ness.movie_release_web.dto.PasswordDto;
+import com.ness.movie_release_web.dto.UserDto;
+import com.ness.movie_release_web.dto.UserMapper;
+import com.ness.movie_release_web.dto.Language;
+import com.ness.movie_release_web.dto.Mode;
+import com.ness.movie_release_web.dto.tmdb.TmdbPasswordChangeDto;
 import com.ness.movie_release_web.service.PasswordRestoreService;
 import com.ness.movie_release_web.service.RegistrationService;
 import com.ness.movie_release_web.service.UserService;
@@ -129,7 +129,7 @@ public class UserController {
 
         model.addAttribute("language", language);
         model.addAttribute("mode", mode);
-        model.addAttribute("passwordChange", new PasswordChangeDto().setPassword(new PasswordDto()));
+        model.addAttribute("passwordChange", new TmdbPasswordChangeDto().setPassword(new PasswordDto()));
 
         return "changePassword";
     }
@@ -166,7 +166,7 @@ public class UserController {
     }
 
     @PostMapping("/changePassword")
-    public String changePass(@Valid @ModelAttribute("passwordChange") PasswordChangeDto dto,
+    public String changePass(@Valid @ModelAttribute("passwordChange") TmdbPasswordChangeDto dto,
                              BindingResult bindingResult,
                              @CookieValue(value = "language", defaultValue = "en") Language language,
                              @CookieValue(value = "mode", defaultValue = "movie") Mode mode,
@@ -236,7 +236,7 @@ public class UserController {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND);
         }
 
-        model.addAttribute("passwordDto", new PasswordChangeDto().setPassword(new PasswordDto()));
+        model.addAttribute("passwordDto", new TmdbPasswordChangeDto().setPassword(new PasswordDto()));
         model.addAttribute("token", token);
 
         return "recoverPassword";
@@ -244,7 +244,7 @@ public class UserController {
 
     @PostMapping("/recoverPassword/{token}")
     public String restorePassword(@PathVariable("token") String token,
-                                  @Valid @ModelAttribute("passwordDto") PasswordChangeDto dto,
+                                  @Valid @ModelAttribute("passwordDto") TmdbPasswordChangeDto dto,
                                   BindingResult bindingResult,
                                   @CookieValue(value = "language", defaultValue = "en") Language language,
                                   @CookieValue(value = "mode", defaultValue = "movie") Mode mode,

@@ -2,10 +2,9 @@ package com.ness.movie_release_web.service.telegram;
 
 import com.ness.movie_release_web.model.User;
 import com.ness.movie_release_web.service.UserService;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
@@ -17,6 +16,8 @@ import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 
 @Component
+@RequiredArgsConstructor
+@Slf4j
 public class TelegramNotificationBotImpl extends TelegramLongPollingBot implements TelegramNotificationBot{
 
     @Value("${telegram.name}")
@@ -28,10 +29,7 @@ public class TelegramNotificationBotImpl extends TelegramLongPollingBot implemen
     @Value("${telegram.webInterfaceLink}")
     private String appLink;
 
-    @Autowired
-    private UserService userService;
-
-    private Logger logger = LoggerFactory.getLogger(this.getClass());
+    private final UserService userService;
 
     public void sendNotify(String resultText, Long telegramChatId, String posterPath) {
         // Create send method
@@ -46,9 +44,9 @@ public class TelegramNotificationBotImpl extends TelegramLongPollingBot implemen
         try {
             execute(photo);
 
-            logger.info("Notification {} sent", photo.toString());
+            log.info("Notification {} sent", photo.toString());
         } catch (TelegramApiException e) {
-            logger.error("Could not sent telegram message: {}", e.getMessage());
+            log.error("Could not sent telegram message: {}", e.getMessage());
             e.printStackTrace();
         }
     }
@@ -60,9 +58,9 @@ public class TelegramNotificationBotImpl extends TelegramLongPollingBot implemen
                     .setText(resultText)
                     .setParseMode(ParseMode.MARKDOWN));
 
-            logger.info("Password restore message sent={} ", message.toString());
+            log.info("Password restore message sent={} ", message.toString());
         } catch (TelegramApiException e) {
-            logger.error("Could not sent telegram message: {}", e.getMessage());
+            log.error("Could not sent telegram message: {}", e.getMessage());
             e.printStackTrace();
         }
     }
@@ -84,9 +82,9 @@ public class TelegramNotificationBotImpl extends TelegramLongPollingBot implemen
             sendMessage.setText("You have been registered");
             try {
                 execute(sendMessage);
-                logger.info("User {} registered", telegramUserName);
+                log.info("User {} registered", telegramUserName);
             } catch (TelegramApiException e) {
-                logger.error("Could register telegram user: {}", e.getMessage());
+                log.error("Could register telegram user: {}", e.getMessage());
             }
         }
     }

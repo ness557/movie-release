@@ -1,16 +1,15 @@
 package com.ness.movie_release_web.service.email;
 
 import com.ness.movie_release_web.model.User;
-import com.ness.movie_release_web.model.dto.tmdb.movie.details.MovieDetailsDto;
-import com.ness.movie_release_web.model.dto.tmdb.releaseDates.ReleaseDate;
-import com.ness.movie_release_web.model.dto.tmdb.tvSeries.details.EpisodeDto;
-import com.ness.movie_release_web.model.dto.tmdb.tvSeries.details.SeasonDto;
-import com.ness.movie_release_web.model.dto.tmdb.tvSeries.details.TVDetailsDto;
+import com.ness.movie_release_web.dto.tmdb.movie.details.TmdbMovieDetailsDto;
+import com.ness.movie_release_web.dto.tmdb.releaseDates.TmdbReleaseDate;
+import com.ness.movie_release_web.dto.tmdb.tvSeries.details.TmdbEpisodeDto;
+import com.ness.movie_release_web.dto.tmdb.tvSeries.details.TmdbSeasonDto;
+import com.ness.movie_release_web.dto.tmdb.tvSeries.details.TmdbTVDetailsDto;
 import freemarker.template.Configuration;
 import freemarker.template.TemplateException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.MessageSource;
 import org.springframework.mail.javamail.JavaMailSender;
@@ -29,24 +28,19 @@ import java.util.Map;
 import static org.springframework.ui.freemarker.FreeMarkerTemplateUtils.processTemplateIntoString;
 
 @Service
+@Slf4j
+@RequiredArgsConstructor
 public class EmailServiceImpl implements EmailService {
 
-    @Autowired
-    private JavaMailSender mailSender;
-
-    @Autowired
-    private Configuration freemarkerConfig;
-
-    @Autowired
-    private MessageSource messageSource;
+    private final JavaMailSender mailSender;
+    private final Configuration freemarkerConfig;
+    private final MessageSource messageSource;
 
     @Value("${telegram.webInterfaceLink}")
     private String webLink;
 
-    private Logger logger = LoggerFactory.getLogger(this.getClass());
-
     @Override
-    public void sendMovieNotify(User user, MovieDetailsDto movie, ReleaseDate releaseDate) {
+    public void sendMovieNotify(User user, TmdbMovieDetailsDto movie, TmdbReleaseDate releaseDate) {
 
         try {
             MimeMessage message = mailSender.createMimeMessage();
@@ -80,14 +74,14 @@ public class EmailServiceImpl implements EmailService {
             helper.setSubject(subject);
 
             mailSender.send(message);
-            logger.info("Email sent to {} with movie {}", user.getEmail(), movie.toString());
+            log.info("Email sent to {} with movie {}", user.getEmail(), movie.toString());
         } catch (IOException | MessagingException | TemplateException e) {
-            logger.error("Could not sent email: {}", e.getMessage());
+            log.error("Could not sent email: {}", e.getMessage());
         }
     }
 
     @Override
-    public void sendEpisodeNotify(User user, EpisodeDto episode, TVDetailsDto show) {
+    public void sendEpisodeNotify(User user, TmdbEpisodeDto episode, TmdbTVDetailsDto show) {
 
         try {
             MimeMessage message = mailSender.createMimeMessage();
@@ -122,14 +116,14 @@ public class EmailServiceImpl implements EmailService {
             helper.setSubject(subject);
 
             mailSender.send(message);
-            logger.info("Email sent to {} with episode {} of tv show {}", user.getEmail(), episode.toString(), show.toString());
+            log.info("Email sent to {} with episode {} of tv show {}", user.getEmail(), episode.toString(), show.toString());
         } catch (IOException | MessagingException | TemplateException e) {
-            logger.error("Could not sent email: {}", e.getMessage());
+            log.error("Could not sent email: {}", e.getMessage());
         }
     }
 
     @Override
-    public void sendSeasonNotify(User user, SeasonDto season, TVDetailsDto show) {
+    public void sendSeasonNotify(User user, TmdbSeasonDto season, TmdbTVDetailsDto show) {
         try {
             MimeMessage message = mailSender.createMimeMessage();
             MimeMessageHelper helper = new MimeMessageHelper(message,
@@ -161,9 +155,9 @@ public class EmailServiceImpl implements EmailService {
             helper.setSubject(subject);
 
             mailSender.send(message);
-            logger.info("Email sent to {} with season {} of tv show {}", user.getEmail(), season.toString(), show.toString());
+            log.info("Email sent to {} with season {} of tv show {}", user.getEmail(), season.toString(), show.toString());
         } catch (IOException | MessagingException | TemplateException e) {
-            logger.error("Could not sent email: {}", e.getMessage());
+            log.error("Could not sent email: {}", e.getMessage());
         }
     }
 
@@ -184,7 +178,8 @@ public class EmailServiceImpl implements EmailService {
 
             mailSender.send(message);
         } catch (IOException | MessagingException | TemplateException e) {
-            logger.error("Could not sent email: {}", e.getMessage());
+            log.error("Could not sent email: {}", e.getMessage());
         }
     }
 }
+

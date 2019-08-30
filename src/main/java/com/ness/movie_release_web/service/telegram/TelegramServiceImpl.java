@@ -1,29 +1,26 @@
 package com.ness.movie_release_web.service.telegram;
 
 import com.ness.movie_release_web.model.User;
-import com.ness.movie_release_web.model.dto.tmdb.movie.details.MovieDetailsDto;
-import com.ness.movie_release_web.model.dto.tmdb.releaseDates.ReleaseDate;
-import com.ness.movie_release_web.model.dto.tmdb.tvSeries.details.EpisodeDto;
-import com.ness.movie_release_web.model.dto.tmdb.tvSeries.details.SeasonDto;
-import com.ness.movie_release_web.model.dto.tmdb.tvSeries.details.TVDetailsDto;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
+import com.ness.movie_release_web.dto.tmdb.movie.details.TmdbMovieDetailsDto;
+import com.ness.movie_release_web.dto.tmdb.releaseDates.TmdbReleaseDate;
+import com.ness.movie_release_web.dto.tmdb.tvSeries.details.TmdbEpisodeDto;
+import com.ness.movie_release_web.dto.tmdb.tvSeries.details.TmdbSeasonDto;
+import com.ness.movie_release_web.dto.tmdb.tvSeries.details.TmdbTVDetailsDto;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Service;
-import org.telegram.telegrambots.meta.TelegramBotsApi;
-import org.telegram.telegrambots.meta.exceptions.TelegramApiRequestException;
-import org.telegram.telegrambots.meta.generics.LongPollingBot;
 
 import java.time.format.DateTimeFormatter;
 
 @Service
+@Slf4j
+@RequiredArgsConstructor
 public class TelegramServiceImpl implements TelegramService {
 
-    private Logger logger = LoggerFactory.getLogger(this.getClass());
-
-    private TelegramNotificationBot notificationBot;
+    private final TelegramNotificationBot notificationBot;
+    private final MessageSource messageSource;
 
     @Value("${telegram.name}")
     private String botName;
@@ -34,26 +31,9 @@ public class TelegramServiceImpl implements TelegramService {
     @Value("${telegram.webInterfaceLink}")
     private String appLink;
 
-    @Autowired
-    private MessageSource messageSource;
-
-    @Autowired
-    public TelegramServiceImpl(TelegramNotificationBot bot) {
-
-        notificationBot = bot;
-
-        // instantiate Tg bot api
-        TelegramBotsApi botsApi = new TelegramBotsApi();
-
-        try {
-            botsApi.registerBot((LongPollingBot) notificationBot);
-        } catch (TelegramApiRequestException e) {
-            logger.info("Couldn't initialize bot: {}", e.getMessage());
-        }
-    }
 
     @Override
-    public void sendMovieNotify(User user, MovieDetailsDto movie, ReleaseDate releaseDate) {
+    public void sendMovieNotify(User user, TmdbMovieDetailsDto movie, TmdbReleaseDate releaseDate) {
 
         String resultText = new StringBuilder()
                 .append(movie.getTitle())
@@ -82,7 +62,7 @@ public class TelegramServiceImpl implements TelegramService {
     }
 
     @Override
-    public void sendEpisodeNotify(User user, EpisodeDto episode, TVDetailsDto show) {
+    public void sendEpisodeNotify(User user, TmdbEpisodeDto episode, TmdbTVDetailsDto show) {
 
         String resultText = new StringBuilder()
                 .append(episode.getAirDate().format(DateTimeFormatter.ofPattern("dd MMMM yyyy").withLocale(user.getLanguage().getLocale()))).append(" ")
@@ -110,7 +90,7 @@ public class TelegramServiceImpl implements TelegramService {
     }
 
     @Override
-    public void sendSeasonNotify(User user, SeasonDto season, TVDetailsDto show) {
+    public void sendSeasonNotify(User user, TmdbSeasonDto season, TmdbTVDetailsDto show) {
 
         String resultText = new StringBuilder()
                 .append(season.getAirDate().format(DateTimeFormatter.ofPattern("dd MMMM yyyy").withLocale(user.getLanguage().getLocale()))).append(" ")

@@ -4,7 +4,7 @@ import lombok.*;
 
 import javax.persistence.*;
 
-import com.ness.movie_release_web.model.dto.tmdb.Language;
+import com.ness.movie_release_web.dto.Language;
 import lombok.experimental.Accessors;
 
 @Entity

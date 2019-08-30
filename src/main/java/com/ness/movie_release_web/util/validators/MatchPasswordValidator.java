@@ -1,6 +1,6 @@
 package com.ness.movie_release_web.util.validators;
 
-import com.ness.movie_release_web.model.dto.PasswordDto;
+import com.ness.movie_release_web.dto.PasswordDto;
 import lombok.extern.slf4j.Slf4j;
 
 import javax.validation.ConstraintValidator;
