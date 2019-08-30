@@ -33,17 +33,13 @@ public class PeopleController {
     public String getDetails(@PathVariable("tmdbId") Long id,
                              @CookieValue(value = "language", defaultValue = "en") Language language,
                              @CookieValue(value = "mode", defaultValue = "movie") Mode mode,
-                             Model model,
-                             Principal principal) {
+                             Model model) {
 
         model.addAttribute("language", language);
         model.addAttribute("mode", mode);
-
-        Optional<TmdbPeopleDto> peopleOpt = tmdbPeopleService.getDetails(id, language);
-        if (!peopleOpt.isPresent()) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND);
-        }
-        model.addAttribute("person", peopleOpt.get());
+        model.addAttribute("person",
+                tmdbPeopleService.getDetails(id, language)
+                        .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND)));
 
         return "personInfo";
     }

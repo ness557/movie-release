@@ -1,16 +1,16 @@
 package com.ness.movie_release_web.service.notification;
 
-import com.ness.movie_release_web.model.Film;
-import com.ness.movie_release_web.model.User;
-import com.ness.movie_release_web.model.UserTVSeries;
 import com.ness.movie_release_web.dto.Language;
 import com.ness.movie_release_web.dto.tmdb.movie.details.TmdbMovieDetailsDto;
-import com.ness.movie_release_web.dto.tmdb.releaseDates.TmdbReleaseDate;
 import com.ness.movie_release_web.dto.tmdb.releaseDates.ReleaseType;
+import com.ness.movie_release_web.dto.tmdb.releaseDates.TmdbReleaseDate;
 import com.ness.movie_release_web.dto.tmdb.tvSeries.details.TmdbEpisodeDto;
 import com.ness.movie_release_web.dto.tmdb.tvSeries.details.TmdbSeasonDto;
 import com.ness.movie_release_web.dto.tmdb.tvSeries.details.TmdbTVDetailsDto;
-import com.ness.movie_release_web.service.MovieService;
+import com.ness.movie_release_web.model.Film;
+import com.ness.movie_release_web.model.User;
+import com.ness.movie_release_web.model.UserTVSeries;
+import com.ness.movie_release_web.repository.FilmRepository;
 import com.ness.movie_release_web.service.TVSeriesService;
 import com.ness.movie_release_web.service.email.EmailService;
 import com.ness.movie_release_web.service.telegram.TelegramService;
@@ -32,7 +32,7 @@ import static java.util.stream.Collectors.toMap;
 @Slf4j
 public class NotificationServiceImpl implements NotificationService {
 
-    private final MovieService movieService;
+    private final FilmRepository movieRepository;
     private final TmdbMovieService tmdbMovieService;
     private final TelegramService telegramService;
     private final EmailService emailService;
@@ -46,7 +46,7 @@ public class NotificationServiceImpl implements NotificationService {
 
         log.info("Notifying for movies...");
 
-        List<Film> films = movieService.getAll();
+        List<Film> films = movieRepository.findAll();
 
         LocalDate endDate = LocalDate.now();
         LocalDate startDate = endDate.minusDays(2);
