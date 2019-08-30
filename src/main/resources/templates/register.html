@@ -84,7 +84,7 @@
                     <div class="col-10 col-sm-10 col-md-10 col-lg-10 col-xl-10 form-group">
                         <div class="icon-addon addon-lg">
                             <select th:field="*{language}" class="form-control" style="height: 46px">
-                                <option th:each="lang : ${T(com.ness.movie_release_web.model.dto.tmdb.Language).values()}"
+                                <option th:each="lang : ${T(com.ness.movie_release_web.model.tmdb.Language).values()}"
                                         th:value="${lang}"
                                         th:text="#{'lang.' + ${lang.value}}"
                                         th:selected="${lang == language}">

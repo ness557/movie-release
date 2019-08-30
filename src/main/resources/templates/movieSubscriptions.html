@@ -43,7 +43,7 @@
                     <div id="collapseFilter" style="padding: 15px 20px;">
 
                         <th:block
-                                th:each="status : ${T(com.ness.movie_release_web.model.dto.tmdb.movie.details.Status).values()}"
+                                th:each="status : ${T(com.ness.movie_release_web.dto.tmdb.movie.details.Status).values()}"
                                 th:if="${status.ordinal() != 0}">
                             <div class="row">
                                 <div class="col-1">

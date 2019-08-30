@@ -15,7 +15,7 @@
                          aria-labelledby="languageDropdown">
 
                         <a href="javascript:void(0);" class="dropdown-item languageSelect"
-                           th:each="lang : ${T(com.ness.movie_release_web.dto.tmdb.Language).values()}">
+                           th:each="lang : ${T(com.ness.movie_release_web.dto.Language).values()}">
                             <option class="langVal"
                                     th:value="${lang}"
                                     th:text="#{'lang.' + ${lang.value}}"
@@ -34,7 +34,7 @@
                          aria-labelledby="modeDropdown">
 
                         <a href="javascript:void(0);" class="dropdown-item modeSelect"
-                           th:each="modd : ${T(com.ness.movie_release_web.dto.tmdb.Mode).values()}">
+                           th:each="modd : ${T(com.ness.movie_release_web.dto.Mode).values()}">
                             <option class="modVal"
                                     th:value="${modd}"
                                     th:text="#{'lang.mode.' + ${modd.name()}}"
