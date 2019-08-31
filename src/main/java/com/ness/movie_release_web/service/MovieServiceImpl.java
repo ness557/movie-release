@@ -12,6 +12,7 @@ import com.ness.movie_release_web.dto.tmdb.movie.search.TmdbMovieSearchDto;
 import com.ness.movie_release_web.model.Film;
 import com.ness.movie_release_web.model.User;
 import com.ness.movie_release_web.dto.tmdb.movie.details.Status;
+import com.ness.movie_release_web.model.type.MessageDestinationType;
 import com.ness.movie_release_web.repository.FilmRepository;
 import com.ness.movie_release_web.repository.MovieSortBy;
 import com.ness.movie_release_web.service.tmdb.*;
@@ -29,6 +30,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
+import static com.ness.movie_release_web.model.type.MessageDestinationType.*;
 import static com.ness.movie_release_web.repository.FilmSpecifications.byUserAndStatusWithOrderby;
 import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toMap;
@@ -106,7 +108,7 @@ public class MovieServiceImpl implements MovieService {
                 .setMovieDetailsDtos(movieDtos)
                 .setSortBy(sort)
                 .setTotalPages((long) filmPage.getTotalPages())
-                .setBotInitialized(!user.isTelegramNotify() || user.getTelegramChatId() != null);
+                .setBotInitialized(user.getMessageDestinationType().equals(EMAIL) || user.getTelegramChatId() != null);
     }
 
     public MovieDiscoverDto discover(TmdbDiscoverSearchCriteria criteria, String login) {
