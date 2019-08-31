@@ -37,6 +37,6 @@ public class Movie {
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(name = "movie_uzer",
             joinColumns = @JoinColumn(name = "movie_id"),
-            inverseJoinColumns = @JoinColumn(name = "movie_id"))
+            inverseJoinColumns = @JoinColumn(name = "uzer_id"))
     private List<User> users;
 }
