@@ -11,7 +11,8 @@ import com.ness.movie_release_web.model.Film;
 import com.ness.movie_release_web.model.User;
 import com.ness.movie_release_web.model.UserTVSeries;
 import com.ness.movie_release_web.repository.FilmRepository;
-import com.ness.movie_release_web.service.TVSeriesService;
+import com.ness.movie_release_web.repository.TVSeriesRepository;
+import com.ness.movie_release_web.repository.UserTVSeriesRepository;
 import com.ness.movie_release_web.service.email.EmailService;
 import com.ness.movie_release_web.service.telegram.TelegramService;
 import com.ness.movie_release_web.service.tmdb.TmdbDatesService;
@@ -37,7 +38,7 @@ public class NotificationServiceImpl implements NotificationService {
     private final TelegramService telegramService;
     private final EmailService emailService;
     private final TmdbDatesService tmdbDatesService;
-    private final TVSeriesService tvSeriesService;
+    private final UserTVSeriesRepository tvSeriesRepository;
     private final TmdbTVSeriesService tmdbTVSeriesService;
 
     @Override
@@ -101,7 +102,7 @@ public class NotificationServiceImpl implements NotificationService {
         Map<User, Map<TmdbEpisodeDto, TmdbTVDetailsDto>> telegramEpisodeNotifies = new HashMap<>();
 
         // get all tv shows from db
-        List<UserTVSeries> allUserTVSeries = tvSeriesService.getAllUserTVSeries();
+        List<UserTVSeries> allUserTVSeries = tvSeriesRepository.findAll();
 
         // @formatter:off
         // for each value from db

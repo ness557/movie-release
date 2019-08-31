@@ -1,18 +1,19 @@
 package com.ness.movie_release_web.service;
 
+import com.ness.movie_release_web.dto.Language;
+import com.ness.movie_release_web.dto.PasswordChangeDto;
+import com.ness.movie_release_web.dto.PasswordResetResponseDto;
 import com.ness.movie_release_web.model.User;
 
 import java.util.Optional;
 
 public interface UserService {
 
-    void save(User user);
+
+    void updateLanguage(String login, Language language);
+
     void saveWithPassEncryption(User user);
-    User get(Long id);
-    Iterable<User> getAll();
     User findByLogin(String login);
-    boolean isExists(String login);
-    boolean existsByIdNotAndLogin(Long id, String login);
-    User findByTelegramId(String telegramId);
-    Optional<User> findByTelegramIdOrEmail(String telegramId, String email);
+    PasswordResetResponseDto sendResetPasswordResponse(String emailOrTg) throws UserNotFoundException;
+    User recoverPassword(String token, PasswordChangeDto dto);
 }

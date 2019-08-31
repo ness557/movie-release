@@ -1,10 +1,10 @@
 package com.ness.movie_release_web.service;
 
 import com.ness.movie_release_web.dto.Language;
-import com.ness.movie_release_web.dto.MovieDiscoverDto;
-import com.ness.movie_release_web.dto.MovieDto;
-import com.ness.movie_release_web.dto.MovieSearchDto;
-import com.ness.movie_release_web.dto.MovieSubscriptionsDto;
+import com.ness.movie_release_web.dto.movie.MovieDiscoverDto;
+import com.ness.movie_release_web.dto.movie.MovieDto;
+import com.ness.movie_release_web.dto.movie.MovieSearchDto;
+import com.ness.movie_release_web.dto.movie.MovieSubscriptionsDto;
 import com.ness.movie_release_web.dto.tmdb.movie.details.TmdbMovieDetailsDto;
 import com.ness.movie_release_web.dto.tmdb.movie.discover.TmdbDiscoverSearchCriteria;
 import com.ness.movie_release_web.dto.tmdb.movie.search.TmdbMovieDto;
@@ -20,6 +20,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
@@ -125,6 +126,33 @@ public class MovieServiceImpl implements MovieService {
                 .setPeople(tmdbPeopleService.getPeopleList(criteria.getPeople(), language))
                 .setGenres(tmdbGenreService.getMovieGenres(language));
 
+    }
+
+    @Override
+    @Scheduled(cron = "${cron.pattern.updateDB}")
+    public void updateDb() {
+
+        log.info("Updating film db...");
+        repository.findAll().forEach(f -> {
+            Long tmdbId = f.getId();
+            Optional<TmdbMovieDetailsDto> movieDetails = tmdbMovieService.getMovieDetails(tmdbId, Language.en);
+
+            if (!movieDetails.isPresent()) {
+                return;
+            }
+
+            TmdbMovieDetailsDto movieDetailsDto = movieDetails.get();
+            f.setReleaseDate(movieDetailsDto.getReleaseDate());
+            f.setVoteAverage(movieDetailsDto.getVoteAverage().floatValue());
+            f.setNameEn(movieDetailsDto.getTitle());
+            f.setStatus(movieDetailsDto.getStatus());
+
+            Optional<TmdbMovieDetailsDto> movieDetailsRuOpt = tmdbMovieService.getMovieDetails(tmdbId, Language.ru);
+            movieDetailsRuOpt.ifPresent(movieDetailsRu -> f.setNameRu(movieDetailsRu.getTitle()));
+
+            repository.save(f);
+        });
+        log.info("film db updated!");
     }
 
     private Page<Film> getByUserAndStatusWithOrderbyAndPages(List<Status> statuses,

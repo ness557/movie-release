@@ -1,13 +1,22 @@
 package com.ness.movie_release_web.service;
 
+import com.ness.movie_release_web.dto.Language;
+import com.ness.movie_release_web.dto.PasswordChangeDto;
+import com.ness.movie_release_web.dto.PasswordResetResponseDto;
 import com.ness.movie_release_web.model.User;
+import com.ness.movie_release_web.model.type.NotificationSource;
 import com.ness.movie_release_web.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.Optional;
+
+import static com.ness.movie_release_web.model.type.NotificationSource.EMAIL;
+import static com.ness.movie_release_web.model.type.NotificationSource.TELEGRAM;
 
 @Service
 @RequiredArgsConstructor
@@ -15,49 +24,51 @@ public class UserServiceImpl implements UserService {
 
     private final UserRepository repository;
     private final PasswordEncoder passwordEncoder;
+    private final PasswordRestoreService passwordRestoreService;
 
     @Override
-    public void save(User user) {
-        repository.save(user);
-    }
-
     public void saveWithPassEncryption(User user) {
         user.setEncPassword(passwordEncoder.encode(user.getEncPassword()));
         repository.save(user);
     }
 
     @Override
-    public User get(Long id) {
-        return repository.getOne(id);
+    public PasswordResetResponseDto sendResetPasswordResponse(String emailOrTg) throws UserNotFoundException {
+        User user = repository.findByTelegramIdOrEmail(emailOrTg, emailOrTg).orElseThrow(UserNotFoundException::new);
+        String resetToken = passwordRestoreService.createRestoreToken(user);
+
+        PasswordResetResponseDto resultDto = new PasswordResetResponseDto();
+
+        if (user.isTelegramNotify()) {
+            passwordRestoreService.sendRestoreViaTelegram(resetToken, user.getTelegramChatId());
+            resultDto.setSource(TELEGRAM)
+                    .setAddress(user.getTelegramId());
+        } else {
+            passwordRestoreService.sendRestoreViaEmail(resetToken, user.getEmail());
+            resultDto.setSource(EMAIL)
+                    .setAddress(user.getEmail());
+        }
+
+        return resultDto;
     }
 
     @Override
-    public Iterable<User> getAll() {
-        return repository.findAll();
+    public User recoverPassword(String token, PasswordChangeDto dto) {
+        User user = passwordRestoreService.getByPasswordToken(token)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
+
+        saveWithPassEncryption(user.setEncPassword(dto.getNewPassword()));
+
+        return user;
+    }
+
+    @Override
+    public void updateLanguage(String login, Language language) {
+        repository.findByLogin(login).setLanguage(language);
     }
 
     @Override
     public User findByLogin(String login) {
         return repository.findByLogin(login);
-    }
-
-    @Override
-    public boolean isExists(String login) {
-        return repository.existsByLogin(login);
-    }
-
-    @Override
-    public boolean existsByIdNotAndLogin(Long id, String login) {
-        return repository.existsByIdNotAndLogin(id, login);
-    }
-
-    @Override
-    public User findByTelegramId(String telegramId) {
-        return repository.findByTelegramId(telegramId);
-    }
-
-    @Override
-    public Optional<User> findByTelegramIdOrEmail(String telegramId, String email) {
-        return repository.findByTelegramIdOrEmail(telegramId, email);
     }
 }

@@ -40,7 +40,9 @@ public class PasswordRestoreServiceImpl implements PasswordRestoreService {
     private Map<String, User> passwordRestoreTokenMap = new WeakHashMap<>();
 
     @Override
-    public List<String> changePassword(User user, String oldPassword, String newPassword, Locale locale) {
+    public List<String> updatePassword(String login, String oldPassword, String newPassword, Locale locale) {
+
+        User user = userService.findByLogin(login);
 
         if (!passwordEncoder.matches(oldPassword, user.getEncPassword())) {
             return Collections.singletonList(messageSource.getMessage("lang.wrong_password_error", new Object[]{}, locale));

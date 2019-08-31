@@ -1,5 +1,8 @@
 package com.ness.movie_release_web.service;
 
+import com.ness.movie_release_web.dto.*;
+import com.ness.movie_release_web.dto.tmdb.movie.discover.TmdbDiscoverSearchCriteria;
+import com.ness.movie_release_web.dto.tvseries.*;
 import com.ness.movie_release_web.model.TVSeries;
 import com.ness.movie_release_web.model.User;
 import com.ness.movie_release_web.model.UserTVSeries;
@@ -13,26 +16,24 @@ import java.util.Optional;
 
 public interface TVSeriesService {
 
-    Boolean isExistsByTmdbIdAndUserId(Long tmdbId, Long userId);
+    TvSeriesDto getShow(Long tmdbId, Language language, Mode mode, String login);
 
-    Optional<UserTVSeries> getByTmdbIdAndUserId(Long tmdbId, Long userId);
+    TvSeriesSeasonDto getSeason(Long tmdbId, Long seasonNumber, Language language, String login);
 
-    Page<UserTVSeries> getByUserAndTVStatusesAndWatchStatusesWithOrderAndPages(List<Status> tvStatuses,
-                                                                               List<WatchStatus> watchStatuses,
-                                                                               TVSeriesSortBy sortBy,
-                                                                               User user,
-                                                                               Integer page,
-                                                                               Integer size);
+    TvSeriesSearchDto search(String query, Long year, Long page, Language language, String login);
 
-    List<UserTVSeries> getAllUserTVSeries();
+    TvSeriesSubscriptionsDto getSubscriptions(List<Status> statuses,
+                                              List<WatchStatus> watchStatuses,
+                                              TVSeriesSortBy sort,
+                                              Boolean viewMode,
+                                              Long page,
+                                              String login,
+                                              Language language);
+
+    TvSeriesDiscoverDto discover(TmdbDiscoverSearchCriteria criteria, String login);
 
     void setSeasonAndEpisode(Long tmdbId, User user, Long seasonNum, Long episodeNum);
 
-    Long spentTotalMinutesToSeries(Long tmdbId, User user, Long currentSeason, Long currentEpisode);
-
-    Long spentTotalMinutesToSeriesSeason(Long tmdbId, Long season, User user, Long currentSeason, Long currentEpisode);
-
     void updateDB();
 
-    Optional<TVSeries> findById(Long id);
 }

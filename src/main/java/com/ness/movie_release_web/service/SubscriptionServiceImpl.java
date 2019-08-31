@@ -5,6 +5,7 @@ import com.ness.movie_release_web.dto.Language;
 import com.ness.movie_release_web.dto.tmdb.movie.details.TmdbMovieDetailsDto;
 import com.ness.movie_release_web.dto.tmdb.tvSeries.details.TmdbTVDetailsDto;
 import com.ness.movie_release_web.repository.FilmRepository;
+import com.ness.movie_release_web.repository.TVSeriesRepository;
 import com.ness.movie_release_web.repository.UserTVSeriesRepository;
 import com.ness.movie_release_web.service.tmdb.TmdbMovieService;
 import com.ness.movie_release_web.service.tmdb.TmdbTVSeriesService;
@@ -25,7 +26,7 @@ public class SubscriptionServiceImpl implements SubscriptionService {
     private final UserService userService;
     private final UserTVSeriesRepository userTVSeriesRepository;
     private final TmdbTVSeriesService tmdbTVSeriesService;
-    private final TVSeriesService tvSeriesService;
+    private final TVSeriesRepository tvSeriesRepository;
 
     @Override
     public void subscribeToMovie(Long tmdbId, String login) {
@@ -80,7 +81,7 @@ public class SubscriptionServiceImpl implements SubscriptionService {
         TmdbTVDetailsDto tvDetails = tvDetailsOptional.get();
         TmdbTVDetailsDto tvDetailsRu = tvDetailsOptionalRu.get();
 
-        Optional<TVSeries> one = tvSeriesService.findById(tmdbId);
+        Optional<TVSeries> one = tvSeriesRepository.findById(tmdbId);
 
         UserTVSeries userTVSeries = new UserTVSeries();
         userTVSeries.setTvSeries(one.orElse(new TVSeries(

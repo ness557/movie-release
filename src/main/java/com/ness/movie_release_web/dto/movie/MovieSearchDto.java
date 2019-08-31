@@ -1,4 +1,4 @@
-package com.ness.movie_release_web.dto;
+package com.ness.movie_release_web.dto.movie;
 
 import com.ness.movie_release_web.dto.tmdb.movie.details.TmdbMovieDetailsDto;
 import com.ness.movie_release_web.dto.tmdb.movie.search.TmdbMovieDto;

@@ -13,7 +13,7 @@ import java.util.Optional;
  */
 public interface PasswordRestoreService {
 
-    List<String> changePassword(User user, String oldPassword, String newPassword, Locale locale);
+    List<String> updatePassword(String login, String oldPassword, String newPassword, Locale locale);
     Optional<User> getByPasswordToken(String token);
     boolean tokenExists(String token);
     String createRestoreToken(User user);

@@ -2,10 +2,10 @@ package com.ness.movie_release_web.controller;
 
 import com.ness.movie_release_web.dto.Language;
 import com.ness.movie_release_web.dto.Mode;
-import com.ness.movie_release_web.dto.MovieDiscoverDto;
-import com.ness.movie_release_web.dto.MovieDto;
-import com.ness.movie_release_web.dto.MovieSearchDto;
-import com.ness.movie_release_web.dto.MovieSubscriptionsDto;
+import com.ness.movie_release_web.dto.movie.MovieDiscoverDto;
+import com.ness.movie_release_web.dto.movie.MovieDto;
+import com.ness.movie_release_web.dto.movie.MovieSearchDto;
+import com.ness.movie_release_web.dto.movie.MovieSubscriptionsDto;
 import com.ness.movie_release_web.dto.tmdb.movie.details.Status;
 import com.ness.movie_release_web.dto.tmdb.movie.discover.TmdbDiscoverSearchCriteria;
 import com.ness.movie_release_web.dto.tmdb.movie.search.TmdbMovieSearchDto;

@@ -1,7 +1,7 @@
 package com.ness.movie_release_web.service.telegram;
 
 import com.ness.movie_release_web.model.User;
-import com.ness.movie_release_web.service.UserService;
+import com.ness.movie_release_web.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -29,7 +29,7 @@ public class TelegramNotificationBotImpl extends TelegramLongPollingBot implemen
     @Value("${telegram.webInterfaceLink}")
     private String appLink;
 
-    private final UserService userService;
+    private final UserRepository userRepository;
 
     public void sendNotify(String resultText, Long telegramChatId, String posterPath) {
         // Create send method
@@ -71,11 +71,11 @@ public class TelegramNotificationBotImpl extends TelegramLongPollingBot implemen
 
         String telegramUserName = message.getFrom().getUserName();
         telegramUserName = "@" + StringUtils.lowerCase(telegramUserName);
-        User user = userService.findByTelegramId(telegramUserName);
+        User user = userRepository.findByTelegramId(telegramUserName);
 
         if (user.getTelegramChatId() == null) {
             user.setTelegramChatId(message.getChatId());
-            userService.save(user);
+            userRepository.save(user);
 
             SendMessage sendMessage = new SendMessage();
             sendMessage.setChatId(message.getChatId());

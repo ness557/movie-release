@@ -1,4 +1,4 @@
-package com.ness.movie_release_web.dto.tmdb;
+package com.ness.movie_release_web.dto;
 
 import com.ness.movie_release_web.dto.PasswordDto;
 import com.ness.movie_release_web.util.validators.MatchPassword;
@@ -18,10 +18,14 @@ import lombok.experimental.Accessors;
 @NoArgsConstructor
 @Accessors(chain = true)
 @ToString
-public class TmdbPasswordChangeDto {
+public class PasswordChangeDto {
 
     private String oldPassword;
 
     @MatchPassword(message = "{lang.passwords_not_match}")
-    private PasswordDto password;
+    private PasswordDto passwordDto = new PasswordDto();
+
+    public String getNewPassword() {
+        return passwordDto.getPassword();
+    }
 }

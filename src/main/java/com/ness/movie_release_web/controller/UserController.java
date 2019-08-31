@@ -1,14 +1,10 @@
 package com.ness.movie_release_web.controller;
 
+import com.ness.movie_release_web.dto.*;
 import com.ness.movie_release_web.model.User;
-import com.ness.movie_release_web.dto.PasswordDto;
-import com.ness.movie_release_web.dto.UserDto;
-import com.ness.movie_release_web.dto.UserMapper;
-import com.ness.movie_release_web.dto.Language;
-import com.ness.movie_release_web.dto.Mode;
-import com.ness.movie_release_web.dto.tmdb.TmdbPasswordChangeDto;
 import com.ness.movie_release_web.service.PasswordRestoreService;
 import com.ness.movie_release_web.service.RegistrationService;
+import com.ness.movie_release_web.service.UserNotFoundException;
 import com.ness.movie_release_web.service.UserService;
 import lombok.AllArgsConstructor;
 import org.springframework.context.MessageSource;
@@ -129,7 +125,7 @@ public class UserController {
 
         model.addAttribute("language", language);
         model.addAttribute("mode", mode);
-        model.addAttribute("passwordChange", new TmdbPasswordChangeDto().setPassword(new PasswordDto()));
+        model.addAttribute("passwordChange", new PasswordChangeDto());
 
         return "changePassword";
     }
@@ -151,9 +147,7 @@ public class UserController {
                             Principal principal,
                             HttpServletResponse response) {
 
-        User user = userService.findByLogin(principal.getName());
-        user.setLanguage(language);
-        userService.save(user);
+        userService.updateLanguage(principal.getName(), language);
 
         response.addCookie(new Cookie("language", language.getValue()));
     }
@@ -166,7 +160,7 @@ public class UserController {
     }
 
     @PostMapping("/changePassword")
-    public String changePass(@Valid @ModelAttribute("passwordChange") TmdbPasswordChangeDto dto,
+    public String changePass(@Valid @ModelAttribute("passwordChange") PasswordChangeDto dto,
                              BindingResult bindingResult,
                              @CookieValue(value = "language", defaultValue = "en") Language language,
                              @CookieValue(value = "mode", defaultValue = "movie") Mode mode,
@@ -181,11 +175,8 @@ public class UserController {
             return "changePassword";
         }
 
-        User user = userService.findByLogin(principal.getName());
-        String newPassword = dto.getPassword().getPassword();
-
         List<String> errors =
-                passwordRestoreService.changePassword(user, dto.getOldPassword(), newPassword, locale);
+                passwordRestoreService.updatePassword(principal.getName(), dto.getOldPassword(), dto.getNewPassword(), locale);
 
         if (!errors.isEmpty()) {
             model.addAttribute("errors", errors);
@@ -199,25 +190,19 @@ public class UserController {
     public String resetPassword(@RequestParam(name = "emailOrTelegram") String emailOrTg,
                                 Locale locale,
                                 Model model) {
-        Optional<User> userOpt = userService.findByTelegramIdOrEmail(emailOrTg, emailOrTg);
 
-        if (!userOpt.isPresent()) {
+        try {
+
+            PasswordResetResponseDto passwordResetDto = userService.sendResetPasswordResponse(emailOrTg);
+            model.addAttribute("receiverService", passwordResetDto.getSource().toString());
+            model.addAttribute("receiverAddress", passwordResetDto.getAddress());
+
+        } catch (UserNotFoundException e) {
+
             model.addAttribute("emailOrTelegram", emailOrTg);
             model.addAttribute("errorMessage", messageSource.getMessage("lang.user_not_found", new Object[]{}, locale));
+
             return "resetPassword";
-        }
-
-        User user = userOpt.get();
-        String resetToken = passwordRestoreService.createRestoreToken(user);
-
-        if (user.isTelegramNotify()) {
-            model.addAttribute("receiverService", "Telegram");
-            model.addAttribute("receiverAddress", user.getTelegramId());
-            passwordRestoreService.sendRestoreViaTelegram(resetToken, user.getTelegramChatId());
-        } else {
-            model.addAttribute("receiverService", "Email");
-            model.addAttribute("receiverAddress", user.getEmail());
-            passwordRestoreService.sendRestoreViaEmail(resetToken, user.getEmail());
         }
 
         return "resetLinkSent";
@@ -236,7 +221,7 @@ public class UserController {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND);
         }
 
-        model.addAttribute("passwordDto", new TmdbPasswordChangeDto().setPassword(new PasswordDto()));
+        model.addAttribute("passwordDto", new PasswordChangeDto());
         model.addAttribute("token", token);
 
         return "recoverPassword";
@@ -244,7 +229,7 @@ public class UserController {
 
     @PostMapping("/recoverPassword/{token}")
     public String restorePassword(@PathVariable("token") String token,
-                                  @Valid @ModelAttribute("passwordDto") TmdbPasswordChangeDto dto,
+                                  @Valid @ModelAttribute("passwordDto") PasswordChangeDto dto,
                                   BindingResult bindingResult,
                                   @CookieValue(value = "language", defaultValue = "en") Language language,
                                   @CookieValue(value = "mode", defaultValue = "movie") Mode mode,
@@ -258,16 +243,8 @@ public class UserController {
             return "recoverPassword";
         }
 
-        Optional<User> userOpt = passwordRestoreService.getByPasswordToken(token);
-
-        if (!userOpt.isPresent()) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND);
-        }
-        User user = userOpt.get();
-
-        userService.saveWithPassEncryption(user.setEncPassword(dto.getPassword().getPassword()));
-
-        request.login(user.getLogin(), dto.getPassword().getPassword());
+        User user = userService.recoverPassword(token, dto);
+        request.login(user.getLogin(), dto.getNewPassword());
 
         return "passwordChanged";
     }

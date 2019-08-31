@@ -1,18 +1,21 @@
 package com.ness.movie_release_web.service;
 
+import com.ness.movie_release_web.dto.*;
+import com.ness.movie_release_web.dto.tmdb.movie.discover.TmdbDiscoverSearchCriteria;
+import com.ness.movie_release_web.dto.tmdb.tvSeries.WatchStatus;
+import com.ness.movie_release_web.dto.tmdb.tvSeries.details.Status;
+import com.ness.movie_release_web.dto.tmdb.tvSeries.details.TmdbEpisodeDto;
+import com.ness.movie_release_web.dto.tmdb.tvSeries.details.TmdbSeasonDto;
+import com.ness.movie_release_web.dto.tmdb.tvSeries.details.TmdbTVDetailsDto;
+import com.ness.movie_release_web.dto.tmdb.tvSeries.search.TmdbTVDto;
+import com.ness.movie_release_web.dto.tmdb.tvSeries.search.TmdbTVSearchDto;
+import com.ness.movie_release_web.dto.tvseries.*;
 import com.ness.movie_release_web.model.TVSeries;
 import com.ness.movie_release_web.model.User;
 import com.ness.movie_release_web.model.UserTVSeries;
 import com.ness.movie_release_web.model.UserTVSeriesPK;
-import com.ness.movie_release_web.dto.Language;
-import com.ness.movie_release_web.dto.tmdb.tvSeries.WatchStatus;
-import com.ness.movie_release_web.dto.tmdb.tvSeries.details.TmdbSeasonDto;
-import com.ness.movie_release_web.dto.tmdb.tvSeries.details.Status;
-import com.ness.movie_release_web.dto.tmdb.tvSeries.details.TmdbTVDetailsDto;
-import com.ness.movie_release_web.repository.TVSeriesRepository;
-import com.ness.movie_release_web.repository.TVSeriesSortBy;
-import com.ness.movie_release_web.repository.UserTVSeriesRepository;
-import com.ness.movie_release_web.service.tmdb.TmdbTVSeriesService;
+import com.ness.movie_release_web.repository.*;
+import com.ness.movie_release_web.service.tmdb.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -22,10 +25,15 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
+import java.util.concurrent.TimeUnit;
 
 import static com.ness.movie_release_web.repository.UserTVSeriesSpecifications.byUserAndTVStatusesAndWatchStatusesWithOrderby;
+import static java.util.stream.Collectors.toList;
+import static java.util.stream.Collectors.toMap;
 
 @Slf4j
 @Service
@@ -34,24 +42,170 @@ public class TVSeriesServiceImpl implements TVSeriesService {
 
     private final UserTVSeriesRepository userTVSeriesRepository;
     private final TVSeriesRepository tvSeriesRepository;
-    private final TmdbTVSeriesService tvSeriesService;
+    private final TmdbTVSeriesService tmdbSeriesService;
+    private final UserRepository userRepository;
+    private final TmdbDiscoverService discoverService;
+    private final TmdbCompanyService tmdbCompanyService;
+    private final TmdbNetworkService tmdbNetworkService;
+    private final TmdbGenreService tmdbGenreService;
+
+    public TvSeriesDto getShow(Long tmdbId, Language language, Mode mode, String login) {
+        TvSeriesDto result = new TvSeriesDto();
+        User user = userRepository.findByLogin(login);
+
+        TmdbTVDetailsDto tmdbTVDetails = tmdbSeriesService.getTVDetails(tmdbId, language)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
+
+        result.setTvDetailsDto(tmdbTVDetails);
+
+        getByTmdbIdAndUserId(tmdbId, user.getId()).ifPresent(userTVSeries -> {
+            result.setSubscribed(true);
+
+            Long currentSeasonNum = userTVSeries.getCurrentSeason();
+            Long currentEpisodeNum = userTVSeries.getCurrentEpisode();
+            TmdbEpisodeDto lastEpisodeToAir = tmdbTVDetails.getLastEpisodeToAir();
+
+            result.setCurrentSeason(currentSeasonNum);
+
+            if (currentSeasonNum > 0) {
+                TmdbSeasonDto tmdbSeason = tmdbSeriesService.getSeasonDetails(tmdbId, currentSeasonNum, language)
+                        .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
+
+                result.setSeasonWatched(tmdbSeason.getEpisodes().stream().noneMatch(e -> e.getEpisodeNumber() > currentEpisodeNum));
+            }
+
+            if (lastEpisodeToAir != null) {
+                result.setLastEpisodeWatched(lastEpisodeToAir.getSeasonNumber() < currentSeasonNum
+                        || (lastEpisodeToAir.getSeasonNumber().equals(currentSeasonNum) && lastEpisodeToAir.getEpisodeNumber() <= currentEpisodeNum));
+            }
+
+            Long minutes = spentTotalMinutesToSeries(tmdbId, user, currentSeasonNum, currentEpisodeNum);
+            fillTimeSpent(result, minutes);
+
+        });
+
+        return result;
+    }
 
 
-    @Override
-    public Boolean isExistsByTmdbIdAndUserId(Long tmdbId, Long userId) {
+    public TvSeriesSeasonDto getSeason(Long tmdbId, Long seasonNumber, Language language, String login) {
+
+        User user = userRepository.findByLogin(login);
+
+        TvSeriesSeasonDto result = new TvSeriesSeasonDto();
+
+        TmdbTVDetailsDto tvDetails = tmdbSeriesService.getTVDetails(tmdbId, language)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
+        TmdbSeasonDto seasonDetails = tmdbSeriesService.getSeasonDetails(tmdbId, seasonNumber, language)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
+
+        result.setTvDetailsDto(tvDetails)
+                .setSeasonDto(seasonDetails);
+
+        getByTmdbIdAndUserId(tmdbId, user.getId()).ifPresent(userTVSeries -> {
+            Long currentSeason = userTVSeries.getCurrentSeason();
+            Long currentEpisode = userTVSeries.getCurrentEpisode();
+
+            result.setSubscribed(true)
+                    .setCurrentSeason(currentSeason)
+                    .setCurrentEpisode(currentEpisode);
+
+            Long minutes = spentTotalMinutesToSeriesSeason(tmdbId, seasonNumber, user, currentSeason, currentEpisode);
+            fillTimeSpent(result, minutes);
+
+        });
+
+        return result;
+    }
+
+    public TvSeriesSearchDto search(String query, Long year, Long page, Language language, String login) {
+
+        TvSeriesSearchDto result = new TvSeriesSearchDto();
+
+        User user = userRepository.findByLogin(login);
+
+        TmdbTVSearchDto tmdbTVSearchDto = tmdbSeriesService.search(query, page.intValue(), year, language)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR));
+
+        return result.setSeriesSearchDtoMap(getDtoMap(tmdbTVSearchDto, user))
+                .setTotal(tmdbTVSearchDto.getTotalPages());
+    }
+
+    public TvSeriesSubscriptionsDto getSubscriptions(List<Status> statuses,
+                                                     List<WatchStatus> watchStatuses,
+                                                     TVSeriesSortBy sort,
+                                                     Boolean viewMode,
+                                                     Long page,
+                                                     String login,
+                                                     Language language) {
+
+
+        if (sort == null) {
+            switch (language) {
+                case en:
+                    sort = TVSeriesSortBy.NameEn_asc;
+                    break;
+                case ru:
+                    sort = TVSeriesSortBy.NameRu_asc;
+                    break;
+            }
+        }
+
+        int size = viewMode ? 30 : 10;
+
+        User user = userRepository.findByLogin(login);
+        Page<UserTVSeries> userTVSeries = getByUserAndTVStatusesAndWatchStatusesWithOrderAndPages(statuses, watchStatuses, sort, user, (int) (page - 1), size);
+        List<UserTVSeries> series = userTVSeries.getContent();
+
+        List<TmdbTVDetailsDto> subscriptions;
+        if (viewMode) {
+            subscriptions = series.stream()
+                    .map(UserTVSeries::getTvSeries)
+                    .map(s -> TmdbTVDetailsDto.of(s, language)).collect(toList());
+        } else {
+            subscriptions = series.stream()
+                    .map(f -> tmdbSeriesService.getTVDetails(f.getId().getTvSeriesId(), language))
+                    .filter(Optional::isPresent)
+                    .map(Optional::get)
+                    .collect(toList());
+        }
+
+        return new TvSeriesSubscriptionsDto()
+                .setSortBy(sort)
+                .setBotInitialized(!user.isTelegramNotify() || user.getTelegramChatId() != null)
+                .setSeriesDetailsDtos(subscriptions)
+                .setTotalPages((long) userTVSeries.getTotalPages());
+    }
+
+    public TvSeriesDiscoverDto discover(TmdbDiscoverSearchCriteria criteria, String login) {
+
+        User user = userRepository.findByLogin(login);
+        TvSeriesDiscoverDto result = new TvSeriesDiscoverDto();
+
+        discoverService.discoverSeries(criteria)
+                .ifPresent(tmdbTVSearchDto ->
+                        result.setSeriesSearchDtoMap(getDtoMap(tmdbTVSearchDto, user))
+                                .setTotalPages(tmdbTVSearchDto.getTotalPages() > 1000 ? 1000 : tmdbTVSearchDto.getTotalPages()));
+
+        return result.setCompanies(tmdbCompanyService.getCompanies(criteria.getCompanies(), criteria.getLanguage()))
+                .setNetworks(tmdbNetworkService.getNetworks(criteria.getNetworks()))
+                .setGenres(tmdbGenreService.getTVGenres(criteria.getLanguage()));
+    }
+
+
+    private Boolean isExistsByTmdbIdAndUserId(Long tmdbId, Long userId) {
         return userTVSeriesRepository.existsById(UserTVSeriesPK.wrap(userId, tmdbId));
     }
 
-    @Override
-    public Optional<UserTVSeries> getByTmdbIdAndUserId(Long tmdbId, Long userId) {
+    private Optional<UserTVSeries> getByTmdbIdAndUserId(Long tmdbId, Long userId) {
         return userTVSeriesRepository.findById(UserTVSeriesPK.wrap(userId, tmdbId));
     }
 
     @Override
     public void setSeasonAndEpisode(Long tmdbId, User user, Long seasonNum, Long episodeNum) {
 
-        Optional<TmdbTVDetailsDto> tvDetailsOptional = tvSeriesService.getTVDetails(tmdbId, Language.en);
-        Optional<TmdbTVDetailsDto> tvDetailsOptionalRu = tvSeriesService.getTVDetails(tmdbId, Language.ru);
+        Optional<TmdbTVDetailsDto> tvDetailsOptional = tmdbSeriesService.getTVDetails(tmdbId, Language.en);
+        Optional<TmdbTVDetailsDto> tvDetailsOptionalRu = tmdbSeriesService.getTVDetails(tmdbId, Language.ru);
 
         if (!tvDetailsOptional.isPresent() || !tvDetailsOptionalRu.isPresent())
             throw new ResponseStatusException(HttpStatus.CONFLICT);
@@ -83,8 +237,7 @@ public class TVSeriesServiceImpl implements TVSeriesService {
         userTVSeriesRepository.save(userTVSeries);
     }
 
-    @Override
-    public Page<UserTVSeries> getByUserAndTVStatusesAndWatchStatusesWithOrderAndPages(
+    private Page<UserTVSeries> getByUserAndTVStatusesAndWatchStatusesWithOrderAndPages(
             List<Status> tvStatuses,
             List<WatchStatus> watchStatuses,
             TVSeriesSortBy sortBy,
@@ -97,15 +250,9 @@ public class TVSeriesServiceImpl implements TVSeriesService {
                 PageRequest.of(page, size));
     }
 
-    @Override
-    public List<UserTVSeries> getAllUserTVSeries() {
-        return userTVSeriesRepository.findAll();
-    }
+    private Long spentTotalMinutesToSeries(Long tmdbId, User user, Long currentSeason, Long currentEpisode) {
 
-    @Override
-    public Long spentTotalMinutesToSeries(Long tmdbId, User user, Long currentSeason, Long currentEpisode) {
-
-        Optional<TmdbTVDetailsDto> tvDetailsOptional = tvSeriesService.getTVDetails(tmdbId, user.getLanguage());
+        Optional<TmdbTVDetailsDto> tvDetailsOptional = tmdbSeriesService.getTVDetails(tmdbId, user.getLanguage());
         if (!tvDetailsOptional.isPresent())
             return 0L;
 
@@ -115,7 +262,7 @@ public class TVSeriesServiceImpl implements TVSeriesService {
 
 
         for (int i = 1; i < currentSeason; i++) {
-            Optional<TmdbSeasonDto> seasonDetailsOpt = tvSeriesService.getSeasonDetails(tmdbId, (long) i, user.getLanguage());
+            Optional<TmdbSeasonDto> seasonDetailsOpt = tmdbSeriesService.getSeasonDetails(tmdbId, (long) i, user.getLanguage());
             if (!seasonDetailsOpt.isPresent())
                 continue;
 
@@ -123,7 +270,7 @@ public class TVSeriesServiceImpl implements TVSeriesService {
             result += tmdbSeasonDto.getEpisodes().size() * average;
         }
 
-        Optional<TmdbSeasonDto> seasonDetails = tvSeriesService.getSeasonDetails(tmdbId, currentSeason, user.getLanguage());
+        Optional<TmdbSeasonDto> seasonDetails = tmdbSeriesService.getSeasonDetails(tmdbId, currentSeason, user.getLanguage());
 
         if (!seasonDetails.isPresent()) {
             return result.longValue();
@@ -135,17 +282,34 @@ public class TVSeriesServiceImpl implements TVSeriesService {
         return result.longValue();
     }
 
-    @Override
-    public Long spentTotalMinutesToSeriesSeason(Long tmdbId, Long season, User user, Long currentSeason, Long currentEpisode) {
+    private void fillTimeSpent(TimeSpentDto dto, Long minutes) {
+        if (minutes > 60) {
+            dto.setHoursSpent(TimeUnit.MINUTES.toHours(minutes));
+            minutes %= 60;
+        }
 
-        Optional<TmdbTVDetailsDto> tvDetailsOptional = tvSeriesService.getTVDetails(tmdbId, user.getLanguage());
+        dto.setMinutesSpent(minutes);
+    }
+
+    private Map<TmdbTVDto, Boolean> getDtoMap(TmdbTVSearchDto searchDto, User user) {
+        return searchDto.getResults().stream()
+                .collect(toMap(
+                        f -> f,
+                        f -> isExistsByTmdbIdAndUserId(f.getId(), user.getId()),
+                        (f1, f2) -> f1,
+                        LinkedHashMap::new));
+    }
+
+    private Long spentTotalMinutesToSeriesSeason(Long tmdbId, Long season, User user, Long currentSeason, Long currentEpisode) {
+
+        Optional<TmdbTVDetailsDto> tvDetailsOptional = tmdbSeriesService.getTVDetails(tmdbId, user.getLanguage());
         if (!tvDetailsOptional.isPresent())
             return 0L;
 
         TmdbTVDetailsDto tvDetails = tvDetailsOptional.get();
         double average = tvDetails.getEpisodeRunTime().stream().mapToDouble(Long::doubleValue).average().orElse(0d);
 
-        Optional<TmdbSeasonDto> seasonDetails = tvSeriesService.getSeasonDetails(tmdbId, currentSeason, user.getLanguage());
+        Optional<TmdbSeasonDto> seasonDetails = tmdbSeriesService.getSeasonDetails(tmdbId, currentSeason, user.getLanguage());
 
         if (season < currentSeason)
             return ((Double) (seasonDetails.orElse(new TmdbSeasonDto()).getEpisodes().size() * average)).longValue();
@@ -163,7 +327,7 @@ public class TVSeriesServiceImpl implements TVSeriesService {
         log.info("Updating series db...");
         tvSeriesRepository.findAll().forEach(tvs -> {
             Long id = tvs.getId();
-            Optional<TmdbTVDetailsDto> tvDetails = tvSeriesService.getTVDetails(id, Language.en);
+            Optional<TmdbTVDetailsDto> tvDetails = tmdbSeriesService.getTVDetails(id, Language.en);
 
             if (!tvDetails.isPresent()) {
                 return;
@@ -176,10 +340,10 @@ public class TVSeriesServiceImpl implements TVSeriesService {
             tvs.setNameEn(tmdbTvDetailsDto.getName());
             tvs.setStatus(tmdbTvDetailsDto.getStatus());
 
-            Optional<TmdbTVDetailsDto> tvDetailsRu = tvSeriesService.getTVDetails(id, Language.ru);
+            Optional<TmdbTVDetailsDto> tvDetailsRu = tmdbSeriesService.getTVDetails(id, Language.ru);
             tvDetailsRu.ifPresent(tvDetailsDto1 -> tvs.setNameRu(tvDetailsDto1.getName()));
 
-            Optional<TmdbSeasonDto> seasonDetails = tvSeriesService.getSeasonDetails(id, tmdbTvDetailsDto.getNumberOfSeasons(), Language.en);
+            Optional<TmdbSeasonDto> seasonDetails = tmdbSeriesService.getSeasonDetails(id, tmdbTvDetailsDto.getNumberOfSeasons(), Language.en);
             if (!seasonDetails.isPresent()) {
                 tvSeriesRepository.save(tvs);
                 return;
@@ -195,10 +359,5 @@ public class TVSeriesServiceImpl implements TVSeriesService {
             tvSeriesRepository.save(tvs);
         });
         log.info("series db updated!");
-    }
-
-    @Override
-    public Optional<TVSeries> findById(Long id) {
-        return tvSeriesRepository.findById(id);
     }
 }
