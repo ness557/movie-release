@@ -174,38 +174,19 @@
                     </th:block>
                 </div>
 
+
                 <div class="row">
+
                     <div class="col-10 col-sm-10 col-md-10 col-lg-10 col-xl-10 form-group">
-                        <div class="row mytext" style="height: 36px; font-size: 16px">
-
-                            <div class="col-4 col-sm-4 col-md-4 col-lg-4 col-xl-4"
-                                 style="text-align: left; padding-right: 0" th:text="#{lang.notify_via}">
-                            </div>
-
-                            <div class="col-4 col-sm-4 col-md-4 col-lg-4 col-xl-4">
-                                <div class="row">
-                                    <div class="col-1 col-sm-1 col-md-1 col-lg-1 col-xl-1">
-                                        <input type="radio" class="option-input radio"
-                                               th:field="*{telegramNotify}" th:value="true"/>
-                                    </div>
-                                    <div class="col-9 col-sm-9 col-md-9 col-lg-9 col-xl-9" style="padding: 0"
-                                         th:text="#{lang.via_telegram}">
-                                    </div>
-
-                                </div>
-                            </div>
-
-                            <div class="col-4 col-sm-4 col-md-4 col-lg-4 col-xl-4">
-                                <div class="row">
-                                    <div class="col-1 col-sm-1 col-md-1 col-lg-1 col-xl-1">
-                                        <input type="radio" class="option-input radio"
-                                               th:field="*{telegramNotify}" th:value="false"/>
-                                    </div>
-                                    <div class="col-8 col-sm-8 col-md-8 col-lg-8 col-xl-8" style="padding: 0"
-                                         th:text="#{lang.via_email}">
-                                    </div>
-                                </div>
-                            </div>
+                        <div class="icon-addon addon-lg">
+                            <select th:field="*{messageDestinationType}" class="form-control" style="height: 46px">
+                                <option th:each="mdt : ${T(com.ness.movie_release_web.model.type.MessageDestinationType).values()}"
+                                        th:value="${mdt}"
+                                        th:text="#{'lang.' + ${#strings.toLowerCase(mdt.name())}}"
+                                        th:selected="${mdt == messageDestinationType}">
+                                </option>
+                            </select>
+                            <img th:src="@{/img/language-dark.png}" class="glyphicon glyphicon-search">
                         </div>
                     </div>
                 </div>

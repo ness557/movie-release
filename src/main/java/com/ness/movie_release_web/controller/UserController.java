@@ -2,6 +2,7 @@ package com.ness.movie_release_web.controller;
 
 import com.ness.movie_release_web.dto.*;
 import com.ness.movie_release_web.model.User;
+import com.ness.movie_release_web.model.type.MessageDestinationType;
 import com.ness.movie_release_web.service.PasswordRestoreService;
 import com.ness.movie_release_web.service.RegistrationService;
 import com.ness.movie_release_web.service.UserNotFoundException;
