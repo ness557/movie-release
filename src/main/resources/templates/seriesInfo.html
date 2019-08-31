@@ -94,7 +94,7 @@
 
             <div class="row" th:if="${!series.videos.videoList.isEmpty()}">
                 <div class="col-md-12">
-                    <div class="filmPropSpaces">
+                    <div class="moviePropSpaces">
                         <div class="collapse" id="collapseExample">
 
                             <div id="carouselExampleControls" class="carousel slide" data-ride="carousel">
@@ -126,7 +126,7 @@
 
             <div class="row">
                 <div class="col-md-12">
-                    <div class="filmPropSpaces">
+                    <div class="moviePropSpaces">
                         <b th:text="#{lang.genres} + ':'"></b>
                         <th:block th:each="genre: ${series.genres}">
                             <a class="genre-link" th:text="${#strings.capitalize(genre.name)}"
@@ -138,7 +138,7 @@
 
             <div class="row">
                 <div class="col-md-12">
-                    <div class="filmPropSpaces">
+                    <div class="moviePropSpaces">
                         <b th:text="#{lang.networks} + ':'"></b>
                         <th:block th:each="production: ${series.networks}">
                             <a class="genre-link" th:text="${#strings.capitalize(production.name)}"
@@ -150,7 +150,7 @@
 
             <div class="row">
                 <div class="col-md-12">
-                    <div class="filmPropSpaces">
+                    <div class="moviePropSpaces">
                         <b th:text="#{lang.production} + ':'"></b>
                         <th:block th:each="production: ${series.productionCompanies}">
                             <a class="genre-link" th:text="${#strings.capitalize(production.name)}"
@@ -162,7 +162,7 @@
 
             <div class="row">
                 <div class="col-md-12">
-                    <div class="filmPropSpaces">
+                    <div class="moviePropSpaces">
                         <b th:text="#{lang.countries} + ':'"></b>
                         <th:block th:each="country: ${series.originCountry}">
                             <span th:text="${country}"></span>
@@ -174,7 +174,7 @@
 
             <div class="row">
                 <div class="col-md-12">
-                    <div class="filmPropSpaces">
+                    <div class="moviePropSpaces">
                         <b>
                             <span th:text="#{lang.release_date} + ':'"></span>
                         </b>
@@ -185,7 +185,7 @@
 
             <div class="row" th:if="${subscribed}">
                 <div class="col-md-12">
-                    <div class="filmPropSpaces">
+                    <div class="moviePropSpaces">
                         <b>
                             <span th:text="#{lang.time_spent} + ':'"></span>
                         </b>
@@ -199,7 +199,7 @@
 
             <div class="row">
                 <div class="col-md-12">
-                    <div class="filmPropSpaces">
+                    <div class="moviePropSpaces">
                         <b th:text="#{lang.overview} + ':'"></b>
                         <th:block th:text="${series.overview}"/>
                     </div>
@@ -208,7 +208,7 @@
 
             <div class="row">
                 <div class="col-11">
-                    <div class="filmPropSpaces">
+                    <div class="moviePropSpaces">
                         <b th:text="#{lang.season} + ':'"></b>
                         <div class="owl-carousel owl-theme" id="owl-season">
                             <div th:each="season : ${series.seasons}"
@@ -261,7 +261,7 @@
 
             <div class="row">
                 <div class="col-11">
-                    <div class="filmPropSpaces">
+                    <div class="moviePropSpaces">
                         <b th:text="#{lang.actors} + ':'"></b>
                         <div class="owl-carousel owl-theme" id="owl-actors">
                             <div th:each="actor : ${series.credits.casts}"

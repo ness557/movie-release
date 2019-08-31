@@ -1,6 +1,6 @@
 package com.ness.movie_release_web.repository;
 
-import com.ness.movie_release_web.model.Film;
+import com.ness.movie_release_web.model.Movie;
 import com.ness.movie_release_web.model.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
@@ -11,8 +11,8 @@ import java.util.Optional;
 
 @Repository
 @Transactional
-public interface FilmRepository extends JpaRepository<Film, Long>, JpaSpecificationExecutor<Film> {
-    Optional<Film> findByIdAndUsers(Long id, User user);
+public interface MovieRepository extends JpaRepository<Movie, Long>, JpaSpecificationExecutor<Movie> {
+    Optional<Movie> findByIdAndUsers(Long id, User user);
     boolean existsByIdAndUsers(Long id, User user);
 
 }

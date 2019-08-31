@@ -4,7 +4,7 @@ import com.ness.movie_release_web.model.*;
 import com.ness.movie_release_web.dto.Language;
 import com.ness.movie_release_web.dto.tmdb.movie.details.TmdbMovieDetailsDto;
 import com.ness.movie_release_web.dto.tmdb.tvSeries.details.TmdbTVDetailsDto;
-import com.ness.movie_release_web.repository.FilmRepository;
+import com.ness.movie_release_web.repository.MovieRepository;
 import com.ness.movie_release_web.repository.TVSeriesRepository;
 import com.ness.movie_release_web.repository.UserTVSeriesRepository;
 import com.ness.movie_release_web.service.tmdb.TmdbMovieService;
@@ -22,7 +22,7 @@ import java.util.Optional;
 public class SubscriptionServiceImpl implements SubscriptionService {
 
     private final TmdbMovieService tmdbMovieService;
-    private final FilmRepository movieRepository;
+    private final MovieRepository movieRepository;
     private final UserService userService;
     private final UserTVSeriesRepository userTVSeriesRepository;
     private final TmdbTVSeriesService tmdbTVSeriesService;
@@ -42,25 +42,24 @@ public class SubscriptionServiceImpl implements SubscriptionService {
 
         TmdbMovieDetailsDto tmdbMovieDetailsDto = optionalMovieDetails.get();
 
-        Optional<Film> filmOpt = movieRepository.findById(tmdbId);
-
-        Film film = filmOpt.orElse(new Film(tmdbMovieDetailsDto.getId(), tmdbMovieDetailsDto.getTitle(), "",
+        Movie movie = movieRepository.findById(tmdbId).orElse(new Movie(tmdbMovieDetailsDto.getId(), tmdbMovieDetailsDto.getTitle(), "",
                 tmdbMovieDetailsDto.getStatus(), tmdbMovieDetailsDto.getReleaseDate(),
                 tmdbMovieDetailsDto.getVoteAverage().floatValue(), new ArrayList<>()));
-        film.getUsers().add(user);
 
-        movieRepository.save(film);
+        movie.getUsers().add(user);
+
+        movieRepository.save(movie);
     }
 
     @Override
     public void unsubscribeFromMovie(Long tmdbId, String login) {
         User user = userService.findByLogin(login);
 
-        Optional<Film> film = movieRepository.findByIdAndUsers(tmdbId, user);
-        film.ifPresent(f -> {
-            f.getUsers().remove(user);
-            movieRepository.save(f);
-        });
+        movieRepository.findByIdAndUsers(tmdbId, user)
+                .ifPresent(f -> {
+                    f.getUsers().remove(user);
+                    movieRepository.save(f);
+                });
     }
 
     @Override

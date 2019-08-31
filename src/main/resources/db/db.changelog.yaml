@@ -7,3 +7,11 @@ databaseChangeLog:
             dbms: postgresql
             encoding: utf8
             path: db/sql/user_add_message_destination_type_collumn.sql
+  - changeSet:
+      id: rename_film_to_movie
+      author: Bezruchko
+      changes:
+        - sqlFile:
+            dbms: postgresql
+            encoding: utf8
+            path: db/sql/rename_film_to_movie.sql

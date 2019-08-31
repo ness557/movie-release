@@ -14,7 +14,7 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 @ToString(exclude = "users")
-public class Film {
+public class Movie {
 
     @Id
     private Long id;

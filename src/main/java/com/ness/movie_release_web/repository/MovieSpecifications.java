@@ -1,6 +1,6 @@
 package com.ness.movie_release_web.repository;
 
-import com.ness.movie_release_web.model.Film;
+import com.ness.movie_release_web.model.Movie;
 import com.ness.movie_release_web.model.User;
 import com.ness.movie_release_web.dto.tmdb.movie.details.Status;
 import org.springframework.data.jpa.domain.Specification;
@@ -9,13 +9,13 @@ import javax.persistence.criteria.Join;
 import javax.persistence.criteria.Predicate;
 import java.util.List;
 
-public class FilmSpecifications {
+public class MovieSpecifications {
 
-    public static Specification<Film> byUserAndStatusWithOrderby(List<Status> statuses,
-                                                                 MovieSortBy sortBy,
-                                                                 User user){
+    public static Specification<Movie> byUserAndStatusWithOrderby(List<Status> statuses,
+                                                                  MovieSortBy sortBy,
+                                                                  User user){
 
-        return (Specification<Film>) (root, criteriaQuery, cb) -> {
+        return (Specification<Movie>) (root, criteriaQuery, cb) -> {
 
             Join<Object, Object> joinUser = root.join("users");
 

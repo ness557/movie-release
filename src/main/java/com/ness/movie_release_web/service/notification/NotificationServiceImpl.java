@@ -7,11 +7,10 @@ import com.ness.movie_release_web.dto.tmdb.releaseDates.TmdbReleaseDate;
 import com.ness.movie_release_web.dto.tmdb.tvSeries.details.TmdbEpisodeDto;
 import com.ness.movie_release_web.dto.tmdb.tvSeries.details.TmdbSeasonDto;
 import com.ness.movie_release_web.dto.tmdb.tvSeries.details.TmdbTVDetailsDto;
-import com.ness.movie_release_web.model.Film;
+import com.ness.movie_release_web.model.Movie;
 import com.ness.movie_release_web.model.User;
 import com.ness.movie_release_web.model.UserTVSeries;
-import com.ness.movie_release_web.repository.FilmRepository;
-import com.ness.movie_release_web.repository.TVSeriesRepository;
+import com.ness.movie_release_web.repository.MovieRepository;
 import com.ness.movie_release_web.repository.UserTVSeriesRepository;
 import com.ness.movie_release_web.service.email.EmailService;
 import com.ness.movie_release_web.service.telegram.TelegramService;
@@ -33,7 +32,7 @@ import static java.util.stream.Collectors.toMap;
 @Slf4j
 public class NotificationServiceImpl implements NotificationService {
 
-    private final FilmRepository movieRepository;
+    private final MovieRepository movieRepository;
     private final TmdbMovieService tmdbMovieService;
     private final TelegramService telegramService;
     private final EmailService emailService;
@@ -47,7 +46,7 @@ public class NotificationServiceImpl implements NotificationService {
 
         log.info("Notifying for movies...");
 
-        List<Film> films = movieRepository.findAll();
+        List<Movie> movies = movieRepository.findAll();
 
         LocalDate endDate = LocalDate.now();
         LocalDate startDate = endDate.minusDays(2);
@@ -56,7 +55,7 @@ public class NotificationServiceImpl implements NotificationService {
         Map<User, Map<TmdbMovieDetailsDto, TmdbReleaseDate>> emailNotifies = new HashMap<>();
 
         // notifies about release
-        films.forEach((f) -> {
+        movies.forEach((f) -> {
 
             List<TmdbReleaseDate> releaseDates =
                     tmdbDatesService.getReleaseDates(

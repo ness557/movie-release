@@ -2,7 +2,7 @@ package com.ness.movie_release_web.dto.tmdb.movie.details;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
-import com.ness.movie_release_web.model.Film;
+import com.ness.movie_release_web.model.Movie;
 import com.ness.movie_release_web.dto.tmdb.TmdbGenreDto;
 import com.ness.movie_release_web.dto.Language;
 import com.ness.movie_release_web.dto.tmdb.TmdbProductionCompanyDto;
@@ -120,21 +120,21 @@ public class TmdbMovieDetailsDto {
 
     private List<TmdbReleaseDate> releaseDates = new ArrayList<>();
 
-    public static TmdbMovieDetailsDto of(Film film, Language language) {
+    public static TmdbMovieDetailsDto of(Movie movie, Language language) {
         TmdbMovieDetailsDto dto = new TmdbMovieDetailsDto();
-        dto.setId(film.getId());
+        dto.setId(movie.getId());
         switch (language) {
             case ru:
-                dto.setTitle(film.getNameRu());
+                dto.setTitle(movie.getNameRu());
                 break;
             case en:
-                dto.setTitle(film.getNameEn());
+                dto.setTitle(movie.getNameEn());
                 break;
             default:
-                dto.setTitle(film.getNameRu());
+                dto.setTitle(movie.getNameRu());
                 break;
         }
-        dto.setReleaseDate(film.getReleaseDate());
+        dto.setReleaseDate(movie.getReleaseDate());
         return dto;
     }
 }

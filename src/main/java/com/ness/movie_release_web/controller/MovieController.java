@@ -35,17 +35,17 @@ public class MovieController {
     private final SubscriptionService subscriptionService;
 
     @GetMapping("/{tmdbId}")
-    public String getFilm(@PathVariable("tmdbId") Long tmdbId,
-                          @CookieValue(value = "language", defaultValue = "en") Language language,
-                          @CookieValue(value = "mode", defaultValue = "movie") Mode mode,
-                          Principal principal,
-                          Model model) {
+    public String getMovie(@PathVariable("tmdbId") Long tmdbId,
+                           @CookieValue(value = "language", defaultValue = "en") Language language,
+                           @CookieValue(value = "mode", defaultValue = "movie") Mode mode,
+                           Principal principal,
+                           Model model) {
 
         MovieDto movie = movieService.getMovie(tmdbId, principal.getName(), language);
 
         model.addAttribute("subscribed", movie.getSubscribed());
         model.addAttribute("releases", movie.getReleases());
-        model.addAttribute("film", movie.getMovieDetailsDto());
+        model.addAttribute("movie", movie.getMovieDetailsDto());
         model.addAttribute("language", language);
         model.addAttribute("mode", mode);
         return "movieInfo";
@@ -80,7 +80,7 @@ public class MovieController {
         model.addAttribute("year", year);
         model.addAttribute("language", language);
         model.addAttribute("mode", mode);
-        model.addAttribute("films", searchDto.getMovieSearchDtoMap());
+        model.addAttribute("movies", searchDto.getMovieSearchDtoMap());
         model.addAttribute("pageCount", searchDto.getTotal());
         model.addAttribute("page", page);
 
@@ -145,7 +145,7 @@ public class MovieController {
         model.addAttribute("people", discoverDto.getPeople());
         model.addAttribute("genres", discoverDto.getGenres());
 
-        model.addAttribute("films", discoverDto.getTmdbMovieDtoMap());
+        model.addAttribute("movies", discoverDto.getTmdbMovieDtoMap());
         model.addAttribute("pageCount", discoverDto.getTotalPages());
 
         model.addAttribute("page", page);

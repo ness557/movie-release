@@ -9,11 +9,10 @@ import com.ness.movie_release_web.dto.tmdb.movie.details.TmdbMovieDetailsDto;
 import com.ness.movie_release_web.dto.tmdb.movie.discover.TmdbDiscoverSearchCriteria;
 import com.ness.movie_release_web.dto.tmdb.movie.search.TmdbMovieDto;
 import com.ness.movie_release_web.dto.tmdb.movie.search.TmdbMovieSearchDto;
-import com.ness.movie_release_web.model.Film;
+import com.ness.movie_release_web.model.Movie;
 import com.ness.movie_release_web.model.User;
 import com.ness.movie_release_web.dto.tmdb.movie.details.Status;
-import com.ness.movie_release_web.model.type.MessageDestinationType;
-import com.ness.movie_release_web.repository.FilmRepository;
+import com.ness.movie_release_web.repository.MovieRepository;
 import com.ness.movie_release_web.repository.MovieSortBy;
 import com.ness.movie_release_web.service.tmdb.*;
 import lombok.RequiredArgsConstructor;
@@ -31,7 +30,7 @@ import java.util.Map;
 import java.util.Optional;
 
 import static com.ness.movie_release_web.model.type.MessageDestinationType.*;
-import static com.ness.movie_release_web.repository.FilmSpecifications.byUserAndStatusWithOrderby;
+import static com.ness.movie_release_web.repository.MovieSpecifications.byUserAndStatusWithOrderby;
 import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toMap;
 
@@ -40,7 +39,7 @@ import static java.util.stream.Collectors.toMap;
 @RequiredArgsConstructor
 public class MovieServiceImpl implements MovieService {
 
-    private final FilmRepository repository;
+    private final MovieRepository repository;
     private final TmdbMovieService tmdbMovieService;
     private final UserService userService;
     private final TmdbDatesService tmdbDatesService;
@@ -93,21 +92,21 @@ public class MovieServiceImpl implements MovieService {
 
         User user = userService.findByLogin(login);
 
-        Page<Film> filmPage = getByUserAndStatusWithOrderbyAndPages(statuses, sort, user, page.intValue() - 1, size);
-        List<Film> films = filmPage.getContent();
+        Page<Movie> moviePage = getByUserAndStatusWithOrderbyAndPages(statuses, sort, user, page.intValue() - 1, size);
+        List<Movie> movies = moviePage.getContent();
 
         List<TmdbMovieDetailsDto> movieDtos;
         if (viewMode) {
-            movieDtos = films.stream().map(f -> TmdbMovieDetailsDto.of(f, language)).collect(toList());
+            movieDtos = movies.stream().map(f -> TmdbMovieDetailsDto.of(f, language)).collect(toList());
         } else {
-            movieDtos = films.stream().map(f -> tmdbMovieService.getMovieDetails(f.getId(), language))
+            movieDtos = movies.stream().map(f -> tmdbMovieService.getMovieDetails(f.getId(), language))
                     .filter(Optional::isPresent).map(Optional::get).collect(toList());
         }
 
         return new MovieSubscriptionsDto()
                 .setMovieDetailsDtos(movieDtos)
                 .setSortBy(sort)
-                .setTotalPages((long) filmPage.getTotalPages())
+                .setTotalPages((long) moviePage.getTotalPages())
                 .setBotInitialized(user.getMessageDestinationType().equals(EMAIL) || user.getTelegramChatId() != null);
     }
 
@@ -134,7 +133,7 @@ public class MovieServiceImpl implements MovieService {
     @Scheduled(cron = "${cron.pattern.updateDB}")
     public void updateDb() {
 
-        log.info("Updating film db...");
+        log.info("Updating movie db...");
         repository.findAll().forEach(f -> {
             Long tmdbId = f.getId();
             Optional<TmdbMovieDetailsDto> movieDetails = tmdbMovieService.getMovieDetails(tmdbId, Language.en);
@@ -154,14 +153,14 @@ public class MovieServiceImpl implements MovieService {
 
             repository.save(f);
         });
-        log.info("film db updated!");
+        log.info("Movie db updated!");
     }
 
-    private Page<Film> getByUserAndStatusWithOrderbyAndPages(List<Status> statuses,
-                                                            MovieSortBy sortBy,
-                                                            User user,
-                                                            Integer page,
-                                                            Integer size) {
+    private Page<Movie> getByUserAndStatusWithOrderbyAndPages(List<Status> statuses,
+                                                              MovieSortBy sortBy,
+                                                              User user,
+                                                              Integer page,
+                                                              Integer size) {
         return repository.findAll(byUserAndStatusWithOrderby(statuses, sortBy, user), PageRequest.of(page, size));
     }
 

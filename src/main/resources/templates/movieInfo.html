@@ -2,7 +2,7 @@
 <html xmlns:th="http://www.thymeleaf.org">
 
 <head th:replace="embeded/header.html :: header(~{::title})">
-    <title th:text="${film.title} + ' (' + ${film.releaseDate?.getYear()} + ')'"></title>
+    <title th:text="${movie.title} + ' (' + ${movie.releaseDate?.getYear()} + ')'"></title>
 </head>
 
 <body>
@@ -14,26 +14,26 @@
         <div class="row">
             <div class="col-10 col-sm-6 col-md-5 col-lg-4 col-xl-3" style="text-align: right">
                 <div style="text-align: center; display: inline-block;">
-                    <img th:src="${film.posterPath}" style="height: 400px; max-width: 300px" class="rounded" th:onerror="'this.src=\'' + @{/img/no-image.png} + '\'; this.onerror=null'">
+                    <img th:src="${movie.posterPath}" style="height: 400px; max-width: 300px" class="rounded" th:onerror="'this.src=\'' + @{/img/no-image.png} + '\'; this.onerror=null'">
 
                     <p style="margin-bottom: 12px; margin-top: 16px;"><span th:text="#{lang.score}"></span>
-                        <b th:if="${film.voteAverage > 6}" style="color: #33CC00" th:text="${film.voteAverage}" />
+                        <b th:if="${movie.voteAverage > 6}" style="color: #33CC00" th:text="${movie.voteAverage}" />
 
-                        <b th:if="${film.voteAverage < 4}" style="color: #FD0100" th:text="${film.voteAverage}" />
+                        <b th:if="${movie.voteAverage < 4}" style="color: #FD0100" th:text="${movie.voteAverage}" />
 
-                        <b th:if="${film.voteAverage >= 4 and film.voteAverage <= 6}" style="color: #E1AC00" th:text="${film.voteAverage}" />
+                        <b th:if="${movie.voteAverage >= 4 and movie.voteAverage <= 6}" style="color: #E1AC00" th:text="${movie.voteAverage}" />
                     </p>
 
                     <div>
                         <form th:if="${subscribed}" action="/movie/unSubscribe" method="post" class="unSubsForm">
-                            <input type="hidden" name="tmdbId" th:value="${film.id}" />
+                            <input type="hidden" name="tmdbId" th:value="${movie.id}" />
                             <input type="submit" th:value="#{lang.unsubscribe}" class="btn btn-danger" />
                         </form>
                     </div>
 
                     <div>
                         <form th:unless="${subscribed}" action="/movie/subscribe" method="post" class="subsForm">
-                            <input type="hidden" name="tmdbId" th:value="${film.id}" />
+                            <input type="hidden" name="tmdbId" th:value="${movie.id}" />
                             <input type="submit" th:value="#{lang.subscribe}" class="btn btn-warning" />
                         </form>
                     </div>
@@ -44,35 +44,35 @@
                 <div class="row">
                     <div class="col-md-8">
                         <div style="font-size: 27px;">
-                            <b th:text="${film.title} + ' (' + ${film.releaseDate?.getYear()} + ')'" />
+                            <b th:text="${movie.title} + ' (' + ${movie.releaseDate?.getYear()} + ')'" />
                         </div>
                     </div>
                 </div>
                 <div class="row" style="font-size: 12px; height: 32px; vertical-align: center; padding-top: 4px">
                     <div class="col-auto col-sm-auto col-md-auto col-lg-auto col-xl-auto">
                         <div class="plate">
-                            <span class="plate-text" th:text="#{'lang.status.' + ${film.status}}" />
+                            <span class="plate-text" th:text="#{'lang.status.' + ${movie.status}}" />
                         </div>
                     </div>
 
                     <div class="col-auto col-sm-auto col-md-auto col-lg-auto col-xl-auto">
                         <div class="plate">
-                            <p class="plate-text" th:text="${#strings.capitalize(film.originalLanguage)}" />
+                            <p class="plate-text" th:text="${#strings.capitalize(movie.originalLanguage)}" />
                         </div>
                     </div>
 
-                    <div th:unless="${film.runtime == null || film.runtime <= 0}" class="col-auto col-sm-auto col-md-auto col-lg-auto col-xl-auto"
+                    <div th:unless="${movie.runtime == null || movie.runtime <= 0}" class="col-auto col-sm-auto col-md-auto col-lg-auto col-xl-auto"
                         style="text-align: center; max-width: 100px">
                         <img style="width: 16px; margin-right: 3px" th:src="@{/img/clock.png}" />
-                        <span class="plate-text" th:text="${film.runtime} + ' ' + #{lang.minutes}" />
+                        <span class="plate-text" th:text="${movie.runtime} + ' ' + #{lang.minutes}" />
                     </div>
-                    <div th:unless="${film.homepage == null || film.homepage.equals('')}" class="col-auto col-sm-auto col-md-auto col-lg-auto col-xl-auto pr-2"
+                    <div th:unless="${movie.homepage == null || movie.homepage.equals('')}" class="col-auto col-sm-auto col-md-auto col-lg-auto col-xl-auto pr-2"
                         style="padding: 0">
-                        <a class="plate-text site" style="color: #337ab7;" th:href="${film.homepage}" th:text="#{lang.website}">
+                        <a class="plate-text site" style="color: #337ab7;" th:href="${movie.homepage}" th:text="#{lang.website}">
                         </a>
                     </div>
 
-                    <div th:if="${!film.videos.videoList.isEmpty()}" class="col-auto col-sm-auto col-md-auto col-lg-auto col-xl-auto"
+                    <div th:if="${!movie.videos.videoList.isEmpty()}" class="col-auto col-sm-auto col-md-auto col-lg-auto col-xl-auto"
                         style="padding: 0">
 
                         <a class="plate-text site" th:text="#{lang.video}" style="color: #337ab7;" data-toggle="collapse"
@@ -82,20 +82,20 @@
 
                 <div class="row">
                     <div class="col-md-12">
-                        <div class="filmPropSpaces">
+                        <div class="moviePropSpaces">
                             <div class="collapse" id="collapseExample">
 
                                 <div id="carouselExampleControls" class="carousel slide" data-ride="carousel"
                                     data-interval="false">
                                     <div class="carousel-inner">
-                                        <div th:class="${i.index == 0 ? 'active' : ''} + ' carousel-item'" th:each="video, i : ${film.videos.videoList}"
+                                        <div th:class="${i.index == 0 ? 'active' : ''} + ' carousel-item'" th:each="video, i : ${movie.videos.videoList}"
                                             style="height: 500px;">
                                             <iframe height="500px" class="yt-frame" th:src="${video.ytLink}">
                                             </iframe>
                                         </div>
 
                                     </div>
-                                    <th:block th:if="${film.videos.videoList.size() > 1}">
+                                    <th:block th:if="${movie.videos.videoList.size() > 1}">
                                         <a class="carousel-control-prev" href="#carouselExampleControls" role="button"
                                             data-slide="prev">
                                             <span class="carousel-control-prev-icon" aria-hidden="true"></span>
@@ -115,18 +115,18 @@
 
                 <div class="row">
                     <div class="col-md-12">
-                        <div class="filmPropSpaces">
+                        <div class="moviePropSpaces">
                             <b th:text="#{lang.tag_line} + ':'"></b>
-                            <th:block th:text="${film.tagline}" />
+                            <th:block th:text="${movie.tagline}" />
                         </div>
                     </div>
                 </div>
 
                 <div class="row">
                     <div class="col-md-12">
-                        <div class="filmPropSpaces">
+                        <div class="moviePropSpaces">
                             <b th:text="#{lang.genres} + ':'"></b>
-                            <th:block th:each="genre: ${film.genres}">
+                            <th:block th:each="genre: ${movie.genres}">
                                 <a class="genre-link" th:text="${#strings.capitalize(genre.name)}" th:href="${'/movie/discover?genres=' + genre.id}"></a>
                             </th:block>
                         </div>
@@ -135,9 +135,9 @@
 
                 <div class="row">
                     <div class="col-md-12">
-                        <div class="filmPropSpaces">
+                        <div class="moviePropSpaces">
                             <b th:text="#{lang.production} + ':'"></b>
-                            <th:block th:each="production: ${film.productionCompanies}">
+                            <th:block th:each="production: ${movie.productionCompanies}">
                                 <a class="genre-link" th:text="${#strings.capitalize(production.name)}" th:href="${'/movie/discover?companies=' + production.id}"></a>
                             </th:block>
                         </div>
@@ -146,9 +146,9 @@
 
                 <div class="row">
                     <div class="col-md-12">
-                        <div class="filmPropSpaces">
+                        <div class="moviePropSpaces">
                             <b th:text="#{lang.countries} + ':'"></b>
-                            <th:block th:each="country: ${film.productionCountries}">
+                            <th:block th:each="country: ${movie.productionCountries}">
                                 <span th:text="${country.name}"></span>
                                 <span> </span>
                             </th:block>
@@ -159,7 +159,7 @@
                 <th:block th:each="release: ${releases}">
                     <div class="row">
                         <div class="col-md-12">
-                            <div class="filmPropSpaces">
+                            <div class="moviePropSpaces">
                                 <b>
                                     <th:block th:text="#{'lang.release.' + ${release.releaseType.name()}}" />
                                     <span th:text="#{lang.release_date} + ':'"></span></b>
@@ -171,37 +171,37 @@
 
                 <div class="row">
                     <div class="col-md-12">
-                        <div class="filmPropSpaces">
+                        <div class="moviePropSpaces">
                             <b th:text="#{lang.budget} + ':'"></b>
-                            <th:block th:text="${'$' + #numbers.formatDecimal(film.budget, 0, 'COMMA', 2, 'POINT')}" />
+                            <th:block th:text="${'$' + #numbers.formatDecimal(movie.budget, 0, 'COMMA', 2, 'POINT')}" />
                         </div>
                     </div>
                 </div>
 
                 <div class="row">
                     <div class="col-md-12">
-                        <div class="filmPropSpaces">
+                        <div class="moviePropSpaces">
                             <b th:text="#{lang.revenue} + ':'"></b>
-                            <th:block th:text="${'$' + #numbers.formatDecimal(film.revenue, 0, 'COMMA', 2, 'POINT')}" />
+                            <th:block th:text="${'$' + #numbers.formatDecimal(movie.revenue, 0, 'COMMA', 2, 'POINT')}" />
                         </div>
                     </div>
                 </div>
 
                 <div class="row">
                     <div class="col-md-12">
-                        <div class="filmPropSpaces">
+                        <div class="moviePropSpaces">
                             <b th:text="#{lang.overview} + ':'"></b>
-                            <th:block th:text="${film.overview}" />
+                            <th:block th:text="${movie.overview}" />
                         </div>
                     </div>
                 </div>
 
                 <div class="row">
                     <div class="col-11">
-                        <div class="filmPropSpaces">
+                        <div class="moviePropSpaces">
                             <b th:text="#{lang.actors} + ':'"></b>
                             <div class="owl-carousel owl-theme" id="owl-actors">
-                                <div th:each="actor : ${film.credits.casts}" class="season shadow p-2 mb-3 mr-2 ml-2 rounded">
+                                <div th:each="actor : ${movie.credits.casts}" class="season shadow p-2 mb-3 mr-2 ml-2 rounded">
 
                                     <a class="text-dark" style="text-decoration: none !important" th:href="'/people/' + ${actor.id}">
 

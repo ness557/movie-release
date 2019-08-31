@@ -57,7 +57,7 @@ public class TmdbPeopleDto {
     @JsonDeserialize(using = TmdbPosterPathDeserializer.class)
     private String profilePath;
 
-    @JsonProperty("credits")
+    @JsonProperty("movie_credits")
     private TmdbMovieCreditsDto credits = new TmdbMovieCreditsDto();
 
     @JsonProperty("tv_credits")
