@@ -67,7 +67,6 @@ public class UserServiceImpl implements UserService {
         repository.findByLogin(login).setLanguage(language);
     }
 
-    @Override
     public User findByLogin(String login) {
         return repository.findByLogin(login);
     }

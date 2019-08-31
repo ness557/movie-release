@@ -1,6 +1,7 @@
 package com.ness.movie_release_web.service;
 
 import com.ness.movie_release_web.model.User;
+import com.ness.movie_release_web.repository.UserRepository;
 import com.ness.movie_release_web.service.email.EmailService;
 import com.ness.movie_release_web.service.telegram.TelegramNotificationBot;
 import com.ness.movie_release_web.service.telegram.TelegramService;
@@ -28,7 +29,7 @@ import java.util.WeakHashMap;
 @RequiredArgsConstructor
 public class PasswordRestoreServiceImpl implements PasswordRestoreService {
 
-    private final UserService userService;
+    private final UserRepository userRepository;
     private final MessageSource messageSource;
     private final PasswordEncoder passwordEncoder;
     private final TelegramNotificationBot telegramBot;
@@ -42,14 +43,14 @@ public class PasswordRestoreServiceImpl implements PasswordRestoreService {
     @Override
     public List<String> updatePassword(String login, String oldPassword, String newPassword, Locale locale) {
 
-        User user = userService.findByLogin(login);
+        User user = userRepository.findByLogin(login);
 
         if (!passwordEncoder.matches(oldPassword, user.getEncPassword())) {
             return Collections.singletonList(messageSource.getMessage("lang.wrong_password_error", new Object[]{}, locale));
         }
 
         user.setEncPassword(newPassword);
-        userService.saveWithPassEncryption(user);
+        user.setEncPassword(passwordEncoder.encode(user.getEncPassword()));;
 
         return Collections.emptyList();
     }
