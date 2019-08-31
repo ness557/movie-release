@@ -43,16 +43,16 @@ public class TmdbPeopleServiceImpl implements TmdbPeopleService {
     @Override
     public Optional<TmdbPeopleDto> getDetails(Long id, Language language) {
 
-        UriComponentsBuilder UrlBuilder = UriComponentsBuilder.fromHttpUrl(url + "person/")
+        UriComponentsBuilder urlBuilder = UriComponentsBuilder.fromHttpUrl(url + "person/")
                 .path(id.toString())
                 .queryParam("api_key", apikey)
                 .queryParam("language", language.name())
-                .queryParam("append_to_response", "credits,tv_credits");
+                .queryParam("append_to_response", "movie_credits,tv_credits");
 
 
         ResponseEntity<TmdbPeopleDto> response;
         try {
-            response = restTemplate.getForEntity(UrlBuilder.toUriString(), TmdbPeopleDto.class);
+            response = restTemplate.getForEntity(urlBuilder.toUriString(), TmdbPeopleDto.class);
         } catch (HttpStatusCodeException e) {
             log.error("Could not get people details by id: {}, status: {}", id, e.getStatusCode().value());
 
