@@ -8,7 +8,7 @@ import java.time.LocalDate;
 import java.util.List;
 
 @Entity
-@Table(name = "film")
+@Table(name = "movie")
 @Getter
 @Setter
 @AllArgsConstructor
@@ -35,8 +35,8 @@ public class Movie {
     private Float voteAverage;
 
     @ManyToMany(fetch = FetchType.EAGER)
-    @JoinTable(name = "film_uzer",
-            joinColumns = @JoinColumn(name = "film_id"),
-            inverseJoinColumns = @JoinColumn(name = "uzer_id"))
+    @JoinTable(name = "movie_uzer",
+            joinColumns = @JoinColumn(name = "movie_id"),
+            inverseJoinColumns = @JoinColumn(name = "movie_id"))
     private List<User> users;
 }
