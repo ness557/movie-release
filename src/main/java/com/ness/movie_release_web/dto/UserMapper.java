@@ -20,7 +20,8 @@ public class UserMapper {
                 .setTelegramId(user.getTelegramId())
                 .setTelegramChatId(user.getTelegramChatId())
                 .setEmail(user.getEmail())
-                .setTelegramNotify(user.isTelegramNotify())
+                .setMessageDestinationType(user.getMessageDestinationType())
+
                 .setLanguage(user.getLanguage());
     }
 
@@ -36,7 +37,7 @@ public class UserMapper {
                 .setTelegramId(userDto.getTelegramId())
                 .setTelegramChatId(userDto.getTelegramChatId())
                 .setEmail(userDto.getEmail())
-                .setTelegramNotify(userDto.isTelegramNotify())
+                .setMessageDestinationType(userDto.getMessageDestinationType())
                 .setLanguage(userDto.getLanguage());
     }
 }

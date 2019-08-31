@@ -4,19 +4,15 @@ import com.ness.movie_release_web.dto.Language;
 import com.ness.movie_release_web.dto.PasswordChangeDto;
 import com.ness.movie_release_web.dto.PasswordResetResponseDto;
 import com.ness.movie_release_web.model.User;
-import com.ness.movie_release_web.model.type.NotificationSource;
 import com.ness.movie_release_web.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
-import java.util.Optional;
-
-import static com.ness.movie_release_web.model.type.NotificationSource.EMAIL;
-import static com.ness.movie_release_web.model.type.NotificationSource.TELEGRAM;
+import static com.ness.movie_release_web.model.type.MessageDestinationType.EMAIL;
+import static com.ness.movie_release_web.model.type.MessageDestinationType.TELEGRAM;
 
 @Service
 @RequiredArgsConstructor
@@ -39,14 +35,17 @@ public class UserServiceImpl implements UserService {
 
         PasswordResetResponseDto resultDto = new PasswordResetResponseDto();
 
-        if (user.isTelegramNotify()) {
-            passwordRestoreService.sendRestoreViaTelegram(resetToken, user.getTelegramChatId());
-            resultDto.setSource(TELEGRAM)
-                    .setAddress(user.getTelegramId());
-        } else {
-            passwordRestoreService.sendRestoreViaEmail(resetToken, user.getEmail());
-            resultDto.setSource(EMAIL)
-                    .setAddress(user.getEmail());
+        switch (user.getMessageDestinationType()) {
+            case EMAIL:
+                passwordRestoreService.sendRestoreViaEmail(resetToken, user.getEmail());
+                resultDto.setSource(EMAIL)
+                        .setAddress(user.getEmail());
+                break;
+            case TELEGRAM:
+                passwordRestoreService.sendRestoreViaTelegram(resetToken, user.getTelegramChatId());
+                resultDto.setSource(TELEGRAM)
+                        .setAddress(user.getTelegramId());
+                break;
         }
 
         return resultDto;

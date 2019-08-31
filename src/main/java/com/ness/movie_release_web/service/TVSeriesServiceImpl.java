@@ -14,6 +14,7 @@ import com.ness.movie_release_web.model.TVSeries;
 import com.ness.movie_release_web.model.User;
 import com.ness.movie_release_web.model.UserTVSeries;
 import com.ness.movie_release_web.model.UserTVSeriesPK;
+import com.ness.movie_release_web.model.type.MessageDestinationType;
 import com.ness.movie_release_web.repository.*;
 import com.ness.movie_release_web.service.tmdb.*;
 import lombok.RequiredArgsConstructor;
@@ -31,6 +32,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 
+import static com.ness.movie_release_web.model.type.MessageDestinationType.EMAIL;
 import static com.ness.movie_release_web.repository.UserTVSeriesSpecifications.byUserAndTVStatusesAndWatchStatusesWithOrderby;
 import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toMap;
@@ -172,7 +174,7 @@ public class TVSeriesServiceImpl implements TVSeriesService {
 
         return new TvSeriesSubscriptionsDto()
                 .setSortBy(sort)
-                .setBotInitialized(!user.isTelegramNotify() || user.getTelegramChatId() != null)
+                .setBotInitialized(user.getMessageDestinationType().equals(EMAIL) || user.getTelegramChatId() != null)
                 .setSeriesDetailsDtos(subscriptions)
                 .setTotalPages((long) userTVSeries.getTotalPages());
     }

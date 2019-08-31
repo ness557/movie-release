@@ -72,14 +72,10 @@ public class SubscriptionServiceImpl implements SubscriptionService {
             throw new ResponseStatusException(HttpStatus.CONFLICT);
         }
 
-        Optional<TmdbTVDetailsDto> tvDetailsOptional = tmdbTVSeriesService.getTVDetails(tmdbId, Language.en);
-        Optional<TmdbTVDetailsDto> tvDetailsOptionalRu = tmdbTVSeriesService.getTVDetails(tmdbId, Language.ru);
-
-        if (!tvDetailsOptional.isPresent() || !tvDetailsOptionalRu.isPresent())
-            throw new ResponseStatusException(HttpStatus.CONFLICT);
-
-        TmdbTVDetailsDto tvDetails = tvDetailsOptional.get();
-        TmdbTVDetailsDto tvDetailsRu = tvDetailsOptionalRu.get();
+        TmdbTVDetailsDto tvDetails = tmdbTVSeriesService.getTVDetails(tmdbId, Language.en)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.CONFLICT));
+        TmdbTVDetailsDto tvDetailsRu = tmdbTVSeriesService.getTVDetails(tmdbId, Language.ru)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.CONFLICT));
 
         Optional<TVSeries> one = tvSeriesRepository.findById(tmdbId);
 
@@ -106,12 +102,9 @@ public class SubscriptionServiceImpl implements SubscriptionService {
     public void unsubscribeFromSeries(Long tmdbId, String login) {
         User user = userService.findByLogin(login);
 
-        Optional<UserTVSeries> userTVSeries = userTVSeriesRepository.findById(UserTVSeriesPK.wrap(user.getId(), tmdbId));
+        UserTVSeries userTVSeries = userTVSeriesRepository.findById(UserTVSeriesPK.wrap(user.getId(), tmdbId))
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.CONFLICT));
 
-        if (!userTVSeries.isPresent()) {
-            throw new ResponseStatusException(HttpStatus.CONFLICT);
-        }
-
-        userTVSeriesRepository.delete(userTVSeries.get());
+        userTVSeriesRepository.delete(userTVSeries);
     }
 }

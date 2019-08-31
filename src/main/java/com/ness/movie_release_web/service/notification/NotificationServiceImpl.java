@@ -71,10 +71,15 @@ public class NotificationServiceImpl implements NotificationService {
             f.getUsers().forEach(u ->
                     releaseDates.forEach(rd -> {
                         if (rd.getReleaseDate().isBefore(endDate) && rd.getReleaseDate().isAfter(startDate)) {
-                            if (u.isTelegramNotify()) {
-                                addMovieNotify(langMovie.get(u.getLanguage()), u, rd, telegramNotifies);
-                            } else {
-                                addMovieNotify(langMovie.get(u.getLanguage()), u, rd, emailNotifies);
+
+                            switch (u.getMessageDestinationType()) {
+
+                                case EMAIL:
+                                    addMovieNotify(langMovie.get(u.getLanguage()), u, rd, emailNotifies);
+                                    break;
+                                case TELEGRAM:
+                                    addMovieNotify(langMovie.get(u.getLanguage()), u, rd, telegramNotifies);
+                                    break;
                             }
                         }
                     }));
@@ -134,14 +139,15 @@ public class NotificationServiceImpl implements NotificationService {
                             if (tmdbSeasonDto.getAirDate().isBefore(endDate) && tmdbSeasonDto.getAirDate().isAfter(startDate)) {
 
                                 // notify about season
-                                if (tv.getUser().isTelegramNotify()) {
-
-                                    // add to telegram notify list
-                                    addSeasonNotify(tmdbSeasonDto, tmdbTvDetailsDto, tv.getUser(), telegramSeasonNotifies);
-                                } else {
-
-                                    // add to email notify list
-                                    addSeasonNotify(tmdbSeasonDto, tmdbTvDetailsDto, tv.getUser(), emailSeasonNotifies);
+                                switch (tv.getUser().getMessageDestinationType()) {
+                                    case EMAIL:
+                                        // add to email notify list
+                                        addSeasonNotify(tmdbSeasonDto, tmdbTvDetailsDto, tv.getUser(), emailSeasonNotifies);
+                                        break;
+                                    case TELEGRAM:
+                                        // add to telegram notify list
+                                        addSeasonNotify(tmdbSeasonDto, tmdbTvDetailsDto, tv.getUser(), telegramSeasonNotifies);
+                                        break;
                                 }
                             }
 
@@ -150,16 +156,15 @@ public class NotificationServiceImpl implements NotificationService {
 
                             // looking for episodes, the date of which matches condition
                             tmdbSeasonDto.getEpisodes().stream().filter(e -> e.getAirDate().isBefore(endDate) && e.getAirDate().isAfter(startDate)).forEach(e -> {
-
-                                // notify about episode
-                                if(tv.getUser().isTelegramNotify()){
-
-                                    // add to telegram notify list
-                                    addEpisodeNotify(e, tmdbTvDetailsDto, tv.getUser(), telegramEpisodeNotifies);
-                                } else {
-
-                                    // add to email notify list
-                                    addEpisodeNotify(e, tmdbTvDetailsDto, tv.getUser(), emailEpisodeNotifies);
+                                switch (tv.getUser().getMessageDestinationType()) {
+                                    case EMAIL:
+                                        // add to email notify list
+                                        addEpisodeNotify(e, tmdbTvDetailsDto, tv.getUser(), emailEpisodeNotifies);
+                                        break;
+                                    case TELEGRAM:
+                                        // add to telegram notify list
+                                        addEpisodeNotify(e, tmdbTvDetailsDto, tv.getUser(), telegramEpisodeNotifies);
+                                        break;
                                 }
                             });
                         }

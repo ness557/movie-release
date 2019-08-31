@@ -1,5 +1,6 @@
 package com.ness.movie_release_web.dto;
 
+import com.ness.movie_release_web.model.type.MessageDestinationType;
 import com.ness.movie_release_web.util.validators.MatchPassword;
 import lombok.*;
 import lombok.experimental.Accessors;
@@ -34,7 +35,7 @@ public class UserDto {
     @NotBlank(message = "{lang.email_error_msg}")
     private String email;
 
-    private boolean isTelegramNotify;
+    private MessageDestinationType messageDestinationType;
 
     private Long telegramChatId;
 

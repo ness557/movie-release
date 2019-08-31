@@ -1,0 +1,9 @@
+databaseChangeLog:
+  - changeSet:
+      id: user_add_message_destination_type_collumn
+      author: Bezruchko
+      changes:
+        - sqlFile:
+            dbms: postgresql
+            encoding: utf8
+            path: db/sql/user_add_message_destination_type_collumn.sql

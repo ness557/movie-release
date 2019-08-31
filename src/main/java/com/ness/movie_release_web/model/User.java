@@ -1,20 +1,16 @@
 package com.ness.movie_release_web.model;
 
-import lombok.*;
+import com.ness.movie_release_web.dto.Language;
+import com.ness.movie_release_web.model.type.MessageDestinationType;
+import lombok.Data;
+import lombok.experimental.Accessors;
 
 import javax.persistence.*;
 
-import com.ness.movie_release_web.dto.Language;
-import lombok.experimental.Accessors;
-
 @Entity
 @Table(name = "uzer")
-@Getter
-@Setter
-@NoArgsConstructor
+@Data
 @Accessors(chain = true)
-@ToString
-@EqualsAndHashCode
 public class User {
 
     @Id
@@ -36,8 +32,9 @@ public class User {
     @Column(name = "email")
     private String email;
 
-    @Column(name = "is_telegram_notify")
-    private boolean isTelegramNotify;
+    @Column(name = "message_dest_type")
+    @Enumerated(EnumType.STRING)
+    private MessageDestinationType messageDestinationType;
 
     @Column(name = "telegram_chat_id")
     private Long telegramChatId;
