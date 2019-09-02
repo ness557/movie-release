@@ -4,7 +4,6 @@ import com.ness.movie_release_web.model.User;
 import com.ness.movie_release_web.repository.UserRepository;
 import com.ness.movie_release_web.service.email.EmailService;
 import com.ness.movie_release_web.service.telegram.TelegramNotificationBot;
-import com.ness.movie_release_web.service.telegram.TelegramService;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.springframework.beans.factory.annotation.Value;
@@ -12,12 +11,7 @@ import org.springframework.context.MessageSource;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.util.Collections;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Optional;
-import java.util.WeakHashMap;
+import java.util.*;
 
 /**
  * PasswordRestoreServiceImpl.
@@ -50,7 +44,7 @@ public class PasswordRestoreServiceImpl implements PasswordRestoreService {
         }
 
         user.setEncPassword(newPassword);
-        user.setEncPassword(passwordEncoder.encode(user.getEncPassword()));;
+        user.setEncPassword(passwordEncoder.encode(user.getEncPassword()));
 
         return Collections.emptyList();
     }

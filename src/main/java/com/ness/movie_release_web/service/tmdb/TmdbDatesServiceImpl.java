@@ -1,15 +1,14 @@
 package com.ness.movie_release_web.service.tmdb;
 
+import com.ness.movie_release_web.dto.tmdb.releaseDates.ReleaseType;
 import com.ness.movie_release_web.dto.tmdb.releaseDates.TmdbReleaseDate;
 import com.ness.movie_release_web.dto.tmdb.releaseDates.TmdbReleaseDateResultDto;
 import com.ness.movie_release_web.dto.tmdb.releaseDates.TmdbReleaseDateResultListDto;
-import com.ness.movie_release_web.dto.tmdb.releaseDates.ReleaseType;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.ResponseEntity;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
-import org.springframework.web.client.HttpStatusCodeException;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 
@@ -18,7 +17,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Function;
 import java.util.function.Predicate;
 
-import static java.lang.Thread.sleep;
+import static com.ness.movie_release_web.util.tmdb.TmdbApiUtils.getTmdbEntity;
 import static java.util.Collections.emptyList;
 import static java.util.stream.Collectors.toList;
 
@@ -37,6 +36,7 @@ public class TmdbDatesServiceImpl implements TmdbDatesService {
     private String url;
 
     @Override
+    @Cacheable("getReleaseDates")
     public List<TmdbReleaseDate> getReleaseDates(String imdbId, ReleaseType... releaseTypes) {
 
         if (releaseTypes.length < 1) {
@@ -51,6 +51,7 @@ public class TmdbDatesServiceImpl implements TmdbDatesService {
     }
 
     @Override
+    @Cacheable("getReleaseDates")
     public List<TmdbReleaseDate> getReleaseDates(String imdbId) {
 
         Long tmdbId = tmdbExternalIdService.getTmdbIdByImdbId(imdbId);
@@ -59,6 +60,8 @@ public class TmdbDatesServiceImpl implements TmdbDatesService {
         return distinctReleaseDates(releaseDates);
     }
 
+    @Cacheable("getReleaseDates")
+    @Override
     public List<TmdbReleaseDate> getReleaseDates(Long tmdbId, ReleaseType... releaseTypes) {
 
         if (releaseTypes.length < 1) {
@@ -71,7 +74,8 @@ public class TmdbDatesServiceImpl implements TmdbDatesService {
         return distinctAndFilterReleadeDates(releaseDates, releaseTypes);
     }
 
-
+    @Override
+    @Cacheable("getReleaseDates")
     public List<TmdbReleaseDate> getReleaseDates(Long tmdbId) {
 
         List<TmdbReleaseDateResultDto> releaseDates = getReleaseDatesByTmdbId(tmdbId);
@@ -107,26 +111,9 @@ public class TmdbDatesServiceImpl implements TmdbDatesService {
         UriComponentsBuilder releasesBuilder = UriComponentsBuilder.fromHttpUrl(url + "movie/")
                 .path(tmdbId.toString()).path("/release_dates")
                 .queryParam("api_key", apikey);
-        ResponseEntity<TmdbReleaseDateResultListDto> releaseResponse;
-        try {
-            releaseResponse = restTemplate.getForEntity(releasesBuilder.toUriString(), TmdbReleaseDateResultListDto.class);
-        } catch (HttpStatusCodeException e) {
-            log.error("Could not get release dates: {}", e.getMessage());
 
-            if (e.getStatusCode().value() == 429) {
-                try {
-                    // sleep current thread for 1s
-                    sleep(1000);
-                } catch (InterruptedException e1) {
-                    log.error(e1.getMessage());
-                }
-                // and try again
-                return this.getReleaseDatesByTmdbId(tmdbId);
-            }
-
-            return emptyList();
-        }
-        return Optional.ofNullable(releaseResponse.getBody()).map(TmdbReleaseDateResultListDto::getReleaseDates).orElse(Collections.emptyList());
+        return getTmdbEntity(releasesBuilder.toUriString(), restTemplate, TmdbReleaseDateResultListDto.class)
+                .map(TmdbReleaseDateResultListDto::getReleaseDates).orElse(Collections.emptyList());
     }
 
     private static <T> Predicate<T> distinctByKey(Function<? super T, ?> ke) {

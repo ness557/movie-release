@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ness.movie_release_web.dto.tmdb.TmdbProductionCompanyDto;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.IOUtils;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
@@ -51,6 +52,7 @@ public class TmdbNetworkServiceImpl implements TmdbNetworkService {
     }
 
     @Override
+    @Cacheable("getNetworks")
     public List<TmdbProductionCompanyDto> getNetworks() {
         if(networks.isEmpty()) {
             try {
@@ -59,16 +61,21 @@ public class TmdbNetworkServiceImpl implements TmdbNetworkService {
                 log.error(e.getLocalizedMessage());
             }
         }
-        return networks;
+        return new ArrayList<>(networks);
     }
 
     @Override
+    @Cacheable("getNetworks")
     public List<TmdbProductionCompanyDto> getNetworks(List<Long> ids) {
         return networks.stream().filter(n -> ids.contains(n.getId())).collect(toList());
     }
 
     @Override
+    @Cacheable("networkSearch")
     public List<TmdbProductionCompanyDto> search(String query) {
-        return networks.stream().filter(Objects::nonNull).filter(n -> n.getName().toLowerCase().contains(query.toLowerCase())).collect(toList());
+        return networks.stream()
+                .filter(Objects::nonNull)
+                .filter(n -> n.getName().toLowerCase().contains(query.toLowerCase()))
+                .collect(toList());
     }
 }

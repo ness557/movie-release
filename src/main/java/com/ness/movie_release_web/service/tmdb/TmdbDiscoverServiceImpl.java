@@ -6,16 +6,14 @@ import com.ness.movie_release_web.dto.tmdb.tvSeries.search.TmdbTVSearchDto;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-import org.springframework.web.client.HttpStatusCodeException;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import java.time.format.DateTimeFormatter;
 import java.util.Optional;
 
-import static java.lang.Thread.sleep;
+import static com.ness.movie_release_web.util.tmdb.TmdbApiUtils.getTmdbEntity;
 import static java.util.stream.Collectors.toList;
 
 @Service
@@ -65,26 +63,8 @@ public class TmdbDiscoverServiceImpl implements TmdbDiscoverService {
             movieBuilder.queryParam("with_people",
                     StringUtils.join(criteria.getPeople(), criteria.getPeopleAnd() ? "," : "|"));
 
-        ResponseEntity<TmdbMovieSearchDto> response;
-        try {
-            response = restTemplate.getForEntity(movieBuilder.build(false).toUriString(), TmdbMovieSearchDto.class);
-        } catch (HttpStatusCodeException e) {
-            log.error("Could not discover for movies: {}", e.getStatusCode().value());
 
-            if (e.getStatusCode().value() == 429) {
-                try {
-                    // sleep current thread for 1s
-                    sleep(1000);
-                } catch (InterruptedException e1) {
-                    log.error(e1.getMessage());
-                }
-                // and try again
-                return this.discoverMovie(criteria);
-            }
-            return Optional.empty();
-        }
-
-        return Optional.ofNullable(response.getBody());
+        return getTmdbEntity(movieBuilder.build(false).toUriString(), restTemplate, TmdbMovieSearchDto.class);
     }
 
     @Override
@@ -117,25 +97,6 @@ public class TmdbDiscoverServiceImpl implements TmdbDiscoverService {
             movieBuilder.queryParam("with_companies",
                     StringUtils.join(criteria.getCompanies(), criteria.getCompaniesAnd() ? "," : "|"));
 
-        ResponseEntity<TmdbTVSearchDto> response;
-        try {
-            response = restTemplate.getForEntity(movieBuilder.build(false).toUriString(), TmdbTVSearchDto.class);
-        } catch (HttpStatusCodeException e) {
-            log.error("Could not discover for series: {}", e.getStatusCode().value());
-
-            if (e.getStatusCode().value() == 429) {
-                try {
-                    // sleep current thread for 1s
-                    sleep(1000);
-                } catch (InterruptedException e1) {
-                    log.error(e1.getMessage());
-                }
-                // and try again
-                return this.discoverSeries(criteria);
-            }
-            return Optional.empty();
-        }
-
-        return Optional.ofNullable(response.getBody());
+        return getTmdbEntity(movieBuilder.build(false).toUriString(), restTemplate, TmdbTVSearchDto.class);
     }
 }

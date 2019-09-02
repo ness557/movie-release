@@ -55,29 +55,32 @@ public class NotificationServiceImpl implements NotificationService {
         Map<User, Map<TmdbMovieDetailsDto, TmdbReleaseDate>> emailNotifies = new HashMap<>();
 
         // notifies about release
-        movies.forEach((f) -> {
+        movies.forEach((movie) -> {
 
             List<TmdbReleaseDate> releaseDates =
                     tmdbDatesService.getReleaseDates(
-                            f.getId(),
+                            movie.getId(),
                             ReleaseType.Theatrical,
                             ReleaseType.Digital,
                             ReleaseType.Physical);
 
             Map<Language, TmdbMovieDetailsDto> langMovie =
-                    Arrays.stream(Language.values()).collect(toMap(l -> l, l -> tmdbMovieService.getMovieDetails(f.getId(), l).orElse(new TmdbMovieDetailsDto())));
+                    Arrays.stream(Language.values())
+                            .collect(toMap(
+                                    language -> language,
+                                    language -> tmdbMovieService.getMovieDetails(movie.getId(),
+                                            language).orElse(new TmdbMovieDetailsDto())));
 
-            f.getUsers().forEach(u ->
-                    releaseDates.forEach(rd -> {
-                        if (rd.getReleaseDate().isBefore(endDate) && rd.getReleaseDate().isAfter(startDate)) {
+            movie.getUsers().forEach(u ->
+                    releaseDates.forEach(releaseDate -> {
+                        if (releaseDate.getReleaseDate().isBefore(endDate) && releaseDate.getReleaseDate().isAfter(startDate)) {
 
                             switch (u.getMessageDestinationType()) {
-
                                 case EMAIL:
-                                    addMovieNotify(langMovie.get(u.getLanguage()), u, rd, emailNotifies);
+                                    addMovieNotify(langMovie.get(u.getLanguage()), u, releaseDate, emailNotifies);
                                     break;
                                 case TELEGRAM:
-                                    addMovieNotify(langMovie.get(u.getLanguage()), u, rd, telegramNotifies);
+                                    addMovieNotify(langMovie.get(u.getLanguage()), u, releaseDate, telegramNotifies);
                                     break;
                             }
                         }
@@ -115,7 +118,7 @@ public class NotificationServiceImpl implements NotificationService {
             // get foll tv show info
             Optional<TmdbTVDetailsDto> tvDetails =
                     tmdbTVSeriesService.getTVDetails(tv.getId().getTvSeriesId(),
-                                                     tv.getUser().getLanguage());
+                            tv.getUser().getLanguage());
             if (tvDetails.isPresent()) {
                 TmdbTVDetailsDto tmdbTvDetailsDto = tvDetails.get();
 
@@ -125,8 +128,8 @@ public class NotificationServiceImpl implements NotificationService {
                     // get all season info
                     Optional<TmdbSeasonDto> seasonDetails =
                             tmdbTVSeriesService.getSeasonDetails(tmdbTvDetailsDto.getId(),
-                                                                 s.getSeasonNumber(),
-                                                                 tv.getUser().getLanguage());
+                                    s.getSeasonNumber(),
+                                    tv.getUser().getLanguage());
                     if (seasonDetails.isPresent()) {
                         TmdbSeasonDto tmdbSeasonDto = seasonDetails.get();
 
@@ -150,7 +153,7 @@ public class NotificationServiceImpl implements NotificationService {
                                 }
                             }
 
-                        // season episodes DOES NOT matches season air date
+                            // season episodes DOES NOT matches season air date
                         } else {
 
                             // looking for episodes, the date of which matches condition

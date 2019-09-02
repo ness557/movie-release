@@ -3,21 +3,17 @@ package com.ness.movie_release_web.service.tmdb;
 import com.ness.movie_release_web.dto.Language;
 import com.ness.movie_release_web.dto.tmdb.movie.details.TmdbMovieDetailsDto;
 import com.ness.movie_release_web.dto.tmdb.movie.search.TmdbMovieSearchDto;
-import com.ness.movie_release_web.dto.tmdb.releaseDates.TmdbReleaseDate;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cache.annotation.Cacheable;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-import org.springframework.web.client.HttpStatusCodeException;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 
-import java.util.List;
 import java.util.Optional;
 
-import static java.lang.Thread.sleep;
+import static com.ness.movie_release_web.util.tmdb.TmdbApiUtils.getTmdbEntity;
 
 @Service
 @RequiredArgsConstructor
@@ -43,35 +39,11 @@ public class TmdbMovieServiceImpl implements TmdbMovieService {
                 .queryParam("append_to_response", "credits,videos")
                 .queryParam("language", language.name());
 
-        ResponseEntity<TmdbMovieDetailsDto> response;
-        try {
-            response = restTemplate.getForEntity(movieUrlBuilder.toUriString(), TmdbMovieDetailsDto.class);
-        } catch (HttpStatusCodeException e) {
-            log.error("Could not get movie by id: {}, status: {}", tmdbId, e.getStatusCode().value());
-
-            // if there are too many requests
-            if (e.getStatusCode().value() == 429) {
-                try {
-                    // sleep current thread for 1s
-                    sleep(1000);
-                } catch (InterruptedException e1) {
-                    log.error(e1.getMessage());
-                }
-                // and try again
-                return this.getMovieDetails(tmdbId, language);
-            }
-            return Optional.empty();
-        }
-
-        TmdbMovieDetailsDto result = response.getBody();
-
-        if (result != null) {
-
-            List<TmdbReleaseDate> releaseDates = releaseDatesService.getReleaseDates(result.getId());
-            result.setReleaseDates(releaseDates);
-        }
-
-        return Optional.ofNullable(result);
+        return getTmdbEntity(movieUrlBuilder.toUriString(), restTemplate, TmdbMovieDetailsDto.class)
+                .map(dto -> {
+                    dto.setReleaseDates(releaseDatesService.getReleaseDates(dto.getId()));
+                    return dto;
+                });
     }
 
     @Override
@@ -86,25 +58,6 @@ public class TmdbMovieServiceImpl implements TmdbMovieService {
         if (year != null)
             searchUrlBuilder.queryParam("year", year);
 
-        ResponseEntity<TmdbMovieSearchDto> response;
-        try {
-            response = restTemplate.getForEntity(searchUrlBuilder.build(false).toUriString(), TmdbMovieSearchDto.class);
-        } catch (HttpStatusCodeException e) {
-            log.error("Could not search for movie: {}, status: {}", query, e.getStatusCode().value());
-
-            if (e.getStatusCode().value() == 429) {
-                try {
-                    // sleep current thread for 1s
-                    sleep(1000);
-                } catch (InterruptedException e1) {
-                    log.error(e1.getMessage());
-                }
-                // and try again
-                return this.searchForMovies(query, page, year, language);
-            }
-
-            return Optional.empty();
-        }
-        return Optional.ofNullable(response.getBody());
+        return getTmdbEntity(searchUrlBuilder.build(false).toUriString(), restTemplate, TmdbMovieSearchDto.class);
     }
 }
