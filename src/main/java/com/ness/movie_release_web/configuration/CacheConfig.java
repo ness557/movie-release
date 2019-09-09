@@ -24,7 +24,7 @@ public class CacheConfig {
                         CacheBuilder.newBuilder()
                                 .expireAfterWrite(8, TimeUnit.HOURS)
                                 .build()
-                                .asMap(), false);
+                                .asMap(), true);
             }
         };
     }
