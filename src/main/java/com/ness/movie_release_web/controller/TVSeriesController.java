@@ -103,7 +103,7 @@ public class TVSeriesController {
     @GetMapping("/search")
     public String search(@RequestParam("query") String query,
                          @RequestParam(required = false, name = "year") Long year,
-                         @RequestParam(required = false, name = "page") Long page,
+                         @RequestParam(required = false, name = "page", defaultValue = "1") Long page,
                          @CookieValue(value = "language", defaultValue = "en") Language language,
                          @CookieValue(value = "mode", defaultValue = "movie") Mode mode,
                          Principal principal,
