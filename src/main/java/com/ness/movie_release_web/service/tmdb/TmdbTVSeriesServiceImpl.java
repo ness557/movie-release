@@ -84,6 +84,6 @@ public class TmdbTVSeriesServiceImpl implements TmdbTVSeriesService {
         if (year != null)
             urlBuilder.queryParam("first_air_date_year", year);
 
-        return getTmdbEntity(urlBuilder.toUriString(), restTemplate, TmdbTVSearchDto.class);
+        return getTmdbEntity(urlBuilder.build(false).toUriString(), restTemplate, TmdbTVSearchDto.class);
     }
 }
