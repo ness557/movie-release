@@ -350,18 +350,15 @@ public class TVSeriesServiceImpl implements TVSeriesService {
             Optional<TmdbTVDetailsDto> tvDetailsRu = tmdbSeriesService.getTVDetails(id, Language.ru);
             tvDetailsRu.ifPresent(tvDetailsDto1 -> tvs.setNameRu(tvDetailsDto1.getName()));
 
-            Optional<TmdbSeasonDto> seasonDetails = tmdbSeriesService.getSeasonDetails(id, tmdbTvDetailsDto.getNumberOfSeasons(), Language.en);
-            if (!seasonDetails.isPresent()) {
-                tvSeriesRepository.save(tvs);
-                return;
+            long lastSeason = 0L;
+            long lastEpisode = 0L;
+            if (tmdbTvDetailsDto.getLastEpisodeToAir() != null) {
+                lastSeason = tmdbTvDetailsDto.getLastEpisodeToAir().getSeasonNumber();
+                lastEpisode = tmdbTvDetailsDto.getLastEpisodeToAir().getEpisodeNumber();
             }
 
-            TmdbSeasonDto tmdbSeasonDto = seasonDetails.get();
-            tmdbSeasonDto.getEpisodes().stream().min((s1, s2) -> ((Long) (s2.getEpisodeNumber() - s1.getEpisodeNumber())).intValue())
-                    .ifPresent(e -> {
-                        tvs.setLastSeasonNumber(e.getSeasonNumber());
-                        tvs.setLastEpisodeNumber(e.getEpisodeNumber());
-                    });
+            tvs.setLastSeasonNumber(lastSeason);
+            tvs.setLastEpisodeNumber(lastEpisode);
 
             tvSeriesRepository.save(tvs);
         });
