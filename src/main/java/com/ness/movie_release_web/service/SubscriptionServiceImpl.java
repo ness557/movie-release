@@ -1,9 +1,9 @@
 package com.ness.movie_release_web.service;
 
-import com.ness.movie_release_web.model.*;
 import com.ness.movie_release_web.dto.Language;
 import com.ness.movie_release_web.dto.tmdb.movie.details.TmdbMovieDetailsDto;
 import com.ness.movie_release_web.dto.tmdb.tvSeries.details.TmdbTVDetailsDto;
+import com.ness.movie_release_web.model.*;
 import com.ness.movie_release_web.repository.MovieRepository;
 import com.ness.movie_release_web.repository.TVSeriesRepository;
 import com.ness.movie_release_web.repository.UserTVSeriesRepository;
@@ -79,17 +79,26 @@ public class SubscriptionServiceImpl implements SubscriptionService {
         Optional<TVSeries> one = tvSeriesRepository.findById(tmdbId);
 
         UserTVSeries userTVSeries = new UserTVSeries();
-        userTVSeries.setTvSeries(one.orElse(new TVSeries(
-                tmdbId,
-                tvDetails.getName(),
-                tvDetailsRu.getName(),
-                tvDetails.getFirstAirDate(),
-                tvDetails.getLastAirDate(),
-                tvDetails.getVoteAverage(),
-                0L,
-                0L,
-                tvDetails.getStatus()
-        )));
+        userTVSeries.setTvSeries(one.orElseGet(() -> {
+            Long lastSeason = 0L;
+            Long lastEpisode = 0L;
+            if (tvDetails.getLastEpisodeToAir() != null) {
+                lastSeason = tvDetails.getLastEpisodeToAir().getSeasonNumber();
+                lastEpisode = tvDetails.getLastEpisodeToAir().getEpisodeNumber();
+            }
+
+            return new TVSeries(
+                    tmdbId,
+                    tvDetails.getName(),
+                    tvDetailsRu.getName(),
+                    tvDetails.getFirstAirDate(),
+                    tvDetails.getLastAirDate(),
+                    tvDetails.getVoteAverage(),
+                    lastSeason,
+                    lastEpisode,
+                    tvDetails.getStatus()
+            );
+        }));
         userTVSeries.setUser(user);
         userTVSeries.setCurrentSeason(0L);
         userTVSeries.setCurrentEpisode(0L);

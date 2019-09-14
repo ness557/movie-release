@@ -1,6 +1,8 @@
 package com.ness.movie_release_web.service;
 
-import com.ness.movie_release_web.dto.*;
+import com.ness.movie_release_web.dto.Language;
+import com.ness.movie_release_web.dto.Mode;
+import com.ness.movie_release_web.dto.TimeSpentDto;
 import com.ness.movie_release_web.dto.tmdb.movie.discover.TmdbDiscoverSearchCriteria;
 import com.ness.movie_release_web.dto.tmdb.tvSeries.WatchStatus;
 import com.ness.movie_release_web.dto.tmdb.tvSeries.details.Status;
@@ -14,8 +16,10 @@ import com.ness.movie_release_web.model.TVSeries;
 import com.ness.movie_release_web.model.User;
 import com.ness.movie_release_web.model.UserTVSeries;
 import com.ness.movie_release_web.model.UserTVSeriesPK;
-import com.ness.movie_release_web.model.type.MessageDestinationType;
-import com.ness.movie_release_web.repository.*;
+import com.ness.movie_release_web.repository.TVSeriesRepository;
+import com.ness.movie_release_web.repository.TVSeriesSortBy;
+import com.ness.movie_release_web.repository.UserRepository;
+import com.ness.movie_release_web.repository.UserTVSeriesRepository;
 import com.ness.movie_release_web.service.tmdb.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -332,6 +336,7 @@ public class TVSeriesServiceImpl implements TVSeriesService {
             Optional<TmdbTVDetailsDto> tvDetails = tmdbSeriesService.getTVDetails(id, Language.en);
 
             if (!tvDetails.isPresent()) {
+                log.warn("No such tv series at TMDB: {}", tvs);
                 return;
             }
 

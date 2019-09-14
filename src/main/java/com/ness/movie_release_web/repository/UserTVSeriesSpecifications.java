@@ -1,13 +1,14 @@
 package com.ness.movie_release_web.repository;
 
-import com.ness.movie_release_web.model.User;
-import com.ness.movie_release_web.model.UserTVSeries;
 import com.ness.movie_release_web.dto.tmdb.tvSeries.WatchStatus;
 import com.ness.movie_release_web.dto.tmdb.tvSeries.details.Status;
+import com.ness.movie_release_web.model.User;
+import com.ness.movie_release_web.model.UserTVSeries;
 import org.springframework.data.jpa.domain.Specification;
 
 import javax.persistence.criteria.Join;
 import javax.persistence.criteria.Predicate;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -26,9 +27,14 @@ public class UserTVSeriesSpecifications {
 
             if (watchStatuses.contains(WatchStatus.NOT_STARTED))
                 watchPredicates.add(
-                        cb.and(
-                                cb.equal(root.get("currentSeason"), 0),
-                                cb.equal(root.get("currentEpisode"), 0)));
+                        cb.or(
+                                cb.and(
+                                        cb.equal(root.get("currentSeason"), 0),
+                                        cb.equal(root.get("currentEpisode"), 0)
+                                ),
+                                cb.greaterThan(tvSeriesJoin.get("releaseDate"), LocalDate.now())
+                        )
+                );
 
             if (watchStatuses.contains(WatchStatus.IN_PROGRESS)) {
                 watchPredicates.add(
@@ -49,7 +55,8 @@ public class UserTVSeriesSpecifications {
                 watchPredicates.add(
                         cb.and(
                                 cb.equal(root.get("currentSeason"), tvSeriesJoin.get("lastSeasonNumber")),
-                                cb.equal(root.get("currentEpisode"), tvSeriesJoin.get("lastEpisodeNumber"))
+                                cb.equal(root.get("currentEpisode"), tvSeriesJoin.get("lastEpisodeNumber")),
+                                cb.lessThanOrEqualTo(tvSeriesJoin.get("releaseDate"), LocalDate.now())
                         )
                 );
             }
