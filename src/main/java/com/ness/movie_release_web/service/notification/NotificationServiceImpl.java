@@ -135,7 +135,8 @@ public class NotificationServiceImpl implements NotificationService {
 
 
                         // if all episode dates matches season air date (season was released fully that date)
-                        if (tmdbSeasonDto.getEpisodes().stream().allMatch(e -> e.getAirDate().equals(tmdbSeasonDto.getAirDate()))) {
+                        if (tmdbSeasonDto.getEpisodes().stream().allMatch(e -> e.getAirDate().equals(tmdbSeasonDto.getAirDate()))
+                                && tmdbSeasonDto.getEpisodes().size() > 1) {
 
                             // season air date matches condition
                             if (tmdbSeasonDto.getAirDate().isBefore(endDate) && tmdbSeasonDto.getAirDate().isAfter(startDate)) {
