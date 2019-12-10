@@ -1,6 +1,5 @@
 package com.ness.movie_release_web.service.notification;
 
-import com.ness.movie_release_web.dto.Language;
 import com.ness.movie_release_web.dto.tmdb.movie.details.TmdbMovieDetailsDto;
 import com.ness.movie_release_web.dto.tmdb.releaseDates.ReleaseType;
 import com.ness.movie_release_web.dto.tmdb.releaseDates.TmdbReleaseDate;
@@ -23,9 +22,10 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
-import java.util.*;
-
-import static java.util.stream.Collectors.toMap;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -46,16 +46,15 @@ public class NotificationServiceImpl implements NotificationService {
 
         log.info("Notifying for movies...");
 
-        List<Movie> movies = movieRepository.findAll();
+        List<Movie> movies = movieRepository.findAllByUsersIsNotEmpty();
 
         LocalDate endDate = LocalDate.now();
         LocalDate startDate = endDate.minusDays(2);
 
-        Map<User, Map<TmdbMovieDetailsDto, TmdbReleaseDate>> telegramNotifies = new HashMap<>();
-        Map<User, Map<TmdbMovieDetailsDto, TmdbReleaseDate>> emailNotifies = new HashMap<>();
+        Map<User, Map<TmdbMovieDetailsDto, TmdbReleaseDate>> notifies = new HashMap<>();
 
         // notifies about release
-        movies.forEach((movie) -> {
+        movies.forEach(movie -> {
 
             List<TmdbReleaseDate> releaseDates =
                     tmdbDatesService.getReleaseDates(
@@ -64,33 +63,32 @@ public class NotificationServiceImpl implements NotificationService {
                             ReleaseType.Digital,
                             ReleaseType.Physical);
 
-            Map<Language, TmdbMovieDetailsDto> langMovie =
-                    Arrays.stream(Language.values())
-                            .collect(toMap(
-                                    language -> language,
-                                    language -> tmdbMovieService.getMovieDetails(movie.getId(),
-                                            language).orElse(new TmdbMovieDetailsDto())));
-
-            movie.getUsers().forEach(u ->
+            movie.getUsers().forEach(user ->
                     releaseDates.forEach(releaseDate -> {
                         if (releaseDate.getReleaseDate().isBefore(endDate) && releaseDate.getReleaseDate().isAfter(startDate)) {
 
-                            switch (u.getMessageDestinationType()) {
-                                case EMAIL:
-                                    addMovieNotify(langMovie.get(u.getLanguage()), u, releaseDate, emailNotifies);
-                                    break;
-                                case TELEGRAM:
-                                    addMovieNotify(langMovie.get(u.getLanguage()), u, releaseDate, telegramNotifies);
-                                    break;
-                            }
+                            tmdbMovieService.getMovieDetails(movie.getId(), user.getLanguage())
+                                    .ifPresent(movieDetailsDto -> {
+                                        notifies.computeIfAbsent(user, k -> new HashMap<>());
+                                        notifies.get(user).put(movieDetailsDto, releaseDate);
+                                    });
                         }
                     }));
         });
 
-        notifyMovieByEmail(emailNotifies);
-        notifyMovieByTelegram(telegramNotifies);
-        log.info("Notified by email: {}", emailNotifies.toString());
-        log.info("Notified by telegram: {}", telegramNotifies.toString());
+        notifies.forEach((user, detailsReleaseDateMap) -> detailsReleaseDateMap.forEach((movie, releaseDate) -> {
+            switch (user.getMessageDestinationType()) {
+
+                case EMAIL:
+                    emailService.sendMovieNotify(user, movie, releaseDate);
+                    break;
+                case TELEGRAM:
+                    telegramService.sendMovieNotify(user, movie, releaseDate);
+                    break;
+            }
+        }));
+
+        log.info("Notified {}", notifies);
     }
 
     @Override
@@ -102,11 +100,8 @@ public class NotificationServiceImpl implements NotificationService {
         LocalDate endDate = LocalDate.now();
         LocalDate startDate = endDate.minusDays(2);
 
-
-        Map<User, Map<TmdbSeasonDto, TmdbTVDetailsDto>> telegramSeasonNotifies = new HashMap<>();
-        Map<User, Map<TmdbSeasonDto, TmdbTVDetailsDto>> emailSeasonNotifies = new HashMap<>();
-        Map<User, Map<TmdbEpisodeDto, TmdbTVDetailsDto>> emailEpisodeNotifies = new HashMap<>();
-        Map<User, Map<TmdbEpisodeDto, TmdbTVDetailsDto>> telegramEpisodeNotifies = new HashMap<>();
+        Map<User, Map<TmdbSeasonDto, TmdbTVDetailsDto>> seasonNotifies = new HashMap<>();
+        Map<User, Map<TmdbEpisodeDto, TmdbTVDetailsDto>> episodeNotifies = new HashMap<>();
 
         // get all tv shows from db
         List<UserTVSeries> allUserTVSeries = tvSeriesRepository.findAll();
@@ -114,9 +109,11 @@ public class NotificationServiceImpl implements NotificationService {
         // for each value from db
         allUserTVSeries.forEach(userTvSeries -> {
 
+            User user = userTvSeries.getUser();
+
             // get full userTvSeries show info
             Optional<TmdbTVDetailsDto> tvDetails =
-                    tmdbTVSeriesService.getTVDetails(userTvSeries.getId().getTvSeriesId(), userTvSeries.getUser().getLanguage());
+                    tmdbTVSeriesService.getTVDetails(userTvSeries.getId().getTvSeriesId(), user.getLanguage());
 
             tvDetails.ifPresent(tmdbTVDetailsDto -> {
 
@@ -125,10 +122,9 @@ public class NotificationServiceImpl implements NotificationService {
 
                     // get all season info
                     Optional<TmdbSeasonDto> seasonDetails =
-                            tmdbTVSeriesService.getSeasonDetails(tmdbTVDetailsDto.getId(), s.getSeasonNumber(), userTvSeries.getUser().getLanguage());
+                            tmdbTVSeriesService.getSeasonDetails(tmdbTVDetailsDto.getId(), s.getSeasonNumber(), user.getLanguage());
                     if (seasonDetails.isPresent()) {
                         TmdbSeasonDto tmdbSeasonDto = seasonDetails.get();
-
 
                         // if all episode dates matches season air date (season was released fully that date)
                         if (tmdbSeasonDto.getEpisodes().stream().allMatch(e -> e.getAirDate().equals(tmdbSeasonDto.getAirDate()))
@@ -136,91 +132,50 @@ public class NotificationServiceImpl implements NotificationService {
 
                             // season air date matches condition
                             if (tmdbSeasonDto.getAirDate().isBefore(endDate) && tmdbSeasonDto.getAirDate().isAfter(startDate)) {
-
                                 // notify about season
-                                switch (userTvSeries.getUser().getMessageDestinationType()) {
-                                    case EMAIL:
-                                        // add to email notify list
-                                        addSeasonNotify(tmdbSeasonDto, tmdbTVDetailsDto, userTvSeries.getUser(), emailSeasonNotifies);
-                                        break;
-                                    case TELEGRAM:
-                                        // add to telegram notify list
-                                        addSeasonNotify(tmdbSeasonDto, tmdbTVDetailsDto, userTvSeries.getUser(), telegramSeasonNotifies);
-                                        break;
-                                }
+                                seasonNotifies.computeIfAbsent(user, k -> new HashMap<>());
+                                seasonNotifies.get(user).put(tmdbSeasonDto, tmdbTVDetailsDto);
                             }
 
                             // season episodes DOES NOT matches season air date
                         } else {
 
                             // looking for episodes, the date of which matches condition
-                            tmdbSeasonDto.getEpisodes().stream().filter(e -> e.getAirDate().isBefore(endDate) && e.getAirDate().isAfter(startDate)).forEach(e -> {
-                                switch (userTvSeries.getUser().getMessageDestinationType()) {
-                                    case EMAIL:
-                                        // add to email notify list
-                                        addEpisodeNotify(e, tmdbTVDetailsDto, userTvSeries.getUser(), emailEpisodeNotifies);
-                                        break;
-                                    case TELEGRAM:
-                                        // add to telegram notify list
-                                        addEpisodeNotify(e, tmdbTVDetailsDto, userTvSeries.getUser(), telegramEpisodeNotifies);
-                                        break;
-                                }
-                            });
+                            tmdbSeasonDto.getEpisodes().stream()
+                                    .filter(episode -> episode.getAirDate().isBefore(endDate) && episode.getAirDate().isAfter(startDate))
+                                    .forEach(episode -> {
+                                        episodeNotifies.computeIfAbsent(user, k -> new HashMap<>());
+                                        episodeNotifies.get(user).put(episode, tmdbTVDetailsDto);
+                                    });
                         }
                     }
                 });
             });
         });
 
-        //notifying
-        notifySeasonByEmail(emailSeasonNotifies);
-        notifySeasonByTelegram(telegramSeasonNotifies);
-        notifyEpisodeByEmail(emailEpisodeNotifies);
-        notifyEpisodeByTelegram(telegramEpisodeNotifies);
+        seasonNotifies.forEach((user, seasonToDetailsMap) -> seasonToDetailsMap.forEach((season, tvDetails) -> {
+            switch (user.getMessageDestinationType()) {
+                case EMAIL:
+                    telegramService.sendSeasonNotify(user, season, tvDetails);
+                    break;
+                case TELEGRAM:
+                    emailService.sendSeasonNotify(user, season, tvDetails);
+                    break;
+            }
+        }));
 
-        log.info("Notified episodes by email: {}", emailEpisodeNotifies.toString());
-        log.info("Notified episodes by telegram: {}", telegramEpisodeNotifies.toString());
-        log.info("Notified seasons by email: {}", emailSeasonNotifies.toString());
-        log.info("Notified seasons by telegram: {}", telegramSeasonNotifies.toString());
-    }
+        episodeNotifies.forEach((user, episodeToDetailsMap) -> episodeToDetailsMap.forEach((episode, tvDetails) -> {
+            switch (user.getMessageDestinationType()) {
+                case EMAIL:
+                    telegramService.sendEpisodeNotify(user, episode, tvDetails);
+                    break;
+                case TELEGRAM:
+                    emailService.sendEpisodeNotify(user, episode, tvDetails);
+                    break;
+            }
+        }));
 
-
-    private void addEpisodeNotify(TmdbEpisodeDto e, TmdbTVDetailsDto t, User user, Map<User, Map<TmdbEpisodeDto, TmdbTVDetailsDto>> notifies) {
-        notifies.computeIfAbsent(user, k -> new HashMap<>());
-        notifies.get(user).put(e, t);
-    }
-
-    private void addSeasonNotify(TmdbSeasonDto s, TmdbTVDetailsDto t, User user, Map<User, Map<TmdbSeasonDto, TmdbTVDetailsDto>> notifies) {
-        notifies.computeIfAbsent(user, k -> new HashMap<>());
-        notifies.get(user).put(s, t);
-    }
-
-    private void addMovieNotify(TmdbMovieDetailsDto movie, User user, TmdbReleaseDate releaseDate, Map<User, Map<TmdbMovieDetailsDto, TmdbReleaseDate>> notifies) {
-        notifies.computeIfAbsent(user, k -> new HashMap<>());
-        notifies.get(user).put(movie, releaseDate);
-    }
-
-    private void notifyMovieByEmail(Map<User, Map<TmdbMovieDetailsDto, TmdbReleaseDate>> notifies) {
-        notifies.forEach((user, value) -> value.forEach((movie, rd) -> emailService.sendMovieNotify(user, movie, rd)));
-    }
-
-    private void notifyMovieByTelegram(Map<User, Map<TmdbMovieDetailsDto, TmdbReleaseDate>> notifies) {
-        notifies.forEach((user, value) -> value.forEach((movie, rd) -> telegramService.sendMovieNotify(user, movie, rd)));
-    }
-
-    private void notifyEpisodeByTelegram(Map<User, Map<TmdbEpisodeDto, TmdbTVDetailsDto>> notifies) {
-        notifies.forEach((user, value) -> value.forEach((episode, show) -> telegramService.sendEpisodeNotify(user, episode, show)));
-    }
-
-    private void notifyEpisodeByEmail(Map<User, Map<TmdbEpisodeDto, TmdbTVDetailsDto>> notifies) {
-        notifies.forEach((user, value) -> value.forEach((episode, show) -> emailService.sendEpisodeNotify(user, episode, show)));
-    }
-
-    private void notifySeasonByTelegram(Map<User, Map<TmdbSeasonDto, TmdbTVDetailsDto>> notifies) {
-        notifies.forEach((user, value) -> value.forEach((season, show) -> telegramService.sendSeasonNotify(user, season, show)));
-    }
-
-    private void notifySeasonByEmail(Map<User, Map<TmdbSeasonDto, TmdbTVDetailsDto>> notifies) {
-        notifies.forEach((user, value) -> value.forEach((season, show) -> emailService.sendSeasonNotify(user, season, show)));
+        log.info("Notified episodes: {}", seasonNotifies);
+        log.info("Notified seasons: {}", seasonNotifies);
     }
 }
