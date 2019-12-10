@@ -20,7 +20,7 @@ public class TmdbApiUtils {
         try {
             response = restTemplate.getForEntity(url, type);
         } catch (HttpStatusCodeException e) {
-            log.error("Could not get entity type={}, status={}", type.getSimpleName(), e.getStatusCode().value());
+            log.error("Could not get entity url={}, status={}", url, e.getStatusCode().value());
 
             if (e.getStatusCode().value() == 429) {
                 try {
@@ -32,6 +32,9 @@ public class TmdbApiUtils {
                 // and try again
                 return getTmdbEntity(url, restTemplate, type);
             }
+            return Optional.empty();
+        } catch (Exception e) {
+            log.error("Could not get entity url={}", url);
             return Optional.empty();
         }
 

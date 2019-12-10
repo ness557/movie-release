@@ -111,25 +111,21 @@ public class NotificationServiceImpl implements NotificationService {
         // get all tv shows from db
         List<UserTVSeries> allUserTVSeries = tvSeriesRepository.findAll();
 
-        // @formatter:off
         // for each value from db
-        allUserTVSeries.forEach(tv -> {
+        allUserTVSeries.forEach(userTvSeries -> {
 
-            // get foll tv show info
+            // get full userTvSeries show info
             Optional<TmdbTVDetailsDto> tvDetails =
-                    tmdbTVSeriesService.getTVDetails(tv.getId().getTvSeriesId(),
-                            tv.getUser().getLanguage());
-            if (tvDetails.isPresent()) {
-                TmdbTVDetailsDto tmdbTvDetailsDto = tvDetails.get();
+                    tmdbTVSeriesService.getTVDetails(userTvSeries.getId().getTvSeriesId(), userTvSeries.getUser().getLanguage());
 
-                // for each season of tv show
-                tmdbTvDetailsDto.getSeasons().forEach(s -> {
+            tvDetails.ifPresent(tmdbTVDetailsDto -> {
+
+                // for each season of userTvSeries show
+                tmdbTVDetailsDto.getSeasons().forEach(s -> {
 
                     // get all season info
                     Optional<TmdbSeasonDto> seasonDetails =
-                            tmdbTVSeriesService.getSeasonDetails(tmdbTvDetailsDto.getId(),
-                                    s.getSeasonNumber(),
-                                    tv.getUser().getLanguage());
+                            tmdbTVSeriesService.getSeasonDetails(tmdbTVDetailsDto.getId(), s.getSeasonNumber(), userTvSeries.getUser().getLanguage());
                     if (seasonDetails.isPresent()) {
                         TmdbSeasonDto tmdbSeasonDto = seasonDetails.get();
 
@@ -142,14 +138,14 @@ public class NotificationServiceImpl implements NotificationService {
                             if (tmdbSeasonDto.getAirDate().isBefore(endDate) && tmdbSeasonDto.getAirDate().isAfter(startDate)) {
 
                                 // notify about season
-                                switch (tv.getUser().getMessageDestinationType()) {
+                                switch (userTvSeries.getUser().getMessageDestinationType()) {
                                     case EMAIL:
                                         // add to email notify list
-                                        addSeasonNotify(tmdbSeasonDto, tmdbTvDetailsDto, tv.getUser(), emailSeasonNotifies);
+                                        addSeasonNotify(tmdbSeasonDto, tmdbTVDetailsDto, userTvSeries.getUser(), emailSeasonNotifies);
                                         break;
                                     case TELEGRAM:
                                         // add to telegram notify list
-                                        addSeasonNotify(tmdbSeasonDto, tmdbTvDetailsDto, tv.getUser(), telegramSeasonNotifies);
+                                        addSeasonNotify(tmdbSeasonDto, tmdbTVDetailsDto, userTvSeries.getUser(), telegramSeasonNotifies);
                                         break;
                                 }
                             }
@@ -159,23 +155,22 @@ public class NotificationServiceImpl implements NotificationService {
 
                             // looking for episodes, the date of which matches condition
                             tmdbSeasonDto.getEpisodes().stream().filter(e -> e.getAirDate().isBefore(endDate) && e.getAirDate().isAfter(startDate)).forEach(e -> {
-                                switch (tv.getUser().getMessageDestinationType()) {
+                                switch (userTvSeries.getUser().getMessageDestinationType()) {
                                     case EMAIL:
                                         // add to email notify list
-                                        addEpisodeNotify(e, tmdbTvDetailsDto, tv.getUser(), emailEpisodeNotifies);
+                                        addEpisodeNotify(e, tmdbTVDetailsDto, userTvSeries.getUser(), emailEpisodeNotifies);
                                         break;
                                     case TELEGRAM:
                                         // add to telegram notify list
-                                        addEpisodeNotify(e, tmdbTvDetailsDto, tv.getUser(), telegramEpisodeNotifies);
+                                        addEpisodeNotify(e, tmdbTVDetailsDto, userTvSeries.getUser(), telegramEpisodeNotifies);
                                         break;
                                 }
                             });
                         }
                     }
                 });
-            }
+            });
         });
-        // @formatter:on
 
         //notifying
         notifySeasonByEmail(emailSeasonNotifies);
