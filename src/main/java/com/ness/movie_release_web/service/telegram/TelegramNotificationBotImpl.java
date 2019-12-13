@@ -46,8 +46,7 @@ public class TelegramNotificationBotImpl extends TelegramLongPollingBot implemen
 
             log.info("Notification {} sent", photo.toString());
         } catch (TelegramApiException e) {
-            log.error("Could not sent telegram message: {}", e.getMessage());
-            e.printStackTrace();
+            log.error("Could not sent telegram message: ", e);
         }
     }
 
@@ -60,8 +59,7 @@ public class TelegramNotificationBotImpl extends TelegramLongPollingBot implemen
 
             log.info("Password restore message sent={} ", message.toString());
         } catch (TelegramApiException e) {
-            log.error("Could not sent telegram message: {}", e.getMessage());
-            e.printStackTrace();
+            log.error("Could not sent telegram message: ", e);
         }
     }
 

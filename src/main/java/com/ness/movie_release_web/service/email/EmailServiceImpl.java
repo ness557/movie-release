@@ -117,7 +117,7 @@ public class EmailServiceImpl implements EmailService {
 
             mailSender.send(message);
             log.info("Email sent to {} with episode {} of tv show {}", user.getEmail(), episode.toString(), show.toString());
-        } catch (IOException | MessagingException | TemplateException e) {
+        } catch (Exception e) {
             log.error("Could not sent email: {}", e.getMessage());
         }
     }
@@ -156,7 +156,7 @@ public class EmailServiceImpl implements EmailService {
 
             mailSender.send(message);
             log.info("Email sent to {} with season {} of tv show {}", user.getEmail(), season.toString(), show.toString());
-        } catch (IOException | MessagingException | TemplateException e) {
+        } catch (Exception e) {
             log.error("Could not sent email: {}", e.getMessage());
         }
     }
@@ -177,7 +177,7 @@ public class EmailServiceImpl implements EmailService {
             helper.setText(processTemplateIntoString(freemarkerConfig.getTemplate("passwordRecovery.ftl"), params), true);
 
             mailSender.send(message);
-        } catch (IOException | MessagingException | TemplateException e) {
+        } catch (Exception e) {
             log.error("Could not sent email: {}", e.getMessage());
         }
     }
