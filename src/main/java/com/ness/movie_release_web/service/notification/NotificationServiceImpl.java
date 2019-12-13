@@ -77,14 +77,18 @@ public class NotificationServiceImpl implements NotificationService {
         });
 
         notifies.forEach((user, detailsReleaseDateMap) -> detailsReleaseDateMap.forEach((movie, releaseDate) -> {
-            switch (user.getMessageDestinationType()) {
+            try {
+                switch (user.getMessageDestinationType()) {
 
-                case EMAIL:
-                    emailService.sendMovieNotify(user, movie, releaseDate);
-                    break;
-                case TELEGRAM:
-                    telegramService.sendMovieNotify(user, movie, releaseDate);
-                    break;
+                    case EMAIL:
+                        emailService.sendMovieNotify(user, movie, releaseDate);
+                        break;
+                    case TELEGRAM:
+                        telegramService.sendMovieNotify(user, movie, releaseDate);
+                        break;
+                }
+            } catch (Exception e) {
+                log.error("Couldn't notify for new season: ", e);
             }
         }));
 
@@ -154,24 +158,32 @@ public class NotificationServiceImpl implements NotificationService {
         });
 
         seasonNotifies.forEach((user, seasonToDetailsMap) -> seasonToDetailsMap.forEach((season, tvDetails) -> {
-            switch (user.getMessageDestinationType()) {
-                case EMAIL:
-                    telegramService.sendSeasonNotify(user, season, tvDetails);
-                    break;
-                case TELEGRAM:
-                    emailService.sendSeasonNotify(user, season, tvDetails);
-                    break;
+            try {
+                switch (user.getMessageDestinationType()) {
+                    case EMAIL:
+                        telegramService.sendSeasonNotify(user, season, tvDetails);
+                        break;
+                    case TELEGRAM:
+                        emailService.sendSeasonNotify(user, season, tvDetails);
+                        break;
+                }
+            } catch (Exception e) {
+                log.error("Couldn't notify for new season: ", e);
             }
         }));
 
         episodeNotifies.forEach((user, episodeToDetailsMap) -> episodeToDetailsMap.forEach((episode, tvDetails) -> {
-            switch (user.getMessageDestinationType()) {
-                case EMAIL:
-                    telegramService.sendEpisodeNotify(user, episode, tvDetails);
-                    break;
-                case TELEGRAM:
-                    emailService.sendEpisodeNotify(user, episode, tvDetails);
-                    break;
+            try {
+                switch (user.getMessageDestinationType()) {
+                    case EMAIL:
+                        telegramService.sendEpisodeNotify(user, episode, tvDetails);
+                        break;
+                    case TELEGRAM:
+                        emailService.sendEpisodeNotify(user, episode, tvDetails);
+                        break;
+                }
+            } catch (Exception e) {
+                log.error("Couldn't notify for new season: ", e);
             }
         }));
 
