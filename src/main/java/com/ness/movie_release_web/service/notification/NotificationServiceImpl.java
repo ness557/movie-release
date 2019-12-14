@@ -160,10 +160,10 @@ public class NotificationServiceImpl implements NotificationService {
         seasonNotifies.forEach((user, seasonToDetailsMap) -> seasonToDetailsMap.forEach((season, tvDetails) -> {
             try {
                 switch (user.getMessageDestinationType()) {
-                    case EMAIL:
+                    case TELEGRAM:
                         telegramService.sendSeasonNotify(user, season, tvDetails);
                         break;
-                    case TELEGRAM:
+                    case EMAIL:
                         emailService.sendSeasonNotify(user, season, tvDetails);
                         break;
                 }
@@ -175,10 +175,10 @@ public class NotificationServiceImpl implements NotificationService {
         episodeNotifies.forEach((user, episodeToDetailsMap) -> episodeToDetailsMap.forEach((episode, tvDetails) -> {
             try {
                 switch (user.getMessageDestinationType()) {
-                    case EMAIL:
+                    case TELEGRAM:
                         telegramService.sendEpisodeNotify(user, episode, tvDetails);
                         break;
-                    case TELEGRAM:
+                    case EMAIL:
                         emailService.sendEpisodeNotify(user, episode, tvDetails);
                         break;
                 }
@@ -187,7 +187,7 @@ public class NotificationServiceImpl implements NotificationService {
             }
         }));
 
-        log.info("Notified episodes: {}", seasonNotifies);
+        log.info("Notified episodes: {}", episodeNotifies);
         log.info("Notified seasons: {}", seasonNotifies);
     }
 }
