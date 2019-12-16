@@ -82,6 +82,8 @@ public class TVSeriesController {
         model.addAttribute("season", season.getSeasonDto());
         model.addAttribute("currentSeason", season.getCurrentSeason());
         model.addAttribute("currentEpisode", season.getCurrentEpisode());
+        model.addAttribute("hours", season.getHoursSpent());
+        model.addAttribute("minutes", season.getMinutesSpent());
 
         return "seasonInfo";
     }
