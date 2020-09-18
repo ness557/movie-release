@@ -28,11 +28,11 @@ public class ServiceLoggingAspect {
 
     @Around("movieReleaseServicesPointcut() || movieReleaseControllersPointcut() || movieReleaseComponentsPointcut()")
     public Object logAround(ProceedingJoinPoint joinPoint) throws Throwable {
-        log.debug("{}.{}() - start: with argument[s] = {}", joinPoint.getSignature().getDeclaringType().getSimpleName(),
+        log.debug("{}.{} - start: with argument[s] = {}", joinPoint.getSignature().getDeclaringType().getSimpleName(),
                 joinPoint.getSignature().toString(), Arrays.toString(joinPoint.getArgs()));
         try {
             Object result = joinPoint.proceed();
-            log.debug("{}.{}() - end: with result = {}", joinPoint.getSignature().getDeclaringType().getSimpleName(),
+            log.debug("{}.{} - end: with result = {}", joinPoint.getSignature().getDeclaringType().getSimpleName(),
                     joinPoint.getSignature().toString(), result);
             return result;
         } catch (IllegalArgumentException e) {

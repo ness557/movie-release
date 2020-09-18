@@ -15,6 +15,8 @@ import org.telegram.telegrambots.meta.api.objects.Message;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 
+import java.util.List;
+
 @Component
 @RequiredArgsConstructor
 @Slf4j
@@ -85,6 +87,11 @@ public class TelegramNotificationBotImpl extends TelegramLongPollingBot implemen
                 log.error("Could register telegram user: {}", e.getMessage());
             }
         }
+    }
+
+    @Override
+    public void onUpdatesReceived(List<Update> updates) {
+        updates.forEach(this::onUpdateReceived);
     }
 
     @Override
