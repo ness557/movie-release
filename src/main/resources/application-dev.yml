@@ -1,0 +1,17 @@
+spring:
+  datasource:
+    url: jdbc:h2:mem:testdb
+    driverClassName: org.h2.Driver
+    username: sa
+    password: password
+  jpa:
+    database-platform: org.hibernate.dialect.H2Dialect
+
+
+
+telegram:
+  bot: movie_notify_bot
+  id: movie_notify_bot
+  name: ness_debug_wish_list_bot
+  token: 718425977:AAGMH5huVNu4_Ux-6_O8qNqfJ02zaT54SDM
+  webInterfaceLink: movie-release.ddns.net

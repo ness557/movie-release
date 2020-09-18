@@ -18,7 +18,7 @@ import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 @Component
 @RequiredArgsConstructor
 @Slf4j
-public class TelegramNotificationBotImpl extends TelegramLongPollingBot implements TelegramNotificationBot{
+public class TelegramNotificationBotImpl extends TelegramLongPollingBot implements TelegramNotificationBot {
 
     @Value("${telegram.name}")
     private String botName;
