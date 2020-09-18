@@ -22,7 +22,11 @@ public class ServiceLoggingAspect {
     public void movieReleaseControllersPointcut() {
     }
 
-    @Around("movieReleaseServicesPointcut() || movieReleaseControllersPointcut()")
+    @Pointcut("within(@org.springframework.stereotype.Component *) && within(com.ness.movie_release_web..*)")
+    public void movieReleaseComponentsPointcut() {
+    }
+
+    @Around("movieReleaseServicesPointcut() || movieReleaseControllersPointcut() || movieReleaseComponentsPointcut()")
     public Object logAround(ProceedingJoinPoint joinPoint) throws Throwable {
         log.debug("{}.{}() - start: with argument[s] = {}", joinPoint.getSignature().getDeclaringType().getSimpleName(),
                 joinPoint.getSignature().toString(), Arrays.toString(joinPoint.getArgs()));
