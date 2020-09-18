@@ -7,11 +7,9 @@ spring:
   jpa:
     database-platform: org.hibernate.dialect.H2Dialect
 
-
-
 telegram:
   bot: movie_notify_bot
   id: movie_notify_bot
-  name: ness_debug_wish_list_bot
-  token: 718425977:AAGMH5huVNu4_Ux-6_O8qNqfJ02zaT54SDM
+  name: nothing_to_look_for_here
+  token: tokenn
   webInterfaceLink: movie-release.ddns.net

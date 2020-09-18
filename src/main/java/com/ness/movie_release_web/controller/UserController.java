@@ -93,7 +93,9 @@ public class UserController {
             registrationService.registerUser(user);
         }
 
-        response.addCookie(new Cookie("language", language.getValue()));
+        Cookie cookie = new Cookie("language", language.getValue());
+        cookie.setPath("/");
+        response.addCookie(cookie);
 
         if (isAuthenticated && !principal.getName().equals(user.getLogin())) {
             request.logout();
