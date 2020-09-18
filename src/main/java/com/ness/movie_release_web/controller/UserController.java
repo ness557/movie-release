@@ -68,6 +68,8 @@ public class UserController {
                            HttpServletRequest request,
                            Principal principal) throws ServletException {
 
+        language = userDto.getLanguage();
+
         model.addAttribute("mode", mode);
         model.addAttribute("language", language);
 
