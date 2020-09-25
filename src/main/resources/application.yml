@@ -46,7 +46,7 @@ telegram:
   id: movie_notify_bot
   name: ${BOT_NAME}
   token: ${BOT_TOKEN}
-  webInterfaceLink: movie-release.ddns.net
+  webInterfaceLink: ${BOT_LINK}
 
 logging:
   level:
