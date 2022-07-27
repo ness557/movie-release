@@ -34,7 +34,7 @@ public class TmdbApiUtils {
             }
             return Optional.empty();
         } catch (Exception e) {
-            log.error("Could not get entity url={}", url);
+            log.error("Could not get entity url={}, message = {}", url, e.getMessage(), e);
             return Optional.empty();
         }
 
